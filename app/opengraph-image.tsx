@@ -22,16 +22,28 @@ export default async function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <div
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: 999,
-              background: "linear-gradient(135deg, #FFD54F, #f43f5e, #7c3aed)",
+              width: 64,
+              height: 64,
+              borderRadius: 14,
+              background: "#FFD54F",
+              display: "flex",
             }}
-          />
-          <div style={{ fontSize: 36, fontWeight: 600, letterSpacing: -1 }}>Ciro</div>
+          >
+            <svg width="64" height="64" viewBox="0 0 200 200">
+              <path
+                d="M 152 70 A 60 60 0 1 0 152 130"
+                fill="none"
+                stroke="white"
+                strokeWidth={32}
+                strokeLinecap="round"
+              />
+              <circle cx={158} cy={82} r={10} fill="white" />
+            </svg>
+          </div>
+          <div style={{ fontSize: 40, fontWeight: 600, letterSpacing: -1 }}>Ciro</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>

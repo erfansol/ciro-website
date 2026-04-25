@@ -4,9 +4,11 @@
   "description": "Experience cities through AI-powered stories. A travel app and startup founded by Erfan Soleymanzadeh.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#06070d",
-  "theme_color": "#7c3aed",
+  "background_color": "#FFD54F",
+  "theme_color": "#FFD54F",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-icon", "sizes": "180x180", "type": "image/png", "purpose": "any maskable" }
   ]
 }
