@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Nav } from "@/components/ui/Nav";
@@ -12,9 +12,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const display = Instrument_Serif({
+const display = Fraunces({
   subsets: ["latin"],
-  weight: "400",
+  axes: ["opsz", "SOFT"],
   variable: "--font-display",
   display: "swap",
 });

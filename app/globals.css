@@ -16,6 +16,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.font-display {
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
 /* Subtle grain over cinematic backgrounds */
 .bg-aurora {
   background-image:

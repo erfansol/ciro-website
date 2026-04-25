@@ -28,7 +28,7 @@ export default async function OpengraphImage() {
               width: 56,
               height: 56,
               borderRadius: 999,
-              background: "linear-gradient(135deg, #f59e0b, #f43f5e, #7c3aed)",
+              background: "linear-gradient(135deg, #FFD54F, #f43f5e, #7c3aed)",
             }}
           />
           <div style={{ fontSize: 36, fontWeight: 600, letterSpacing: -1 }}>Ciro</div>
@@ -48,7 +48,7 @@ export default async function OpengraphImage() {
             <span
               style={{
                 background:
-                  "linear-gradient(120deg, #f59e0b 0%, #f43f5e 45%, #a78bfa 100%)",
+                  "linear-gradient(120deg, #FFD54F 0%, #f43f5e 50%, #a78bfa 100%)",
                 backgroundClip: "text",
                 color: "transparent",
               }}

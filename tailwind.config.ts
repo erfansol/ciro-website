@@ -35,9 +35,10 @@ const config: Config = {
           900: "#4c1d95",
         },
         sun: {
-          400: "#fbbf24",
-          500: "#f59e0b",
-          600: "#ea580c",
+          300: "#FFE082",
+          400: "#FFD54F",
+          500: "#FFC107",
+          600: "#F4A613",
         },
         rose: {
           500: "#f43f5e",
@@ -48,7 +49,7 @@ const config: Config = {
         display: ["var(--font-display)", "var(--font-inter)", "system-ui", "sans-serif"],
       },
       backgroundImage: {
-        "sunset": "linear-gradient(120deg, #f59e0b 0%, #f43f5e 45%, #7c3aed 100%)",
+        "sunset": "linear-gradient(120deg, #FFD54F 0%, #f43f5e 50%, #7c3aed 100%)",
         "aurora": "linear-gradient(135deg, #4c1d95 0%, #1e1b4b 40%, #0a0d16 100%)",
         "grid-light": "linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px)",
         "grid-dark": "linear-gradient(rgba(167,139,250,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.08) 1px, transparent 1px)",

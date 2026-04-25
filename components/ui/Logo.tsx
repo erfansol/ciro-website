@@ -7,7 +7,7 @@ export function Logo({ className, asLink = true }: { className?: string; asLink?
         <svg viewBox="0 0 32 32" className="h-8 w-8">
           <defs>
             <linearGradient id="ciro-logo" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#f59e0b" />
+              <stop offset="0%" stopColor="#FFD54F" />
               <stop offset="55%" stopColor="#f43f5e" />
               <stop offset="100%" stopColor="#7c3aed" />
             </linearGradient>

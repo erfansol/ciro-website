@@ -8,7 +8,7 @@ type Props = {
 
 const colors: Record<NonNullable<Props["color"]>, string> = {
   violet: "rgba(139, 92, 246, 0.55)",
-  amber: "rgba(245, 158, 11, 0.55)",
+  amber: "rgba(255, 213, 79, 0.6)",
   rose: "rgba(244, 63, 94, 0.5)",
   indigo: "rgba(99, 102, 241, 0.5)",
 };
