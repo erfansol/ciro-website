@@ -1,0 +1,12 @@
+{
+  "name": "Ciro — by Erfan Soleymanzadeh",
+  "short_name": "Ciro",
+  "description": "Experience cities through AI-powered stories. A travel app and startup founded by Erfan Soleymanzadeh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06070d",
+  "theme_color": "#7c3aed",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
