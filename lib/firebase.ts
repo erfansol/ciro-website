@@ -1,50 +1,11 @@
 import "server-only";
-import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getAdminDb, isFirebaseConfigured } from "./firebaseAdmin";
 import type { Submission } from "./storage";
 import type { FirestoreStory, StoryCategoryId } from "./categories";
 
-// firebase-admin's modular .d.ts re-exports types from a namespaced
-// @google-cloud/firestore declaration (`FirebaseFirestore.*`), so the
-// modular names (`App`, `Firestore`, `Timestamp`) don't resolve under
-// `moduleResolution: "bundler"`. This file is the only place that
-// touches those values, so we keep the cached client as `any` and rely
-// on the strongly-typed `FirestoreStory` boundary at the exports.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let cached: any = null;
+export { isFirebaseConfigured } from "./firebaseAdmin";
 
-function readEnv() {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-  if (!projectId || !clientEmail || !privateKey) return null;
-  return { projectId, clientEmail, privateKey };
-}
-
-export function isFirebaseConfigured(): boolean {
-  return readEnv() !== null;
-}
-
-function db() {
-  if (cached) return cached;
-  const env = readEnv();
-  if (!env) {
-    throw new Error(
-      "Firebase backend selected but FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY are missing.",
-    );
-  }
-  const app =
-    getApps()[0] ??
-    initializeApp({
-      credential: cert({
-        projectId: env.projectId,
-        clientEmail: env.clientEmail,
-        privateKey: env.privateKey,
-      }),
-    });
-  cached = getFirestore(app);
-  return cached;
-}
+const db = getAdminDb;
 
 export async function saveSubmission(entry: Submission) {
   await db()

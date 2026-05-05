@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { cn } from "@/lib/cn";
@@ -16,6 +17,7 @@ import { cn } from "@/lib/cn";
  * disturbing the hero.
  */
 export function Nav() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -24,6 +26,9 @@ export function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // The admin dashboard has its own chrome; hide the marketing nav there.
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <header

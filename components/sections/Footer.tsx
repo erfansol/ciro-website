@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Logo } from "../ui/Logo";
 import { CITIES } from "@/lib/cities";
 
@@ -20,6 +23,8 @@ const legal = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
   return (
     <footer className="relative border-t border-ink-900/8 dark:border-white/5 bg-white/40 dark:bg-ink-950/60 backdrop-blur">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">

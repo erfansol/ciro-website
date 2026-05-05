@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import {
   motion,
@@ -21,6 +22,7 @@ import { CATEGORIES } from "@/lib/categories";
  * `prefers-reduced-motion`.
  */
 export function CursorAura() {
+  const pathname = usePathname();
   const x = useMotionValue(-200);
   const y = useMotionValue(-200);
   const reduced = useReducedMotion();
@@ -43,6 +45,8 @@ export function CursorAura() {
     };
   }, [x, y, reduced]);
 
+  // Admin dashboard is task-focused; no decorative cursor trail there.
+  if (pathname?.startsWith("/admin")) return null;
   if (reduced) return null;
 
   return (
