@@ -3,16 +3,14 @@ import { Logo } from "../ui/Logo";
 import { CITIES } from "@/lib/cities";
 
 const company = [
-  { label: "About", href: "/#what" },
   { label: "Stories", href: "/stories" },
-  { label: "Investors", href: "/#invest" },
   { label: "Press", href: "mailto:press@ciroai.com" },
 ];
 
 const product = [
-  { label: "How it works", href: "/#how" },
-  { label: "Cities", href: "/#cities" },
   { label: "Waitlist", href: "/#waitlist" },
+  { label: "iOS", href: process.env.NEXT_PUBLIC_IOS_URL ?? "#" },
+  { label: "Android", href: process.env.NEXT_PUBLIC_ANDROID_URL ?? "#" },
 ];
 
 const legal = [

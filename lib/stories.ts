@@ -1,145 +1,148 @@
-export type Story = {
-  id: string;
-  title: string;
-  citySlug: string;
-  cityName: string;
-  location: string;
-  duration: string;
-  narrative: string;
-  emoji: string;
-  gradient: string;
-  ar: boolean;
-  tags: string[];
-};
+import "server-only";
+import { fetchPublishedStories, fetchStoryById } from "./firebase";
+import {
+  CATEGORIES,
+  CATEGORY_BY_ID,
+  type FirestoreStory,
+  type Story,
+  type StoryCategoryId,
+  type StoryCategoryMeta,
+} from "./categories";
 
-export const STORIES: Story[] = [
+// Re-export client-safe types/constants so server consumers can keep
+// importing from a single module (`@/lib/stories`).
+export {
+  CATEGORIES,
+  CATEGORY_BY_ID,
+  type CategoryIconKey,
+  type FirestoreStory,
+  type Story,
+  type StoryCategoryId,
+  type StoryCategoryMeta,
+} from "./categories";
+
+/**
+ * Local fallback for local dev / preview builds where Firebase env vars
+ * are unset. Mirrors the shape of real Firestore docs so the rest of
+ * the site renders identically regardless of source.
+ */
+const LOCAL_FALLBACK: FirestoreStory[] = [
   {
     id: "rome-colosseum-night",
     title: "The Night the Colosseum Sang",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Colosseum, Rome",
-    duration: "8 min",
-    narrative:
-      "It was December, AD 80. The arena was inaugurated with 100 days of games — and an audience of 50,000 voices that, when synchronized, could be heard across the Tiber. Ciro recreates that roar in AR as you stand on the arena floor.",
-    emoji: "🏛️",
-    gradient: "from-amber-400 via-rose-500 to-violet-700",
-    ar: true,
-    tags: ["history", "AR", "ancient Rome"],
+    description:
+      "Once, fifty thousand voices made the river tremble. Stand on the arena floor and hear what the stones still hold.",
+    city: "Rome",
+    category: "historical",
+    durationLabel: "8 min",
+    lat: 41.8902,
+    lon: 12.4922,
+    moods: ["history", "ancient Rome"],
+    hasAr: true,
   },
   {
     id: "rome-bernini-secret",
     title: "Bernini's Hidden Signature",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Piazza Navona, Rome",
-    duration: "5 min",
-    narrative:
-      "Look closely at the Fountain of the Four Rivers. Bernini placed a coded insult to his rival Borromini in marble — and only locals know exactly where to stand to see it.",
-    emoji: "⛲",
-    gradient: "from-sky-400 via-violet-500 to-indigo-700",
-    ar: true,
-    tags: ["art", "rivalry", "Baroque"],
-  },
-  {
-    id: "rome-caravaggio-brawl",
-    title: "Caravaggio's Last Roman Night",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Campo de' Fiori, Rome",
-    duration: "7 min",
-    narrative:
-      "Before he fled to Naples, Caravaggio painted, drank, and dueled within a few blocks of this square. Ciro retraces his steps from the church where he hid his enemies in altarpieces.",
-    emoji: "🗡️",
-    gradient: "from-red-500 via-rose-700 to-stone-900",
-    ar: false,
-    tags: ["art", "noir", "Baroque"],
+    description:
+      "An insult carved in marble, only visible from one angle on Piazza Navona. Locals know exactly where to stand.",
+    city: "Rome",
+    category: "hidden_layers",
+    durationLabel: "5 min",
+    lat: 41.8992,
+    lon: 12.4731,
+    moods: ["art", "Baroque"],
+    hasAr: true,
   },
   {
     id: "rome-trastevere-secrets",
     title: "Trastevere After Midnight",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Trastevere, Rome",
-    duration: "12 min",
-    narrative:
-      "The neighborhood has its own dialect, its own saints, its own grievances. Walk with us through alleys where Roman and Jewish histories braid, and where the city still resists being a museum.",
-    emoji: "🌙",
-    gradient: "from-violet-700 via-fuchsia-600 to-rose-500",
-    ar: false,
-    tags: ["neighborhood", "nightlife", "culture"],
+    description:
+      "A neighborhood that refuses to be a museum. Walk where Roman and Jewish histories braid in the dark.",
+    city: "Rome",
+    category: "interactive",
+    durationLabel: "12 min",
+    lat: 41.8895,
+    lon: 12.4685,
+    moods: ["nightlife"],
+    hasAr: false,
   },
   {
-    id: "rome-pantheon-oculus",
-    title: "The Oculus and the Rain",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Pantheon, Rome",
-    duration: "4 min",
-    narrative:
-      "The hole in the dome isn't a flaw — it's a sundial, a chimney, and a portal. Ciro's AR overlay shows where the noon shaft of light lands on each equinox.",
-    emoji: "☀️",
-    gradient: "from-yellow-300 via-amber-500 to-orange-600",
-    ar: true,
-    tags: ["architecture", "AR", "mystery"],
+    id: "rome-roman-holiday",
+    title: "Where Audrey Stood",
+    description:
+      "The Spanish Steps still keep the angle of the camera. Re-enter the frame, sixty-three years later.",
+    city: "Rome",
+    category: "cinematic",
+    durationLabel: "6 min",
+    lat: 41.9059,
+    lon: 12.4823,
+    moods: ["film", "1953"],
+    hasAr: true,
   },
   {
-    id: "rome-appian-way",
-    title: "The Road That Ate Empires",
-    citySlug: "rome",
-    cityName: "Rome",
-    location: "Via Appia Antica",
-    duration: "15 min",
-    narrative:
-      "From Spartacus' crucified army to the popes' processions, the Appian Way is the longest open-air theater of Roman history. Walk a kilometer and listen as Ciro layers six centuries on top of each other.",
-    emoji: "🛣️",
-    gradient: "from-emerald-500 via-teal-600 to-slate-800",
-    ar: true,
-    tags: ["history", "walking", "AR"],
-  },
-  {
-    id: "milan-duomo-rooftop",
-    title: "Up Among Milan's Saints",
-    citySlug: "milan",
-    cityName: "Milan",
-    location: "Duomo Rooftop, Milan",
-    duration: "6 min",
-    narrative:
-      "There are 3,400 statues on the Duomo. One is a Madonna with a weather vane on her head. Another is a saint holding his own skin. Ciro tells you who they were and why they ended up six stories above the city.",
-    emoji: "✨",
-    gradient: "from-violet-500 via-indigo-600 to-blue-800",
-    ar: true,
-    tags: ["architecture", "religion", "AR"],
-  },
-  {
-    id: "paris-pere-lachaise",
-    title: "The Lovers of Père Lachaise",
-    citySlug: "paris",
-    cityName: "Paris",
-    location: "Père Lachaise Cemetery, Paris",
-    duration: "10 min",
-    narrative:
-      "Édith Piaf, Oscar Wilde, Jim Morrison, Héloïse and Abélard. The most visited cemetery on Earth is a city of romances, scandals, and reburials. We walk its slopes story by story.",
-    emoji: "🥀",
-    gradient: "from-rose-500 via-pink-600 to-violet-800",
-    ar: false,
-    tags: ["culture", "history", "walking"],
-  },
-  {
-    id: "barcelona-sagrada",
-    title: "Gaudí's Forest of Stone",
-    citySlug: "barcelona",
-    cityName: "Barcelona",
-    location: "Sagrada Família, Barcelona",
-    duration: "9 min",
-    narrative:
-      "Gaudí designed every column to lean like a tree. He died before seeing his roof. Ciro's AR shows the cathedral at its 2026 completion — a forest finally finished, 144 years on.",
-    emoji: "🌲",
-    gradient: "from-amber-300 via-orange-500 to-rose-600",
-    ar: true,
-    tags: ["architecture", "Modernisme", "AR"],
+    id: "rome-aventine-keyhole",
+    title: "The Keyhole on the Aventine",
+    description:
+      "Three countries through a small brass hole. Pause. Decide what you came here looking for.",
+    city: "Rome",
+    category: "personal_reflection",
+    durationLabel: "4 min",
+    lat: 41.8841,
+    lon: 12.4781,
+    moods: ["quiet"],
+    hasAr: false,
   },
 ];
 
-export const storiesByCity = (slug: string) =>
-  STORIES.filter((s) => s.citySlug === slug);
+function decorate(s: FirestoreStory): Story {
+  return { ...s, meta: CATEGORY_BY_ID[s.category] };
+}
+
+export async function loadStories(): Promise<Story[]> {
+  try {
+    const live = await fetchPublishedStories();
+    if (live && live.length > 0) return live.map(decorate);
+  } catch (err) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[stories] Firestore read failed, using local fallback:", err);
+    }
+  }
+  return LOCAL_FALLBACK.map(decorate);
+}
+
+export async function loadStoryById(id: string): Promise<Story | null> {
+  try {
+    const live = await fetchStoryById(id);
+    if (live) return decorate(live);
+  } catch (err) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[stories] Firestore read failed for ${id}:`, err);
+    }
+  }
+  const local = LOCAL_FALLBACK.find((s) => s.id === id);
+  return local ? decorate(local) : null;
+}
+
+export async function loadStoriesByCity(citySlug: string): Promise<Story[]> {
+  const all = await loadStories();
+  const target = citySlug.toLowerCase();
+  return all.filter((s) => s.city.toLowerCase() === target);
+}
+
+/**
+ * Returns the first story per category, in the canonical CATEGORIES
+ * order. Used by the homepage 5-act spine so each balloon shows a real,
+ * live teaser when one exists, and stays empty otherwise.
+ */
+export function pickFeaturedPerCategory(
+  stories: Story[],
+): Array<{ category: StoryCategoryMeta; story: Story | null }> {
+  const seen = new Map<StoryCategoryId, Story>();
+  for (const s of stories) {
+    if (!seen.has(s.category)) seen.set(s.category, s);
+  }
+  return CATEGORIES.map((category) => ({
+    category,
+    story: seen.get(category.id) ?? null,
+  }));
+}

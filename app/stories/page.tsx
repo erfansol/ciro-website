@@ -3,78 +3,125 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Button } from "@/components/ui/Button";
-import { STORIES } from "@/lib/stories";
+import { CATEGORIES, loadStories, type Story } from "@/lib/stories";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = buildMetadata({
-  title: "Stories — discover cities through cinematic narratives",
+  title: "Stories that turn streets into chapters",
   description:
-    "Hand-crafted location stories from Rome, Milan, Paris, and Barcelona. Each story is a 5–15 minute cinematic narrative narrated as you walk, with optional AR overlays.",
+    "Live, location-based stories from Rome (and soon Milan, Paris, Barcelona). Walk a corner of a city and the world rearranges itself around you.",
   path: "/stories",
 });
 
-export default function StoriesPage() {
+export default async function StoriesPage() {
+  const stories = await loadStories();
+  const grouped = groupByCategory(stories);
+
   return (
-    <>
-      <header className="relative isolate overflow-hidden bg-aurora pt-32 pb-16 text-white sm:pt-40">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeading
-            eyebrow="Library"
-            title="Stories that turn streets into chapters."
-            description="Every Ciro story is written by a local, narrated cinematic-style, and tied to a specific corner of a city. Press play, walk, listen — the world rearranges itself around you."
-          />
+    <main className="bg-[#06070d] text-white">
+      <header className="relative isolate overflow-hidden pt-32 pb-16 sm:pt-40">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 0%, rgba(110,76,163,0.30) 0%, transparent 60%)",
+          }}
+        />
+        <div className="mx-auto max-w-5xl px-6 text-center lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/45">
+            The Library
+          </p>
+          <h1 className="mt-6 font-display text-balance text-[clamp(2.4rem,5.5vw,4.6rem)] leading-[1.05] tracking-tight">
+            Streets that won&rsquo;t stay quiet.
+          </h1>
         </div>
       </header>
 
-      <section className="py-16 sm:py-24">
+      <section className="pb-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {STORIES.map((story, i) => (
-              <Reveal key={story.id} as="li" delay={(i % 3) * 0.06}>
-                <Card className="group flex h-full flex-col overflow-hidden">
-                  <div className={`relative h-48 bg-gradient-to-br ${story.gradient}`}>
-                    <div className="absolute inset-0 bg-grid-dark [background-size:20px_20px] opacity-30" />
-                    <span className="absolute left-5 top-5 text-5xl drop-shadow-lg" aria-hidden>
-                      {story.emoji}
-                    </span>
-                    <div className="absolute right-4 top-4 flex gap-2">
-                      {story.ar && <Badge tone="ar">AR</Badge>}
-                      <Badge tone="neutral">{story.duration}</Badge>
-                    </div>
-                    <div className="absolute bottom-4 left-5 right-5">
-                      <p className="text-xs uppercase tracking-wider text-white/70">
-                        {story.location}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-6">
-                    <h3 className="font-display text-xl tracking-tight text-ink-900 dark:text-white">
-                      {story.title}
-                    </h3>
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-900/70 dark:text-white/70">
-                      {story.narrative}
+          {CATEGORIES.map((cat) => {
+            const items = grouped[cat.id] ?? [];
+            if (items.length === 0) return null;
+            return (
+              <div key={cat.id} className="mb-20">
+                <div className="mb-8 flex items-baseline justify-between">
+                  <div>
+                    <p
+                      className="text-[11px] font-semibold uppercase tracking-[0.32em]"
+                      style={{ color: cat.color }}
+                    >
+                      {cat.label}
                     </p>
-                    <div className="mt-5 flex items-center justify-between">
-                      <Link
-                        href={`/city/${story.citySlug}`}
-                        className="text-xs font-medium uppercase tracking-wider text-brand-600 dark:text-brand-400 hover:underline"
-                      >
-                        {story.cityName}
-                      </Link>
-                      <Button variant="secondary" size="sm" disabled>
-                        {story.ar ? "Explore in AR" : "Open story"}
-                      </Button>
-                    </div>
+                    <h2 className="mt-2 font-display text-2xl tracking-tight text-white sm:text-3xl">
+                      {cat.tagline}
+                    </h2>
                   </div>
-                </Card>
-              </Reveal>
-            ))}
-          </ul>
+                  <span className="text-xs uppercase tracking-[0.28em] text-white/30">
+                    {items.length} {items.length === 1 ? "story" : "stories"}
+                  </span>
+                </div>
+
+                <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {items.map((story, i) => (
+                    <Reveal key={story.id} as="li" delay={(i % 3) * 0.06}>
+                      <StoryCard story={story} />
+                    </Reveal>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </section>
-    </>
+    </main>
   );
+}
+
+function StoryCard({ story }: { story: Story }) {
+  return (
+    <Link href={`/stories/${story.id}`} className="block h-full">
+      <Card className="group h-full overflow-hidden border-white/5 bg-white/[0.03] transition-transform hover:-translate-y-0.5 hover:border-white/15">
+        <div
+          className="relative h-44"
+          style={{
+            background: `linear-gradient(135deg, ${story.meta.color} 0%, rgba(10,13,22,0.85) 100%)`,
+          }}
+        >
+          <div className="absolute right-4 top-4 flex gap-2">
+            {story.hasAr && <Badge tone="ar">AR</Badge>}
+            {story.durationLabel && (
+              <Badge tone="neutral">{story.durationLabel}</Badge>
+            )}
+          </div>
+          <div className="absolute bottom-4 left-5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/85">
+              {story.city}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col p-6">
+          <h3 className="font-display text-xl tracking-tight text-white">
+            {story.title}
+          </h3>
+          <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-white/55">
+            {story.description}
+          </p>
+          <p className="mt-5 text-[11px] uppercase tracking-[0.28em] text-white/40">
+            {story.meta.label}
+          </p>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+function groupByCategory(stories: Story[]): Record<string, Story[]> {
+  const out: Record<string, Story[]> = {};
+  for (const s of stories) {
+    (out[s.category] ??= []).push(s);
+  }
+  return out;
 }

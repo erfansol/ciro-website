@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CITIES, getCityBySlug } from "@/lib/cities";
-import { storiesByCity } from "@/lib/stories";
+import { loadStoriesByCity } from "@/lib/stories";
 import { buildMetadata, cityJsonLd, SITE } from "@/lib/seo";
 import { Badge, PulseDot } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -37,7 +37,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
   const city = getCityBySlug(slug);
   if (!city) notFound();
 
-  const stories = storiesByCity(slug);
+  const stories = await loadStoriesByCity(slug);
   const live = city.status === "live";
 
   return (
@@ -165,23 +165,32 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
             <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {stories.map((s, i) => (
                 <Reveal key={s.id} as="li" delay={(i % 3) * 0.06}>
-                  <Card className="h-full overflow-hidden">
-                    <div className={`relative h-40 bg-gradient-to-br ${s.gradient}`}>
-                      <span className="absolute left-5 top-5 text-4xl">{s.emoji}</span>
-                      <div className="absolute right-4 top-4 flex gap-2">
-                        {s.ar && <Badge tone="ar">AR</Badge>}
-                        <Badge tone="neutral">{s.duration}</Badge>
+                  <Link href={`/stories/${s.id}`} className="block h-full">
+                    <Card className="h-full overflow-hidden transition-transform hover:-translate-y-0.5">
+                      <div
+                        className="relative h-40"
+                        style={{
+                          background: `linear-gradient(135deg, ${s.meta.color} 0%, rgba(10,13,22,0.85) 100%)`,
+                        }}
+                      >
+                        <span className="absolute left-5 top-5 text-xs font-semibold uppercase tracking-[0.16em] text-white/90">
+                          {s.meta.label}
+                        </span>
+                        <div className="absolute right-4 top-4 flex gap-2">
+                          {s.hasAr && <Badge tone="ar">AR</Badge>}
+                          {s.durationLabel && <Badge tone="neutral">{s.durationLabel}</Badge>}
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="font-display text-lg tracking-tight text-ink-900 dark:text-white">
-                        {s.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-ink-900/65 dark:text-white/65 leading-relaxed">
-                        {s.narrative}
-                      </p>
-                    </div>
-                  </Card>
+                      <div className="p-6">
+                        <h3 className="font-display text-lg tracking-tight text-ink-900 dark:text-white">
+                          {s.title}
+                        </h3>
+                        <p className="mt-2 text-sm text-ink-900/65 dark:text-white/65 leading-relaxed">
+                          {s.description}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
                 </Reveal>
               ))}
             </ul>
