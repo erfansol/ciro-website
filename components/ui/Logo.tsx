@@ -1,23 +1,28 @@
 import Link from "next/link";
 
-export function Logo({ className, asLink = true }: { className?: string; asLink?: boolean }) {
+/**
+ * Minimal wordmark for the dark mystery palette: a small pulsing dot
+ * (the brand yellow #FFD54F, kept as a single accent) plus the CIRO
+ * wordmark in display font with wide tracking. Replaces the previous
+ * yellow-square C-glyph that read as too loud against the new hero.
+ */
+export function Logo({
+  className,
+  asLink = true,
+}: {
+  className?: string;
+  asLink?: boolean;
+}) {
   const inner = (
-    <span className={`group inline-flex items-center gap-2.5 ${className ?? ""}`}>
-      <span className="relative h-9 w-9" aria-hidden>
-        <svg viewBox="0 0 200 200" className="h-9 w-9 rounded-[10px]">
-          <rect width="200" height="200" rx="44" fill="#FFD54F" />
-          <path
-            d="M 152 70 A 60 60 0 1 0 152 130"
-            fill="none"
-            stroke="white"
-            strokeWidth="32"
-            strokeLinecap="round"
-          />
-          <circle cx="158" cy="82" r="10" fill="white" />
-        </svg>
+    <span
+      className={`group inline-flex items-center gap-2.5 ${className ?? ""}`}
+    >
+      <span className="relative inline-flex h-2 w-2" aria-hidden>
+        <span className="absolute inset-0 rounded-full bg-[#FFD54F]" />
+        <span className="absolute inset-0 animate-ping rounded-full bg-[#FFD54F] opacity-60" />
       </span>
-      <span className="font-display text-lg tracking-tight text-ink-900 dark:text-white">
-        Ciro
+      <span className="font-display text-[15px] font-medium tracking-[0.22em] text-white/85 transition-colors group-hover:text-white">
+        CIRO
       </span>
     </span>
   );

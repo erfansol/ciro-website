@@ -3,6 +3,7 @@ import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Nav } from "@/components/ui/Nav";
+import { CursorAura } from "@/components/ui/CursorAura";
 import { Footer } from "@/components/sections/Footer";
 import { buildMetadata, organizationJsonLd, websiteJsonLd, SITE } from "@/lib/seo";
 
@@ -26,17 +27,18 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#06070d" },
-  ],
+  themeColor: "#06070d",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${display.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`dark ${inter.variable} ${display.variable}`}
+    >
       <head>
         <script
           type="application/ld+json"
@@ -47,8 +49,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
         />
       </head>
-      <body className="min-h-screen bg-white font-sans text-ink-900 antialiased dark:bg-ink-950 dark:text-white">
+      <body className="min-h-screen bg-[#06070d] font-sans text-white antialiased">
         <ThemeProvider>
+          <CursorAura />
           <Nav />
           <main id="main">{children}</main>
           <Footer />
