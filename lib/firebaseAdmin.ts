@@ -32,15 +32,34 @@ function normalisePrivateKey(raw: string | undefined): string | null {
 }
 
 /**
- * Optional escape hatch for hosts whose .env panel mangles the multi-line
- * private key (Hostinger's import in particular drops or doubles the \n
- * escapes). Set FIREBASE_PRIVATE_KEY_B64 to the result of:
- *   base64 -i <(printf '%s' "$FIREBASE_PRIVATE_KEY")
- * and we'll decode it here. Base64 has no characters any env parser
- * touches, so what you paste is exactly what we read.
+ * Escape hatches for hosts whose .env panel mangles the multi-line
+ * private key. Two encoded variants, in priority order:
+ *   FIREBASE_PRIVATE_KEY_HEX  — only [0-9a-f], indestructible
+ *   FIREBASE_PRIVATE_KEY_B64  — base64; smaller but slightly mangleable
+ * If both are absent we fall back to the raw FIREBASE_PRIVATE_KEY.
  */
+function readPrivateKeyFromHex(): string | null {
+  const raw = process.env.FIREBASE_PRIVATE_KEY_HEX?.replace(/\s+/g, "");
+  if (!raw) return null;
+  if (!/^[0-9a-fA-F]+$/.test(raw) || raw.length % 2 !== 0) {
+    console.error(
+      `[firebaseAdmin] FIREBASE_PRIVATE_KEY_HEX has non-hex chars or odd length (${raw.length}); ignoring.`,
+    );
+    return null;
+  }
+  try {
+    return Buffer.from(raw, "hex").toString("utf8").trim();
+  } catch (err) {
+    console.error("[firebaseAdmin] FIREBASE_PRIVATE_KEY_HEX decode failed:", err);
+    return null;
+  }
+}
+
 function readPrivateKeyFromB64(): string | null {
-  const raw = process.env.FIREBASE_PRIVATE_KEY_B64?.trim();
+  // Strip whitespace defensively — some panels insert soft-wrap newlines
+  // that Buffer's base64 decoder usually skips, but that we don't want
+  // counted in our length diagnostics.
+  const raw = process.env.FIREBASE_PRIVATE_KEY_B64?.replace(/\s+/g, "");
   if (!raw) return null;
   try {
     return Buffer.from(raw, "base64").toString("utf8").trim();
@@ -53,19 +72,20 @@ function readPrivateKeyFromB64(): string | null {
 function readEnv() {
   const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  const hexKey = readPrivateKeyFromHex();
   const b64Key = readPrivateKeyFromB64();
   const fallbackKey = normalisePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
-  const privateKey = b64Key ?? fallbackKey;
+  const privateKey = hexKey ?? b64Key ?? fallbackKey;
   // One-time visibility into which source supplied the credential and how
-  // long it ended up. A valid Firebase RSA-2048 PEM is ~1700 chars; values
-  // notably shorter were truncated by the host's env panel.
+  // long it ended up. A valid Firebase RSA-2048 PEM is 1704 chars; values
+  // notably shorter were truncated/mangled by the host's env panel.
   if (!ensureAppLogged) {
     ensureAppLogged = true;
-    const b64Len = b64Key?.length ?? 0;
-    const fbLen = fallbackKey?.length ?? 0;
+    const rawHex = process.env.FIREBASE_PRIVATE_KEY_HEX;
     const rawB64 = process.env.FIREBASE_PRIVATE_KEY_B64;
+    const using = hexKey ? "HEX" : b64Key ? "B64" : fallbackKey ? "PRIVATE_KEY" : "none";
     console.log(
-      `[firebaseAdmin] keys — B64_env=${rawB64 ? `${rawB64.length} chars` : "absent"} B64_decoded=${b64Len} PRIVATE_KEY_normalised=${fbLen} using=${b64Key ? "B64" : fallbackKey ? "PRIVATE_KEY" : "none"}`,
+      `[firebaseAdmin] keys — HEX_env=${rawHex ? `${rawHex.length} chars` : "absent"} HEX_decoded=${hexKey?.length ?? 0} B64_env=${rawB64 ? `${rawB64.length} chars` : "absent"} B64_decoded=${b64Key?.length ?? 0} PRIVATE_KEY_normalised=${fallbackKey?.length ?? 0} using=${using}`,
     );
   }
   if (!projectId || !clientEmail || !privateKey) return null;
