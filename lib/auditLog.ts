@@ -12,7 +12,9 @@ export type AuditAction =
   | "auth.signin"
   | "auth.signout"
   | "role.grant"
-  | "role.revoke";
+  | "role.revoke"
+  | "user.suspend"
+  | "user.restore";
 
 export type AuditEntry = {
   actorUid: string;
