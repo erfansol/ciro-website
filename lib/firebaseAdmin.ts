@@ -26,13 +26,36 @@ function normalisePrivateKey(raw: string | undefined): string | null {
   // Service-account JSONs ship the key as a single line with literal "\n"
   // escapes. Convert those into real newlines for OpenSSL/PEM parsing.
   if (key.includes("\\n")) key = key.replace(/\\n/g, "\n");
+  // Some hosts persist Windows-style line endings; OpenSSL is fine with \n.
+  key = key.replace(/\r\n?/g, "\n");
   return key;
+}
+
+/**
+ * Optional escape hatch for hosts whose .env panel mangles the multi-line
+ * private key (Hostinger's import in particular drops or doubles the \n
+ * escapes). Set FIREBASE_PRIVATE_KEY_B64 to the result of:
+ *   base64 -i <(printf '%s' "$FIREBASE_PRIVATE_KEY")
+ * and we'll decode it here. Base64 has no characters any env parser
+ * touches, so what you paste is exactly what we read.
+ */
+function readPrivateKeyFromB64(): string | null {
+  const raw = process.env.FIREBASE_PRIVATE_KEY_B64?.trim();
+  if (!raw) return null;
+  try {
+    return Buffer.from(raw, "base64").toString("utf8").trim();
+  } catch (err) {
+    console.error("[firebaseAdmin] FIREBASE_PRIVATE_KEY_B64 decode failed:", err);
+    return null;
+  }
 }
 
 function readEnv() {
   const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
-  const privateKey = normalisePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
+  const privateKey =
+    readPrivateKeyFromB64() ??
+    normalisePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
   if (!projectId || !clientEmail || !privateKey) return null;
   if (
     !privateKey.includes("BEGIN PRIVATE KEY") ||
@@ -45,7 +68,7 @@ function readEnv() {
     const head = privateKey.slice(0, 32).replace(/\s+/g, " ");
     const tail = privateKey.slice(-32).replace(/\s+/g, " ");
     console.error(
-      `[firebaseAdmin] FIREBASE_PRIVATE_KEY missing PEM markers — ${len} chars, starts "${head}…", ends "…${tail}"`,
+      `[firebaseAdmin] private key missing PEM markers — ${len} chars, starts "${head}…", ends "…${tail}"`,
     );
     return null;
   }
