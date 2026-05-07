@@ -5,9 +5,9 @@ export const SITE = {
   legalName: "Ciro Travel",
   founder: "Erfan Soleymanzadeh",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ciroai.com",
-  defaultTitle: "Ciro — Experience cities through AI-powered stories",
+  defaultTitle: "Ciro — Walk through any place with AI",
   description:
-    "Ciro is an AI-powered travel app by Erfan Soleymanzadeh that turns every city into a living story. Personalized routes, location-based narratives, and AR experiences across Rome, Milan, Paris, and Barcelona.",
+    "Ciro is a travel app that tells you the real story of any street, square, or monument — by voice, in chat, and in AR. Made by Erfan Soleymanzadeh. Live in Rome, with Milan, Paris and Barcelona next.",
   keywords: [
     "AI travel app",
     "AR city exploration",
@@ -72,7 +72,11 @@ export const buildMetadata = ({
       images: [image],
     },
     icons: {
-      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+      icon: [
+        { url: "/favicon.png", type: "image/png", sizes: "64x64" },
+        { url: "/icon.png", type: "image/png", sizes: "256x256" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     },
     manifest: "/manifest.webmanifest",
   };
@@ -84,7 +88,7 @@ export const organizationJsonLd = () => ({
   name: SITE.legalName,
   alternateName: SITE.name,
   url: SITE.url,
-  logo: `${SITE.url}/logo.svg`,
+  logo: `${SITE.url}/logo.png`,
   founder: {
     "@type": "Person",
     name: SITE.founder,

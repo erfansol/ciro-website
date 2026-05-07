@@ -32,7 +32,7 @@ export function Footer() {
           <div className="md:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm text-ink-900/70 dark:text-white/60 leading-relaxed">
-              Cities are not places. They are stories waiting to be experienced. Ciro is the AI travel companion turning every street into a chapter.
+              Ciro turns every place into a short, real story you can walk through — by voice, in chat, and in AR. Open the app at any street and Ciro tells you what happened there, in your language.
             </p>
             <p className="mt-6 text-xs text-ink-900/50 dark:text-white/40">
               A startup &amp; mobile app founded by{" "}

@@ -7,9 +7,10 @@ import { CATEGORIES } from "@/lib/categories";
 import { APP_LINKS } from "@/lib/site";
 
 /**
- * Mystery hero. Five balloons in a slow drift across a deep night sky.
- * One tagline, one quiet CTA, one scroll cue. No explanation of what
- * Ciro is — that reveal is reserved for after install.
+ * Hero. Five balloons drift across the sky. One plain-English line tells
+ * the visitor exactly what Ciro is, then two app-store buttons. The
+ * background flips with the theme: a soft daytime sky in light mode, a
+ * starry night with an aurora wash in dark mode.
  */
 export function HeroBalloons() {
   const reduced = useReducedMotion();
@@ -27,20 +28,30 @@ export function HeroBalloons() {
   return (
     <section
       id="hero"
-      className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-[#06070d] pb-20 text-white sm:pb-28"
+      className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-white pb-20 text-ink-900 dark:bg-[#06070d] dark:text-white sm:pb-28"
     >
-      {/* Soft star field */}
-      <Stars />
-
-      {/* Aurora wash behind the balloons */}
+      {/* Daytime sky — light mode only */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-0 -z-10 dark:hidden"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 30%, rgba(110,76,163,0.35) 0%, rgba(74,144,226,0.18) 30%, transparent 65%)",
+            "linear-gradient(180deg, #fff8e7 0%, #fff 55%, #fff 100%)",
         }}
       />
+
+      {/* Stars + aurora — dark mode only */}
+      <div className="hidden dark:block">
+        <Stars />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 30%, rgba(110,76,163,0.35) 0%, rgba(74,144,226,0.18) 30%, transparent 65%)",
+          }}
+        />
+      </div>
 
       {/* Balloons */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-0">
@@ -104,10 +115,23 @@ export function HeroBalloons() {
           transition={{ duration: 1.1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-balance text-[clamp(2.6rem,6.5vw,5.4rem)] leading-[1.05] tracking-tight"
         >
-          Some places remember.
+          Every place has a story.
           <br />
-          <span className="text-white/55">Listen.</span>
+          <span className="text-ink-900/55 dark:text-white/55">
+            Ciro tells you, on the spot.
+          </span>
         </motion.h1>
+
+        <motion.p
+          initial={reduced ? false : { opacity: 0, y: 10 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65"
+        >
+          Open the app at any street, square, or monument. Ciro plays a
+          short, real story made just for you — by voice, in chat, and
+          in AR. In your language.
+        </motion.p>
 
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 12 }}
@@ -117,15 +141,15 @@ export function HeroBalloons() {
         >
           <Link
             href={APP_LINKS.ios}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-[#06070d] transition-colors hover:bg-white/90"
+            className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-ink-900/90 dark:bg-white dark:text-[#06070d] dark:hover:bg-white/90"
           >
-            iOS
+            Get it on iOS
           </Link>
           <Link
             href={APP_LINKS.android}
-            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-medium text-white backdrop-blur transition-colors hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 bg-white/60 px-6 py-3 text-sm font-medium text-ink-900 backdrop-blur transition-colors hover:bg-white dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
           >
-            Android
+            Get it on Android
           </Link>
         </motion.div>
 
@@ -134,14 +158,14 @@ export function HeroBalloons() {
           initial={reduced ? false : { opacity: 0 }}
           animate={reduced ? undefined : { opacity: 1 }}
           transition={{ duration: 1.6, delay: 1.6 }}
-          className="group mt-16 inline-flex flex-col items-center gap-2 text-xs uppercase tracking-[0.32em] text-white/45 hover:text-white/80"
+          className="group mt-16 inline-flex flex-col items-center gap-2 text-xs uppercase tracking-[0.32em] text-ink-900/45 hover:text-ink-900/80 dark:text-white/45 dark:hover:text-white/80"
         >
-          <span>Begin</span>
+          <span>See how it works</span>
           <motion.span
             aria-hidden
             animate={reduced ? undefined : { y: [0, 6, 0] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            className="h-6 w-px bg-white/40"
+            className="h-6 w-px bg-ink-900/40 dark:bg-white/40"
           />
         </motion.a>
       </div>

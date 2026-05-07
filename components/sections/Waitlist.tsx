@@ -16,8 +16,8 @@ export function Waitlist() {
               <div className="md:col-span-7">
                 <SectionHeading
                   eyebrow="Early access"
-                  title="Get early access to Ciro."
-                  description="Be among the first 10,000 travelers to walk a city the Ciro way. Early access includes free Rome stories, lifetime founder pricing, and behind-the-scenes notes from the team."
+                  title="Be the first to try Ciro."
+                  description="Join the early list and you get free Rome stories at launch, plus founder pricing for life. We email twice a month, no more."
                 />
               </div>
               <div className="md:col-span-5">

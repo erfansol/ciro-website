@@ -38,7 +38,7 @@ export const CATEGORIES: ReadonlyArray<StoryCategoryMeta> = [
   {
     id: "historical",
     label: "Historical",
-    tagline: "Some places remember.",
+    tagline: "Real history, told on the spot.",
     color: "#D4A017",
     iconKey: "temple",
     textTone: "text-[#F5C84A]",
@@ -46,7 +46,7 @@ export const CATEGORIES: ReadonlyArray<StoryCategoryMeta> = [
   {
     id: "hidden_layers",
     label: "Hidden Layers",
-    tagline: "Beneath the surface, another city.",
+    tagline: "What you walk past every day.",
     color: "#6E4CA3",
     iconKey: "eye",
     textTone: "text-[#B392E0]",
@@ -54,7 +54,7 @@ export const CATEGORIES: ReadonlyArray<StoryCategoryMeta> = [
   {
     id: "interactive",
     label: "Interactive",
-    tagline: "Step in. Solve. Belong.",
+    tagline: "Solve a small mystery as you walk.",
     color: "#2CA6A4",
     iconKey: "controller",
     textTone: "text-[#7BD8D6]",
@@ -62,7 +62,7 @@ export const CATEGORIES: ReadonlyArray<StoryCategoryMeta> = [
   {
     id: "cinematic",
     label: "Cinematic",
-    tagline: "The frame is still warm.",
+    tagline: "Stand where famous scenes were shot.",
     color: "#FF7A45",
     iconKey: "clapper",
     textTone: "text-[#FFB089]",
@@ -70,7 +70,7 @@ export const CATEGORIES: ReadonlyArray<StoryCategoryMeta> = [
   {
     id: "personal_reflection",
     label: "Personal Reflection",
-    tagline: "Pause. Listen to yourself.",
+    tagline: "A quiet moment, written for you.",
     color: "#4A90E2",
     iconKey: "heart",
     textTone: "text-[#8FBCEF]",

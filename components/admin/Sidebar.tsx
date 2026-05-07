@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -58,17 +59,26 @@ export function Sidebar({
 
   return (
     <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-white/[0.06] bg-[#0a0d16]">
-      <div className="flex items-center gap-2.5 px-5 py-5">
-        <span className="relative inline-flex h-2 w-2">
-          <span className="absolute inset-0 rounded-full bg-[#FFD54F]" />
-        </span>
+      <Link
+        href="/admin"
+        className="flex items-center gap-2.5 px-5 py-5"
+        aria-label="Ciro admin home"
+      >
+        <Image
+          src="/icon.png"
+          alt=""
+          width={28}
+          height={28}
+          priority
+          className="h-7 w-7 rounded-md"
+        />
         <span className="font-display text-[14px] font-medium tracking-[0.22em] text-white/85">
           CIRO
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">
           admin
         </span>
-      </div>
+      </Link>
 
       <nav className="flex-1 px-3 pb-4">
         <ul className="space-y-0.5">

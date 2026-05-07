@@ -92,7 +92,7 @@ function Act({
     <section
       ref={ref}
       id={`act-${category.id.replace(/_/g, "-")}`}
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-[#06070d] text-white"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-white text-ink-900 dark:bg-[#06070d] dark:text-white"
     >
       {/* Color wash that bleeds in mid-section */}
       <motion.div
@@ -145,29 +145,29 @@ function Act({
           </h2>
 
           {story ? (
-            <div className="mt-10 border-l border-white/15 pl-5">
+            <div className="mt-10 border-l border-ink-900/15 pl-5 dark:border-white/15">
               {coords && (
-                <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/45">
+                <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-ink-900/45 dark:text-white/45">
                   {story.city} · {coords}
                 </p>
               )}
-              <p className="mt-3 font-display text-xl text-white/90">
+              <p className="mt-3 font-display text-xl text-ink-900/90 dark:text-white/90">
                 {story.title}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">
+              <p className="mt-2 text-sm leading-relaxed text-ink-900/65 dark:text-white/55">
                 {firstLine(story.description)}
               </p>
               <Link
                 href={`/stories/${story.id}`}
-                className="mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.28em] text-white/70 transition-colors hover:text-white"
+                className="mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.28em] text-ink-900/70 transition-colors hover:text-ink-900 dark:text-white/70 dark:hover:text-white"
               >
                 Open the story
                 <span aria-hidden>›</span>
               </Link>
             </div>
           ) : (
-            <p className="mt-10 text-sm leading-relaxed text-white/45">
-              Coming soon. The first {category.label.toLowerCase()} stories are still being written.
+            <p className="mt-10 text-sm leading-relaxed text-ink-900/55 dark:text-white/45">
+              Coming soon. We are still writing the first {category.label.toLowerCase()} stories.
             </p>
           )}
         </motion.div>

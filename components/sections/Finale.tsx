@@ -15,7 +15,8 @@ import { APP_LINKS } from "@/lib/site";
 
 /**
  * Closing act. The five balloons converge over a single point and the
- * page commits a single sentence: the answer waits in the app.
+ * page calls the visitor to install. One direct line, two app buttons,
+ * one cities list. Theme-aware so it reads in both light and dark.
  */
 export function Finale() {
   const ref = useRef<HTMLElement>(null);
@@ -36,11 +37,19 @@ export function Finale() {
   return (
     <section
       ref={ref}
-      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-[#06070d] text-white"
+      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-white text-ink-900 dark:bg-[#06070d] dark:text-white"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(15,23,42,0.06) 0%, transparent 55%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 hidden dark:block"
         style={{
           background:
             "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0%, transparent 55%)",
@@ -67,9 +76,11 @@ export function Finale() {
           viewport={{ once: true, margin: "-25%" }}
           className="font-display text-balance text-[clamp(2.4rem,5.5vw,4.6rem)] leading-[1.05] tracking-tight"
         >
-          The rest only opens
+          Open Ciro and start walking.
           <br />
-          <span className="text-white/55">in your hand.</span>
+          <span className="text-ink-900/55 dark:text-white/55">
+            The first three stories are free.
+          </span>
         </motion.h2>
 
         <motion.div
@@ -81,15 +92,15 @@ export function Finale() {
         >
           <Link
             href={APP_LINKS.ios}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-[#06070d] transition-colors hover:bg-white/90"
+            className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-ink-900/90 dark:bg-white dark:text-[#06070d] dark:hover:bg-white/90"
           >
-            Open on iOS
+            Get it on iOS
           </Link>
           <Link
             href={APP_LINKS.android}
-            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-medium text-white backdrop-blur transition-colors hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 bg-white/60 px-7 py-3.5 text-sm font-medium text-ink-900 backdrop-blur transition-colors hover:bg-white dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
           >
-            Open on Android
+            Get it on Android
           </Link>
         </motion.div>
 
@@ -98,9 +109,9 @@ export function Finale() {
           whileInView={reduced ? undefined : { opacity: 1 }}
           transition={{ duration: 1, delay: 0.7 }}
           viewport={{ once: true, margin: "-25%" }}
-          className="mt-12 text-xs uppercase tracking-[0.32em] text-white/35"
+          className="mt-12 text-xs uppercase tracking-[0.32em] text-ink-900/50 dark:text-white/35"
         >
-          Live in Rome · Milan · Paris · Barcelona soon
+          Live in Rome · Milan, Paris and Barcelona coming soon
         </motion.p>
       </div>
     </section>

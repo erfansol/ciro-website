@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LoginForm } from "./LoginForm";
 import { getCurrentAdmin } from "@/lib/auth";
@@ -12,9 +13,14 @@ export default async function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#06070d] p-6">
       <div className="w-full max-w-sm">
         <div className="mb-10 flex items-center gap-2.5">
-          <span className="relative inline-flex h-2 w-2">
-            <span className="absolute inset-0 rounded-full bg-[#FFD54F]" />
-          </span>
+          <Image
+            src="/icon.png"
+            alt=""
+            width={28}
+            height={28}
+            priority
+            className="h-7 w-7 rounded-md"
+          />
           <span className="font-display text-[14px] font-medium tracking-[0.22em] text-white/85">
             CIRO
           </span>
