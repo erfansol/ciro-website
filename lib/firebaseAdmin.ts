@@ -53,9 +53,21 @@ function readPrivateKeyFromB64(): string | null {
 function readEnv() {
   const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
-  const privateKey =
-    readPrivateKeyFromB64() ??
-    normalisePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
+  const b64Key = readPrivateKeyFromB64();
+  const fallbackKey = normalisePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
+  const privateKey = b64Key ?? fallbackKey;
+  // One-time visibility into which source supplied the credential and how
+  // long it ended up. A valid Firebase RSA-2048 PEM is ~1700 chars; values
+  // notably shorter were truncated by the host's env panel.
+  if (!ensureAppLogged) {
+    ensureAppLogged = true;
+    const b64Len = b64Key?.length ?? 0;
+    const fbLen = fallbackKey?.length ?? 0;
+    const rawB64 = process.env.FIREBASE_PRIVATE_KEY_B64;
+    console.log(
+      `[firebaseAdmin] keys — B64_env=${rawB64 ? `${rawB64.length} chars` : "absent"} B64_decoded=${b64Len} PRIVATE_KEY_normalised=${fbLen} using=${b64Key ? "B64" : fallbackKey ? "PRIVATE_KEY" : "none"}`,
+    );
+  }
   if (!projectId || !clientEmail || !privateKey) return null;
   if (
     !privateKey.includes("BEGIN PRIVATE KEY") ||
@@ -79,6 +91,7 @@ export function isFirebaseConfigured(): boolean {
   return readEnv() !== null;
 }
 
+let ensureAppLogged = false;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cachedApp: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
