@@ -29,8 +29,10 @@ export async function createAdminSession(
   let decoded;
   try {
     decoded = await getAdminAuth().verifyIdToken(idToken, true);
-  } catch {
-    return { ok: false, error: "Invalid or expired sign-in token." };
+  } catch (err) {
+    console.error("[admin-auth] verifyIdToken failed:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `Sign-in token rejected: ${msg}` };
   }
 
   const role = await loadRole(decoded.uid);
@@ -47,8 +49,10 @@ export async function createAdminSession(
     sessionCookie = await getAdminAuth().createSessionCookie(idToken, {
       expiresIn: COOKIE_MAX_AGE_MS,
     });
-  } catch {
-    return { ok: false, error: "Could not establish session. Try again." };
+  } catch (err) {
+    console.error("[admin-auth] createSessionCookie failed:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `Could not establish session: ${msg}` };
   }
 
   const jar = await cookies();
