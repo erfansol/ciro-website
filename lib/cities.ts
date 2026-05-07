@@ -44,7 +44,7 @@ export const CITIES: City[] = [
     ],
     gradient: "from-amber-400 via-rose-500 to-violet-600",
     image: {
-      src: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=80",
+      src: "/cities/rome.jpg",
       alt: "Colosseum at golden hour",
     },
   },
@@ -72,7 +72,7 @@ export const CITIES: City[] = [
     ],
     gradient: "from-fuchsia-500 via-violet-600 to-indigo-700",
     image: {
-      src: "https://images.unsplash.com/photo-1520440229-6469a149ac15?auto=format&fit=crop&w=1600&q=80",
+      src: "/cities/milan.jpg",
       alt: "Milan Duomo facade",
     },
   },
@@ -100,7 +100,7 @@ export const CITIES: City[] = [
     ],
     gradient: "from-rose-400 via-pink-500 to-violet-600",
     image: {
-      src: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1600&q=80",
+      src: "/cities/paris.jpg",
       alt: "Eiffel Tower at dusk",
     },
   },
@@ -128,7 +128,7 @@ export const CITIES: City[] = [
     ],
     gradient: "from-amber-300 via-orange-500 to-rose-600",
     image: {
-      src: "https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1600&q=80",
+      src: "/cities/barcelona.jpg",
       alt: "Sagrada Familia at sunset",
     },
   },
