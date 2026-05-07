@@ -41,8 +41,7 @@ export async function signInAction(
     return { ok: true };
   } catch (err) {
     console.error("[admin-auth] signInAction threw:", err);
-    const msg = err instanceof Error ? err.message : String(err);
-    return { ok: false, error: `Sign-in failed: ${msg}` };
+    return { ok: false, error: "Sign-in failed. Please try again." };
   }
 }
 
