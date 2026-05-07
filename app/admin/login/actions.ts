@@ -16,28 +16,34 @@ export async function signInAction(
   _prev: unknown,
   formData: FormData,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  const idToken = formData.get("idToken");
-  if (typeof idToken !== "string" || idToken.length < 20) {
-    return { ok: false, error: "Missing sign-in token." };
-  }
-
-  const result = await createAdminSession(idToken);
-  if (!result.ok) return result;
-
-  // Best-effort audit; auth.signin records who logged in and when.
   try {
-    const decoded = await getAdminAuth().verifyIdToken(idToken);
-    await logAdmin({
-      actorUid: decoded.uid,
-      action: "auth.signin",
-      targetCollection: "users",
-      targetId: decoded.uid,
-    });
-  } catch {
-    // ignore — sign-in still succeeded
-  }
+    const idToken = formData.get("idToken");
+    if (typeof idToken !== "string" || idToken.length < 20) {
+      return { ok: false, error: "Missing sign-in token." };
+    }
 
-  return { ok: true };
+    const result = await createAdminSession(idToken);
+    if (!result.ok) return result;
+
+    // Best-effort audit; auth.signin records who logged in and when.
+    try {
+      const decoded = await getAdminAuth().verifyIdToken(idToken);
+      await logAdmin({
+        actorUid: decoded.uid,
+        action: "auth.signin",
+        targetCollection: "users",
+        targetId: decoded.uid,
+      });
+    } catch {
+      // ignore — sign-in still succeeded
+    }
+
+    return { ok: true };
+  } catch (err) {
+    console.error("[admin-auth] signInAction threw:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `Sign-in failed: ${msg}` };
+  }
 }
 
 export async function signOutAction() {
