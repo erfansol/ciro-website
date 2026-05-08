@@ -16,7 +16,9 @@ export type AuditAction =
   | "user.suspend"
   | "user.restore"
   | "report.resolve"
-  | "report.dismiss";
+  | "report.dismiss"
+  | "media.upload"
+  | "media.delete";
 
 export type AuditEntry = {
   actorUid: string;

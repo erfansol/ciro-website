@@ -33,14 +33,22 @@ export default async function StoryEditPage({
           </h1>
           <p className="mt-1 truncate text-xs text-white/40">{story.id}</p>
         </div>
-        <Link
-          href={`/stories/${story.id}`}
-          target="_blank"
-          rel="noreferrer"
-          className="shrink-0 rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
-        >
-          Open public page ↗
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href={`/admin/stories/${story.id}/media`}
+            className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+          >
+            Manage media
+          </Link>
+          <Link
+            href={`/stories/${story.id}`}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+          >
+            Open public page ↗
+          </Link>
+        </div>
       </header>
 
       <StoryEditorForm story={story} categories={CATEGORIES} />

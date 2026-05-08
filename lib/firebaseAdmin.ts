@@ -2,6 +2,7 @@ import "server-only";
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
 
 /**
  * Singleton Firebase Admin app for server use. Both `lib/firebase.ts`
@@ -128,6 +129,11 @@ function ensureApp() {
     );
   }
   const existing = getApps()[0];
+  // Default storage bucket follows Firebase's convention; override via
+  // FIREBASE_STORAGE_BUCKET if the project uses a non-default name.
+  const bucketName =
+    process.env.FIREBASE_STORAGE_BUCKET?.trim() ||
+    `${env.projectId}.firebasestorage.app`;
   cachedApp =
     existing ??
     initializeApp({
@@ -136,6 +142,9 @@ function ensureApp() {
         clientEmail: env.clientEmail,
         privateKey: env.privateKey,
       }),
+      // Casting because the firebase-admin AppOptions type omits this in
+      // some package versions even though the runtime accepts it.
+      ...({ storageBucket: bucketName } as Record<string, string>),
     });
   return cachedApp;
 }
@@ -150,4 +159,17 @@ export function getAdminAuth() {
   if (cachedAuth) return cachedAuth;
   cachedAuth = getAuth(ensureApp());
   return cachedAuth;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let cachedStorage: any = null;
+
+export function getAdminStorage() {
+  if (cachedStorage) return cachedStorage;
+  cachedStorage = getStorage(ensureApp());
+  return cachedStorage;
+}
+
+export function getAdminBucket() {
+  return getAdminStorage().bucket();
 }
