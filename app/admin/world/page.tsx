@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/auth";
+import { readAdminTheme } from "@/lib/adminTheme";
 import { listAdminStories } from "@/lib/storyAdmin";
 import { CATEGORIES } from "@/lib/categories";
 import { AdminWorldMap } from "./AdminWorldMap";
@@ -7,7 +8,10 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminWorldPage() {
   await requireAdmin();
-  const stories = await listAdminStories();
+  const [stories, theme] = await Promise.all([
+    listAdminStories(),
+    readAdminTheme(),
+  ]);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
 
   // Pinned stories only — drafts without coords have nothing to drop.
@@ -16,6 +20,11 @@ export default async function AdminWorldPage() {
   );
 
   return (
-    <AdminWorldMap apiKey={apiKey} stories={pinned} categories={CATEGORIES} />
+    <AdminWorldMap
+      apiKey={apiKey}
+      stories={pinned}
+      categories={CATEGORIES}
+      theme={theme}
+    />
   );
 }

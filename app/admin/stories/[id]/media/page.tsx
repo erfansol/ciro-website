@@ -9,6 +9,7 @@ import {
 } from "@/lib/mediaAdmin";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import {
+  BannerToggleButton,
   CopyUrlButton,
   MediaDeleteButton,
   PreviewToggleButton,
@@ -52,6 +53,16 @@ export default async function StoryMediaPage({
 
       <div className="mb-6">
         <MediaUploader storyId={id} />
+      </div>
+
+      <div className="mb-6 rounded-md border border-admin-border bg-admin-surface px-4 py-3 text-xs leading-relaxed text-admin-text-muted">
+        <p>
+          <strong className="text-admin-text">Uploading just stores the file.</strong>{" "}
+          To make a file appear in the public gallery (web + Flutter app),
+          click <em className="text-admin-text">Add to preview</em> on its row.
+          To use one image as the story&rsquo;s hero/banner, click{" "}
+          <em className="text-admin-text">Set as banner</em>.
+        </p>
       </div>
 
       {files.length === 0 ? (
@@ -100,6 +111,13 @@ export default async function StoryMediaPage({
                     filename={f.name}
                     isPreview={f.isPreview}
                   />
+                  {isImageContentType(f.contentType) && (
+                    <BannerToggleButton
+                      storyId={id}
+                      filename={f.name}
+                      isBanner={f.isBanner}
+                    />
+                  )}
                   <a
                     href={f.signedReadUrl}
                     target="_blank"

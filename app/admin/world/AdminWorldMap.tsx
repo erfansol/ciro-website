@@ -10,9 +10,7 @@ import { moveStoryPinAction } from "../stories/[id]/actions";
 const DEFAULT_CENTER = { lat: 41.9028, lng: 12.4964 }; // Rome, our flagship city.
 const DEFAULT_ZOOM = 12;
 
-// Dark map style tuned for the admin chrome. Standard "Maps JavaScript
-// API" styling — the same provider the Flutter app uses, so admin pin
-// drops land on the same buildings the consumer sees.
+// Dark map style tuned for the admin chrome.
 const DARK_MAP_STYLE: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#0e1320" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#8d97a8" }] },
@@ -28,25 +26,48 @@ const DARK_MAP_STYLE: google.maps.MapTypeStyle[] = [
   { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3a4257" }] },
 ];
 
-const MAP_OPTIONS: google.maps.MapOptions = {
-  styles: DARK_MAP_STYLE,
-  disableDefaultUI: false,
-  mapTypeControl: false,
-  streetViewControl: false,
-  fullscreenControl: false,
-  clickableIcons: false,
-  backgroundColor: "#06070d",
-};
+// Light map style — matches the admin's light theme: low-noise (POIs
+// hidden), warm neutrals, same road/water hierarchy as dark so the
+// information density doesn't shift between themes.
+const LIGHT_MAP_STYLE: google.maps.MapTypeStyle[] = [
+  { elementType: "geometry", stylers: [{ color: "#f5f6f8" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#3f4757" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+  { featureType: "administrative.country", elementType: "geometry.stroke", stylers: [{ color: "#c8cfdc" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#1f2533" }] },
+  { featureType: "poi", stylers: [{ visibility: "off" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#7a8398" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#ebeff6" }] },
+  { featureType: "transit", stylers: [{ visibility: "off" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#d8e7f3" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#7a8398" }] },
+];
+
+function buildMapOptions(theme: "dark" | "light"): google.maps.MapOptions {
+  return {
+    styles: theme === "dark" ? DARK_MAP_STYLE : LIGHT_MAP_STYLE,
+    disableDefaultUI: false,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    clickableIcons: false,
+    backgroundColor: theme === "dark" ? "#06070d" : "#f8fafc",
+  };
+}
 
 export function AdminWorldMap({
   apiKey,
   stories,
   categories,
+  theme = "dark",
 }: {
   apiKey: string;
   stories: AdminStory[];
   categories: ReadonlyArray<StoryCategoryMeta>;
+  theme?: "dark" | "light";
 }) {
+  const mapOptions = useMemo(() => buildMapOptions(theme), [theme]);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
     // No optional libraries needed for Phase 1; clustering / heatmaps
@@ -140,7 +161,7 @@ export function AdminWorldMap({
         mapContainerStyle={{ width: "100%", height: "100vh" }}
         center={initialCenter}
         zoom={DEFAULT_ZOOM}
-        options={MAP_OPTIONS}
+        options={mapOptions}
       >
         {stories.map((s) => {
           if (s.lat === undefined || s.lon === undefined) return null;

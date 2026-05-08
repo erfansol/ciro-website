@@ -81,6 +81,10 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
           (m): m is string => typeof m === "string" && m.length > 0,
         )
       : [],
+    bannerImage:
+      typeof raw.bannerImage === "string" && raw.bannerImage.length > 0
+        ? raw.bannerImage
+        : null,
     authorUid: readString(raw.authorUid),
     source: (readString(raw.source) as AdminStory["source"]) ?? undefined,
     moderationStatus:
@@ -179,6 +183,8 @@ export type StoryPatch = {
   currency?: string;
   /** Replaces the entire route. Pass `[]` to clear. */
   routeCoords?: import("./categories").Waypoint[];
+  /** Filename under `stories/{id}/`. `null` clears. */
+  bannerImage?: string | null;
 };
 
 /**
@@ -224,6 +230,7 @@ export async function updateStory(
       return out;
     });
   }
+  if (patch.bannerImage !== undefined) update.bannerImage = patch.bannerImage;
 
   await ref.update(update);
 

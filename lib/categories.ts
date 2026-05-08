@@ -133,6 +133,13 @@ export type FirestoreStory = {
    * they're getting.
    */
   previewMedia?: string[];
+  /**
+   * Filename under `stories/{id}/` that drives the hero/banner image on
+   * the public story page and the Flutter story card. Falls back to the
+   * category gradient when unset. The file must already be in the
+   * preview album (or independently public) for the URL to resolve.
+   */
+  bannerImage?: string | null;
 };
 
 /** Story plus its resolved category meta. JSON-serialisable. */

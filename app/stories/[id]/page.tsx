@@ -96,6 +96,10 @@ export default async function StoryDetailPage({
           }}
         />
 
+        {story.bannerImage && (
+          <BannerHero storyId={story.id} filename={story.bannerImage} />
+        )}
+
         <article className="mx-auto max-w-3xl px-6 pt-32 pb-32 lg:px-8">
           <Link
             href="/stories"
@@ -217,6 +221,28 @@ function publicUrlFor(storyId: string, filename: string): string | null {
 }
 
 const VIDEO_EXT = /\.(mp4|webm|ogg|mov|m4v)$/i;
+
+function BannerHero({
+  storyId,
+  filename,
+}: {
+  storyId: string;
+  filename: string;
+}) {
+  const url = publicUrlFor(storyId, filename);
+  if (!url) return null;
+  return (
+    <div className="absolute inset-x-0 top-0 -z-10 h-[60vh]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={url}
+        alt=""
+        className="h-full w-full object-cover opacity-50"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#06070d]/70 to-[#06070d]" />
+    </div>
+  );
+}
 
 function PreviewGallery({
   storyId,

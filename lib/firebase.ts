@@ -76,6 +76,11 @@ function mapDoc(id: string, raw: Record<string, unknown>): FirestoreStory {
       )
     : undefined;
 
+  const bannerImage =
+    typeof raw.bannerImage === "string" && raw.bannerImage.length > 0
+      ? (raw.bannerImage as string)
+      : null;
+
   return {
     id,
     title: typeof raw.title === "string" && raw.title ? raw.title : "Untitled story",
@@ -94,6 +99,7 @@ function mapDoc(id: string, raw: Record<string, unknown>): FirestoreStory {
     currency: typeof raw.currency === "string" ? raw.currency : undefined,
     routeCoords: route,
     previewMedia,
+    bannerImage,
   };
 }
 

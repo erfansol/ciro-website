@@ -13,6 +13,8 @@ export type StoryMediaFile = {
   isPreview: boolean;
   /** Permanent public URL (only present when `isPreview` is true). */
   publicUrl: string | null;
+  /** True when this file is the story's bannerImage. */
+  isBanner: boolean;
 };
 
 export type StorySummary = {
@@ -59,7 +61,7 @@ export async function listStoryMedia(
   const bucket = getAdminBucket();
   const [files] = await bucket.getFiles({ prefix: storyPrefix(storyId) });
 
-  const previewSet = await readStoryPreviewSet(storyId);
+  const { previewSet, banner } = await readStoryMediaState(storyId);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const enriched = await Promise.all(
@@ -76,6 +78,7 @@ export async function listStoryMedia(
       // Skip the implicit folder marker some clients create.
       if (basename === "") return null;
       const isPreview = previewSet.has(basename);
+      const isBanner = banner === basename;
       return {
         name: basename,
         fullPath,
@@ -87,7 +90,9 @@ export async function listStoryMedia(
         updatedAt: readMetaTs(meta.updated),
         signedReadUrl: signedUrl,
         isPreview,
-        publicUrl: isPreview ? publicUrlFor(fullPath, bucket.name) : null,
+        publicUrl:
+          isPreview || isBanner ? publicUrlFor(fullPath, bucket.name) : null,
+        isBanner,
       } as StoryMediaFile;
     }),
   );
@@ -96,15 +101,23 @@ export async function listStoryMedia(
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function readStoryPreviewSet(storyId: string): Promise<Set<string>> {
+async function readStoryMediaState(
+  storyId: string,
+): Promise<{ previewSet: Set<string>; banner: string | null }> {
   try {
     const snap = await getAdminDb().collection("stories").doc(storyId).get();
-    const arr = (snap.data()?.previewMedia ?? []) as unknown[];
-    return new Set(
+    const data = snap.data() ?? {};
+    const arr = (data.previewMedia ?? []) as unknown[];
+    const previewSet = new Set(
       arr.filter((s): s is string => typeof s === "string" && s.length > 0),
     );
+    const banner =
+      typeof data.bannerImage === "string" && data.bannerImage.length > 0
+        ? (data.bannerImage as string)
+        : null;
+    return { previewSet, banner };
   } catch {
-    return new Set();
+    return { previewSet: new Set(), banner: null };
   }
 }
 
@@ -347,6 +360,78 @@ export async function setStoryMediaPreview({
   });
 
   return { publicUrl: isPreview ? publicUrlFor(fullPath, bucket.name) : null };
+}
+
+/**
+ * Set or clear the story's banner image. When setting, the file is
+ * also marked public + appended to previewMedia so its URL resolves
+ * on the public site without admin signing. Pass `null` to clear.
+ */
+export async function setStoryBanner({
+  storyId,
+  filename,
+  actorUid,
+}: {
+  storyId: string;
+  filename: string | null;
+  actorUid: string;
+}): Promise<{ publicUrl: string | null }> {
+  const db = getAdminDb();
+  const storyRef = db.collection("stories").doc(storyId);
+
+  if (filename === null) {
+    await storyRef.set(
+      { bannerImage: null, updatedAt: new Date().toISOString() },
+      { merge: true },
+    );
+    await logAdmin({
+      actorUid,
+      action: "story.update",
+      targetCollection: "stories",
+      targetId: storyId,
+      reason: "banner cleared",
+    });
+    return { publicUrl: null };
+  }
+
+  const safe = sanitizeFilename(filename);
+  if (safe !== filename) {
+    throw new Error(`Refusing to set banner with unsafe filename: ${filename}`);
+  }
+  // Ensure the file exists and is public so the public URL resolves.
+  const fullPath = `${storyPrefix(storyId)}${safe}`;
+  const bucket = getAdminBucket();
+  const remote = bucket.file(fullPath);
+  const [exists] = await remote.exists();
+  if (!exists) throw new Error(`File not found: ${fullPath}`);
+  await remote.makePublic();
+
+  // Add to previewMedia (for symmetry with the toggle) and set as banner
+  // in one merge.
+  const before = await storyRef.get();
+  const prev = (before.data()?.previewMedia ?? []) as unknown[];
+  const prevList = prev.filter(
+    (s): s is string => typeof s === "string" && s.length > 0,
+  );
+  const nextPreview = Array.from(new Set([...prevList, safe]));
+  await storyRef.set(
+    {
+      bannerImage: safe,
+      previewMedia: nextPreview,
+      updatedAt: new Date().toISOString(),
+    },
+    { merge: true },
+  );
+
+  await logAdmin({
+    actorUid,
+    action: "story.update",
+    targetCollection: "stories",
+    targetId: storyId,
+    reason: `banner set to ${safe}`,
+  });
+
+  return { publicUrl: publicUrlFor(fullPath, bucket.name) };
 }
 
 // Reserved for future signed-direct-upload flow if Hostinger body

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   deleteMediaAction,
+  setBannerAction,
   togglePreviewAction,
   type MediaActionResult,
 } from "@/app/admin/stories/[id]/media/actions";
@@ -98,6 +99,60 @@ export function PreviewToggleButton({
         }
       >
         {pending ? "…" : isPreview ? "✓ In preview" : "Add to preview"}
+      </button>
+      {error && <span className="text-[11px] text-rose-300">{error}</span>}
+    </div>
+  );
+}
+
+export function BannerToggleButton({
+  storyId,
+  filename,
+  isBanner,
+}: {
+  storyId: string;
+  filename: string;
+  isBanner: boolean;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  function onClick() {
+    const fd = new FormData();
+    fd.set("storyId", storyId);
+    // Toggle: clear the banner if this file is currently the banner,
+    // otherwise set this file as the banner.
+    fd.set("filename", isBanner ? "" : filename);
+    startTransition(async () => {
+      const res = await setBannerAction(fd);
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      setError(null);
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={pending}
+        className={
+          isBanner
+            ? "rounded-md border border-sky-400/40 bg-sky-400/[0.08] px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-sky-200 transition-colors hover:bg-sky-400/[0.14] disabled:opacity-50"
+            : "rounded-md border border-admin-border bg-admin-surface px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text disabled:opacity-50"
+        }
+        title={
+          isBanner
+            ? "Currently the story banner. Click to remove."
+            : "Use this image as the story's hero banner."
+        }
+      >
+        {pending ? "…" : isBanner ? "✓ Banner" : "Set as banner"}
       </button>
       {error && <span className="text-[11px] text-rose-300">{error}</span>}
     </div>
