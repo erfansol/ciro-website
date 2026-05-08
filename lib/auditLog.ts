@@ -14,7 +14,9 @@ export type AuditAction =
   | "role.grant"
   | "role.revoke"
   | "user.suspend"
-  | "user.restore";
+  | "user.restore"
+  | "report.resolve"
+  | "report.dismiss";
 
 export type AuditEntry = {
   actorUid: string;

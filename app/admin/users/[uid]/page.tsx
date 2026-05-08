@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { getAdminUser } from "@/lib/userAdmin";
+import { getAdminUser, type ActivityEntry } from "@/lib/userAdmin";
 import { UserActions } from "@/components/admin/UserActions";
 
 export const dynamic = "force-dynamic";
@@ -113,26 +113,26 @@ export default async function AdminUserDetailPage({
               Activity timeline
             </h2>
             <p className="mt-2 text-xs text-white/45">
-              Per-event story views and reports are tracked from the Flutter app.
-              Until that lands, this panel surfaces admin actions affecting this account.
+              Story views and reports from the Flutter app, interleaved with
+              admin actions affecting this account. Up to 50 most-recent entries.
             </p>
-            {user.recentAuditEntries.length === 0 ? (
-              <p className="mt-4 text-sm text-white/45">No admin actions recorded for this account.</p>
+            {user.recentActivity.length === 0 ? (
+              <p className="mt-4 text-sm text-white/45">
+                No activity recorded yet. If the Flutter app is writing events
+                but nothing appears here, the composite indexes in
+                <code className="text-white/65"> firestore.indexes.json </code>
+                may need to be deployed.
+              </p>
             ) : (
-              <ul className="mt-4 space-y-2 text-sm">
-                {user.recentAuditEntries.map((e) => (
+              <ul className="mt-4 space-y-3 text-sm">
+                {user.recentActivity.map((e) => (
                   <li
-                    key={e.id}
-                    className="flex items-start justify-between gap-4 border-l border-white/10 pl-3"
+                    key={`${e.kind}-${e.id}`}
+                    className="flex items-start justify-between gap-4 border-l-2 pl-3"
+                    style={{ borderLeftColor: kindColor(e.kind) }}
                   >
-                    <div>
-                      <span className="font-mono text-[11px] text-white/70">{e.action}</span>
-                      {e.reason && (
-                        <p className="mt-0.5 text-xs text-white/55">{e.reason}</p>
-                      )}
-                      <p className="mt-0.5 truncate text-[11px] text-white/35">
-                        by {e.actorUid}
-                      </p>
+                    <div className="min-w-0 flex-1">
+                      <ActivityRow entry={e} />
                     </div>
                     <span className="shrink-0 text-[11px] text-white/45">
                       {formatRelative(e.ts)}
@@ -155,6 +155,85 @@ export default async function AdminUserDetailPage({
       </div>
     </div>
   );
+}
+
+function ActivityRow({ entry }: { entry: ActivityEntry }) {
+  if (entry.kind === "view") {
+    return (
+      <div>
+        <p className="text-white/85">
+          <span className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+            {entry.event ?? "viewed"}
+          </span>{" "}
+          <Link
+            href={
+              entry.storyId
+                ? `/admin/stories/${entry.storyId}`
+                : "#"
+            }
+            className="text-white hover:underline"
+          >
+            {entry.storyTitle ?? "(unknown story)"}
+          </Link>
+        </p>
+        {entry.storyCity && (
+          <p className="mt-0.5 text-[11px] text-white/40">{entry.storyCity}</p>
+        )}
+      </div>
+    );
+  }
+  if (entry.kind === "report") {
+    return (
+      <div>
+        <p className="text-white/85">
+          <span className="text-[10px] uppercase tracking-[0.22em] text-amber-200/80">
+            report · {entry.reason ?? "—"}
+          </span>{" "}
+          <Link
+            href={entry.storyId ? `/admin/stories/${entry.storyId}` : "#"}
+            className="text-white hover:underline"
+          >
+            {entry.storyTitle ?? "(unknown story)"}
+          </Link>
+        </p>
+        {entry.notes && (
+          <p className="mt-0.5 text-xs text-white/55">&ldquo;{entry.notes}&rdquo;</p>
+        )}
+        {entry.status && entry.status !== "open" && (
+          <p className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-white/35">
+            {entry.status}
+          </p>
+        )}
+      </div>
+    );
+  }
+  // audit
+  return (
+    <div>
+      <span className="font-mono text-[11px] text-white/75">
+        {entry.action ?? "(unknown)"}
+      </span>
+      {entry.reason && (
+        <p className="mt-0.5 text-xs text-white/55">{entry.reason}</p>
+      )}
+      {entry.actorUid && (
+        <p className="mt-0.5 truncate text-[11px] text-white/35">
+          by {entry.actorUid}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function kindColor(kind: ActivityEntry["kind"]): string {
+  switch (kind) {
+    case "view":
+      return "rgba(56, 189, 248, 0.4)"; // sky
+    case "report":
+      return "rgba(251, 191, 36, 0.5)"; // amber
+    case "audit":
+      return "rgba(255, 255, 255, 0.18)";
+  }
 }
 
 function Field({

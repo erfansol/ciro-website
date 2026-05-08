@@ -33,9 +33,29 @@ export type AuditDisplayEntry = {
   reason: string | null;
 };
 
+export type ActivityKind = "view" | "report" | "audit";
+
+export type ActivityEntry = {
+  id: string;
+  kind: ActivityKind;
+  ts: string | null;
+  // story_views fields
+  storyId?: string;
+  storyTitle?: string;
+  storyCity?: string;
+  event?: string; // started | completed
+  // story_reports fields
+  reason?: string;
+  notes?: string | null;
+  status?: "open" | "resolved" | "dismissed";
+  // auditLog fields
+  action?: string;
+  actorUid?: string;
+};
+
 export type AdminUserDetail = AdminUserRow & {
   stats: UserStatsSummary | null;
-  recentAuditEntries: AuditDisplayEntry[];
+  recentActivity: ActivityEntry[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,18 +138,35 @@ export async function getAdminUser(
     return null;
   }
 
-  const [roleSnap, statsSnap, auditSnap] = await Promise.all([
-    db.collection("roles").doc(uid).get(),
-    db.collection("users").doc(uid).collection("stats").doc("summary").get(),
-    db
-      .collection("auditLog")
-      .where("targetId", "==", uid)
-      .orderBy("ts", "desc")
-      .limit(20)
-      .get()
-      // Missing composite index returns FAILED_PRECONDITION; treat as empty.
-      .catch(() => null),
-  ]);
+  const [roleSnap, statsSnap, auditSnap, viewsSnap, reportsSnap] =
+    await Promise.all([
+      db.collection("roles").doc(uid).get(),
+      db.collection("users").doc(uid).collection("stats").doc("summary").get(),
+      // Missing composite indexes return FAILED_PRECONDITION on the
+      // first read; treat each as empty so the page still renders and
+      // the empty-state nudges the operator to deploy firestore.indexes.json.
+      db
+        .collection("auditLog")
+        .where("targetId", "==", uid)
+        .orderBy("ts", "desc")
+        .limit(20)
+        .get()
+        .catch(() => null),
+      db
+        .collection("story_views")
+        .where("userUid", "==", uid)
+        .orderBy("viewedAt", "desc")
+        .limit(30)
+        .get()
+        .catch(() => null),
+      db
+        .collection("story_reports")
+        .where("reporterUid", "==", uid)
+        .orderBy("createdAt", "desc")
+        .limit(20)
+        .get()
+        .catch(() => null),
+    ]);
 
   const role = readRole(roleSnap.data()?.role);
 
@@ -154,23 +191,69 @@ export async function getAdminUser(
       }
     : null;
 
-  const recentAuditEntries: AuditDisplayEntry[] =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    auditSnap?.docs.map((d: any) => {
-      const data = d.data() as Record<string, unknown>;
-      return {
-        id: d.id,
-        action: typeof data.action === "string" ? data.action : "(unknown)",
-        actorUid: typeof data.actorUid === "string" ? data.actorUid : "",
-        ts: typeof data.ts === "string" ? data.ts : null,
-        reason: typeof data.reason === "string" ? data.reason : null,
-      };
-    }) ?? [];
+  const activity: ActivityEntry[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  viewsSnap?.docs.forEach((d: any) => {
+    const data = d.data() as Record<string, unknown>;
+    activity.push({
+      id: d.id,
+      kind: "view",
+      ts: readTs(data.viewedAt),
+      storyId: typeof data.storyId === "string" ? data.storyId : undefined,
+      storyTitle:
+        typeof data.storyTitle === "string" ? data.storyTitle : undefined,
+      storyCity:
+        typeof data.storyCity === "string" ? data.storyCity : undefined,
+      event: typeof data.event === "string" ? data.event : undefined,
+    });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  reportsSnap?.docs.forEach((d: any) => {
+    const data = d.data() as Record<string, unknown>;
+    const status = data.status;
+    activity.push({
+      id: d.id,
+      kind: "report",
+      ts: readTs(data.createdAt),
+      storyId: typeof data.storyId === "string" ? data.storyId : undefined,
+      storyTitle:
+        typeof data.storyTitle === "string" ? data.storyTitle : undefined,
+      reason: typeof data.reason === "string" ? data.reason : undefined,
+      notes: typeof data.notes === "string" ? data.notes : null,
+      status:
+        status === "open" || status === "resolved" || status === "dismissed"
+          ? status
+          : undefined,
+    });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  auditSnap?.docs.forEach((d: any) => {
+    const data = d.data() as Record<string, unknown>;
+    activity.push({
+      id: d.id,
+      kind: "audit",
+      ts: typeof data.ts === "string" ? data.ts : null,
+      action: typeof data.action === "string" ? data.action : undefined,
+      actorUid: typeof data.actorUid === "string" ? data.actorUid : undefined,
+      reason: typeof data.reason === "string" ? data.reason : undefined,
+    });
+  });
+
+  // Newest-first; null timestamps drop to the bottom.
+  activity.sort((a, b) => {
+    if (a.ts === b.ts) return 0;
+    if (a.ts === null) return 1;
+    if (b.ts === null) return -1;
+    return a.ts < b.ts ? 1 : -1;
+  });
 
   return {
     ...mapAuthUser(authUser, role),
     stats,
-    recentAuditEntries,
+    recentActivity: activity.slice(0, 50),
   };
 }
 
