@@ -1,5 +1,5 @@
 import "server-only";
-import { getAdminBucket } from "./firebaseAdmin";
+import { getAdminBucket, getAdminDb } from "./firebaseAdmin";
 import { logAdmin } from "./auditLog";
 
 export type StoryMediaFile = {
@@ -9,6 +9,10 @@ export type StoryMediaFile = {
   contentType: string;
   updatedAt: string | null; // ISO
   signedReadUrl: string; // 24h signed URL — preview/download in admin UI
+  /** True when this filename is in the story's `previewMedia` array. */
+  isPreview: boolean;
+  /** Permanent public URL (only present when `isPreview` is true). */
+  publicUrl: string | null;
 };
 
 export type StorySummary = {
@@ -45,13 +49,17 @@ function readMetaTs(v: unknown): string | null {
 /**
  * List all files under `stories/{storyId}/`. Each result carries a
  * 24h signed URL so the admin UI can render thumbnails / previews
- * without a second round-trip to Storage.
+ * without a second round-trip to Storage. Files that the operator
+ * has flagged as preview-public also expose a permanent
+ * `publicUrl`.
  */
 export async function listStoryMedia(
   storyId: string,
 ): Promise<StoryMediaFile[]> {
   const bucket = getAdminBucket();
   const [files] = await bucket.getFiles({ prefix: storyPrefix(storyId) });
+
+  const previewSet = await readStoryPreviewSet(storyId);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const enriched = await Promise.all(
@@ -67,6 +75,7 @@ export async function listStoryMedia(
       const basename = fullPath.slice(storyPrefix(storyId).length);
       // Skip the implicit folder marker some clients create.
       if (basename === "") return null;
+      const isPreview = previewSet.has(basename);
       return {
         name: basename,
         fullPath,
@@ -77,12 +86,36 @@ export async function listStoryMedia(
             : "application/octet-stream",
         updatedAt: readMetaTs(meta.updated),
         signedReadUrl: signedUrl,
+        isPreview,
+        publicUrl: isPreview ? publicUrlFor(fullPath, bucket.name) : null,
       } as StoryMediaFile;
     }),
   );
   return enriched
     .filter((f): f is StoryMediaFile => f !== null)
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+async function readStoryPreviewSet(storyId: string): Promise<Set<string>> {
+  try {
+    const snap = await getAdminDb().collection("stories").doc(storyId).get();
+    const arr = (snap.data()?.previewMedia ?? []) as unknown[];
+    return new Set(
+      arr.filter((s): s is string => typeof s === "string" && s.length > 0),
+    );
+  } catch {
+    return new Set();
+  }
+}
+
+function publicUrlFor(path: string, bucket: string): string {
+  // GCS public access pattern. Encode each path segment so spaces/specials
+  // don't break the URL.
+  const encoded = path
+    .split("/")
+    .map((p) => encodeURIComponent(p))
+    .join("/");
+  return `https://storage.googleapis.com/${bucket}/${encoded}`;
 }
 
 /**
@@ -244,6 +277,76 @@ export function formatBytes(bytes: number): string {
 
 export function isImageContentType(ct: string | null | undefined): boolean {
   return typeof ct === "string" && ct.startsWith("image/");
+}
+
+/**
+ * Flip a single file's preview-public state. Two persistent effects:
+ *   1. Storage object ACL: makePublic / makePrivate so the public
+ *      story page can render the asset without a signed URL.
+ *   2. Story doc: add/remove the filename to the `previewMedia` array.
+ *
+ * Records `media.upload`-equivalent audit entries so the activity
+ * log captures who toggled which asset and when.
+ */
+export async function setStoryMediaPreview({
+  storyId,
+  filename,
+  isPreview,
+  actorUid,
+}: {
+  storyId: string;
+  filename: string;
+  isPreview: boolean;
+  actorUid: string;
+}): Promise<{ publicUrl: string | null }> {
+  const safe = sanitizeFilename(filename);
+  if (safe !== filename) {
+    throw new Error(`Refusing to toggle filename with unsafe chars: ${filename}`);
+  }
+  const fullPath = `${storyPrefix(storyId)}${safe}`;
+  const bucket = getAdminBucket();
+  const remote = bucket.file(fullPath);
+  const [exists] = await remote.exists();
+  if (!exists) {
+    throw new Error(`File not found: ${fullPath}`);
+  }
+
+  if (isPreview) {
+    await remote.makePublic();
+  } else {
+    // makePrivate strips public ACL only; uploader still owns the object.
+    try {
+      await remote.makePrivate({ strict: false });
+    } catch {
+      // Some buckets with uniform IAM (no per-object ACLs) reject this;
+      // ignore — the doc-level previewMedia list is the source of truth
+      // for what the public site renders.
+    }
+  }
+
+  const storyRef = getAdminDb().collection("stories").doc(storyId);
+  const before = await storyRef.get();
+  const prev = (before.data()?.previewMedia ?? []) as unknown[];
+  const prevList = prev.filter(
+    (s): s is string => typeof s === "string" && s.length > 0,
+  );
+  const next = isPreview
+    ? Array.from(new Set([...prevList, safe]))
+    : prevList.filter((s) => s !== safe);
+  await storyRef.set(
+    { previewMedia: next, updatedAt: new Date().toISOString() },
+    { merge: true },
+  );
+
+  await logAdmin({
+    actorUid,
+    action: isPreview ? "media.upload" : "media.delete",
+    targetCollection: "storage",
+    targetId: fullPath,
+    reason: isPreview ? "marked as story preview" : "removed from story preview",
+  });
+
+  return { publicUrl: isPreview ? publicUrlFor(fullPath, bucket.name) : null };
 }
 
 // Reserved for future signed-direct-upload flow if Hostinger body

@@ -40,6 +40,15 @@ export function StoryEditorForm({
   const [publishAtInput, setPublishAtInput] = useState<string>(
     isoToLocalInput(story.publishAt),
   );
+  const [waypoints, setWaypoints] = useState<
+    Array<{ lat: string; lon: string; label: string }>
+  >(() =>
+    (story.routeCoords ?? []).map((w) => ({
+      lat: String(w.lat),
+      lon: String(w.lon),
+      label: w.label ?? "",
+    })),
+  );
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -57,6 +66,20 @@ export function StoryEditorForm({
     } else {
       fd.set("publishAt", "");
     }
+
+    // Serialise waypoints into a single hidden field so the server
+    // action gets one canonical shape regardless of UI manipulation.
+    const wp = waypoints
+      .map((w) => ({
+        lat: parseFloat(w.lat),
+        lon: parseFloat(w.lon),
+        label: w.label.trim(),
+      }))
+      .filter(
+        (w) => Number.isFinite(w.lat) && Number.isFinite(w.lon),
+      );
+    fd.set("routeCoords", JSON.stringify(wp));
+
     startTransition(async () => {
       try {
         await saveStoryAction(story.id, fd);
@@ -116,6 +139,44 @@ export function StoryEditorForm({
           defaultValue={story.durationLabel ?? ""}
           placeholder="e.g. 8 min"
         />
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field
+            label="Price (cents)"
+            name="priceCents"
+            defaultValue={story.priceCents !== undefined ? String(story.priceCents) : "0"}
+            type="number"
+            step="1"
+            placeholder="0 = free"
+          />
+          <Field
+            label="Currency"
+            name="currency"
+            defaultValue={story.currency ?? "USD"}
+            placeholder="USD"
+          />
+        </div>
+        <p className="-mt-3 text-[11px] text-admin-text-faint">
+          Cents avoids floating-point drift. e.g. 299 = $2.99 USD. The Flutter
+          buy sheet reads <code className="text-admin-text-muted">priceCents</code>{" "}
+          + <code className="text-admin-text-muted">currency</code> to render
+          the price pill.
+        </p>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field
+            label="Start label"
+            name="startLabel"
+            defaultValue={story.startLabel ?? ""}
+            placeholder="e.g. Piazza Navona"
+          />
+          <Field
+            label="End label"
+            name="endLabel"
+            defaultValue={story.endLabel ?? ""}
+            placeholder="e.g. Tiber Island"
+          />
+        </div>
       </div>
 
       <div className="space-y-5">
@@ -138,6 +199,97 @@ export function StoryEditorForm({
         <p className="text-[11px] text-admin-text-subtle">
           Tip: open the World view to drag the pin instead of typing coordinates.
         </p>
+
+        <fieldset className="rounded-md border border-admin-border bg-admin-surface p-4">
+          <legend className="px-1 text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
+            Route waypoints
+          </legend>
+          <p className="px-1 pt-1 text-[11px] text-admin-text-subtle">
+            Ordered: first row = start, last row = end. Optional label is shown
+            on the public page; the Flutter map ignores it for now.
+          </p>
+          <div className="mt-3 space-y-2">
+            {waypoints.length === 0 && (
+              <p className="rounded-md border border-dashed border-admin-border bg-admin-surface px-3 py-2 text-xs text-admin-text-faint">
+                No waypoints yet — add at least 2 (start &amp; end) for a route.
+              </p>
+            )}
+            {waypoints.map((w, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-[auto_1fr_1fr_2fr_auto] items-center gap-2"
+              >
+                <span className="text-[10px] uppercase tracking-[0.22em] text-admin-text-faint">
+                  {i === 0
+                    ? "Start"
+                    : i === waypoints.length - 1
+                      ? "End"
+                      : `${i + 1}`}
+                </span>
+                <input
+                  type="number"
+                  step="any"
+                  value={w.lat}
+                  placeholder="lat"
+                  onChange={(e) => {
+                    const next = waypoints.slice();
+                    next[i] = { ...next[i], lat: e.target.value };
+                    setWaypoints(next);
+                  }}
+                  className="rounded-md border border-admin-border bg-admin-surface-strong px-2 py-1.5 text-xs text-admin-text focus:border-admin-border-strong focus:outline-none"
+                />
+                <input
+                  type="number"
+                  step="any"
+                  value={w.lon}
+                  placeholder="lon"
+                  onChange={(e) => {
+                    const next = waypoints.slice();
+                    next[i] = { ...next[i], lon: e.target.value };
+                    setWaypoints(next);
+                  }}
+                  className="rounded-md border border-admin-border bg-admin-surface-strong px-2 py-1.5 text-xs text-admin-text focus:border-admin-border-strong focus:outline-none"
+                />
+                <input
+                  type="text"
+                  value={w.label}
+                  placeholder="label (optional)"
+                  onChange={(e) => {
+                    const next = waypoints.slice();
+                    next[i] = { ...next[i], label: e.target.value };
+                    setWaypoints(next);
+                  }}
+                  className="rounded-md border border-admin-border bg-admin-surface-strong px-2 py-1.5 text-xs text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setWaypoints(waypoints.filter((_, j) => j !== i))
+                  }
+                  className="rounded-md border border-admin-border bg-admin-surface px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-rose-400/40 hover:text-rose-200"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setWaypoints([
+                ...waypoints,
+                {
+                  lat: story.lat !== undefined ? String(story.lat) : "",
+                  lon: story.lon !== undefined ? String(story.lon) : "",
+                  label: "",
+                },
+              ])
+            }
+            className="mt-3 rounded-md border border-admin-border-strong bg-admin-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
+          >
+            Add waypoint
+          </button>
+        </fieldset>
 
         <fieldset className="rounded-md border border-admin-border bg-admin-surface p-4">
           <legend className="px-1 text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">

@@ -55,6 +55,44 @@ export async function saveStoryAction(id: string, fd: FormData) {
   const durationLabel = readStr(fd, "durationLabel");
   if (durationLabel !== undefined) patch.durationLabel = durationLabel;
 
+  const startLabel = readStr(fd, "startLabel");
+  if (startLabel !== undefined) patch.startLabel = startLabel;
+  const endLabel = readStr(fd, "endLabel");
+  if (endLabel !== undefined) patch.endLabel = endLabel;
+
+  const priceCents = readNum(fd, "priceCents");
+  if (priceCents !== undefined && priceCents >= 0) {
+    patch.priceCents = Math.round(priceCents);
+  }
+  const currency = readStr(fd, "currency");
+  if (currency !== undefined && currency.length > 0) {
+    patch.currency = currency.toUpperCase();
+  }
+
+  const routeJson = readStr(fd, "routeCoords");
+  if (routeJson !== undefined) {
+    try {
+      const parsed = JSON.parse(routeJson);
+      if (Array.isArray(parsed)) {
+        patch.routeCoords = parsed
+          .filter(
+            (w): w is { lat: number; lon: number; label?: string } =>
+              typeof w === "object" &&
+              w !== null &&
+              typeof (w as { lat?: unknown }).lat === "number" &&
+              typeof (w as { lon?: unknown }).lon === "number",
+          )
+          .map((w) =>
+            w.label && w.label.length > 0
+              ? { lat: w.lat, lon: w.lon, label: w.label }
+              : { lat: w.lat, lon: w.lon },
+          );
+      }
+    } catch {
+      // Form sent unparseable JSON; ignore so other patch fields still save.
+    }
+  }
+
   const lat = readNum(fd, "lat");
   const lon = readNum(fd, "lon");
   if (lat !== undefined && lon !== undefined) {

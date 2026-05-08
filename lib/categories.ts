@@ -88,6 +88,13 @@ export const CATEGORY_BY_ID: Record<StoryCategoryId, StoryCategoryMeta> =
  * Defined here so client components can type props without pulling the
  * firebase-admin module graph.
  */
+export type Waypoint = {
+  lat: number;
+  lon: number;
+  /** Optional human label — Flutter ignores it today, web admin/UI shows it. */
+  label?: string;
+};
+
 export type FirestoreStory = {
   id: string;
   title: string;
@@ -109,6 +116,23 @@ export type FirestoreStory = {
    * draft so the public site doesn't pick it up early.
    */
   publishAt?: string | null;
+  /** Cents (USD by default; see `currency`). 0 / undefined = free. */
+  priceCents?: number;
+  /** ISO 4217 currency code; defaults to "USD" when undefined. */
+  currency?: string;
+  /**
+   * Ordered list of geo waypoints — start (first), important midpoints,
+   * end (last). Drives the route line drawn on /stories/<id> and the
+   * Flutter map. Stored as plain objects on Firestore for simplicity.
+   */
+  routeCoords?: Waypoint[];
+  /**
+   * Filenames under `stories/{id}/` that the operator has flagged as
+   * public previews. The public story page renders these as a photo /
+   * video album BEFORE the user buys the story so they can see what
+   * they're getting.
+   */
+  previewMedia?: string[];
 };
 
 /** Story plus its resolved category meta. JSON-serialisable. */

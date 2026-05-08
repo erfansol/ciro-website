@@ -30,6 +30,21 @@ function readString(v: unknown): string | undefined {
   return typeof v === "string" ? v : undefined;
 }
 
+function readWaypoints(v: unknown): import("./categories").Waypoint[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const out: import("./categories").Waypoint[] = [];
+  for (const item of v) {
+    if (typeof item !== "object" || item === null) continue;
+    const o = item as Record<string, unknown>;
+    const lat = readNumber(o.lat);
+    const lon = readNumber(o.lon);
+    if (lat === undefined || lon === undefined) continue;
+    const label = readString(o.label);
+    out.push(label ? { lat, lon, label } : { lat, lon });
+  }
+  return out;
+}
+
 function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
   const cat = readString(raw.category) ?? "historical";
   const category = (CATEGORY_BY_ID[cat as keyof typeof CATEGORY_BY_ID]
@@ -58,6 +73,14 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
     hasAr: Boolean(bundle?.iosUrl || bundle?.androidUrl),
     published: raw.published === true,
     publishAt: typeof raw.publishAt === "string" ? raw.publishAt : null,
+    priceCents: readNumber(raw.priceCents),
+    currency: readString(raw.currency),
+    routeCoords: readWaypoints(raw.routeCoords),
+    previewMedia: Array.isArray(raw.previewMedia)
+      ? raw.previewMedia.filter(
+          (m): m is string => typeof m === "string" && m.length > 0,
+        )
+      : [],
     authorUid: readString(raw.authorUid),
     source: (readString(raw.source) as AdminStory["source"]) ?? undefined,
     moderationStatus:
@@ -143,11 +166,19 @@ export type StoryPatch = {
   city?: string;
   category?: AdminStory["category"];
   durationLabel?: string;
+  startLabel?: string;
+  endLabel?: string;
   lat?: number;
   lon?: number;
   published?: boolean;
   /** ISO timestamp; pass `null` to clear an existing schedule. */
   publishAt?: string | null;
+  /** Cents (e.g. 299 = $2.99). 0 = free. */
+  priceCents?: number;
+  /** ISO 4217. */
+  currency?: string;
+  /** Replaces the entire route. Pass `[]` to clear. */
+  routeCoords?: import("./categories").Waypoint[];
 };
 
 /**
@@ -181,6 +212,18 @@ export async function updateStory(
   }
   if (patch.published !== undefined) update.published = patch.published;
   if (patch.publishAt !== undefined) update.publishAt = patch.publishAt;
+  if (patch.startLabel !== undefined) update.startLabel = patch.startLabel;
+  if (patch.endLabel !== undefined) update.endLabel = patch.endLabel;
+  if (patch.priceCents !== undefined) update.priceCents = patch.priceCents;
+  if (patch.currency !== undefined) update.currency = patch.currency;
+  if (patch.routeCoords !== undefined) {
+    // Strip undefined/null label keys so Firestore doesn't store empty strings.
+    update.routeCoords = patch.routeCoords.map((w) => {
+      const out: Record<string, unknown> = { lat: w.lat, lon: w.lon };
+      if (w.label && w.label.length > 0) out.label = w.label;
+      return out;
+    });
+  }
 
   await ref.update(update);
 

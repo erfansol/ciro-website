@@ -8,7 +8,11 @@ import {
   listStoryMedia,
 } from "@/lib/mediaAdmin";
 import { MediaUploader } from "@/components/admin/MediaUploader";
-import { CopyUrlButton, MediaDeleteButton } from "@/components/admin/MediaItem";
+import {
+  CopyUrlButton,
+  MediaDeleteButton,
+  PreviewToggleButton,
+} from "@/components/admin/MediaItem";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +95,11 @@ export default async function StoryMediaPage({
                   {formatRelative(f.updatedAt)}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <PreviewToggleButton
+                    storyId={id}
+                    filename={f.name}
+                    isPreview={f.isPreview}
+                  />
                   <a
                     href={f.signedReadUrl}
                     target="_blank"

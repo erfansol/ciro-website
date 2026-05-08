@@ -136,6 +136,27 @@ export default async function StoryDetailPage({
             ))}
           </div>
 
+          <PreviewGallery
+            storyId={story.id}
+            files={story.previewMedia ?? []}
+            categoryColor={category.color}
+          />
+
+          {(story.startLabel ||
+            story.endLabel ||
+            (story.routeCoords && story.routeCoords.length > 1)) && (
+            <RouteSummary
+              startLabel={story.startLabel}
+              endLabel={story.endLabel}
+              waypoints={story.routeCoords ?? []}
+            />
+          )}
+
+          <PriceBadge
+            priceCents={story.priceCents}
+            currency={story.currency}
+          />
+
           {story.moods.length > 0 && (
             <ul className="mt-10 flex flex-wrap gap-2">
               {story.moods.map((m) => (
@@ -178,4 +199,166 @@ export default async function StoryDetailPage({
       </main>
     </>
   );
+}
+
+const FIREBASE_BUCKET =
+  process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+  (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    ? `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebasestorage.app`
+    : null);
+
+function publicUrlFor(storyId: string, filename: string): string | null {
+  if (!FIREBASE_BUCKET) return null;
+  const path = `stories/${storyId}/${filename}`
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/");
+  return `https://storage.googleapis.com/${FIREBASE_BUCKET}/${path}`;
+}
+
+const VIDEO_EXT = /\.(mp4|webm|ogg|mov|m4v)$/i;
+
+function PreviewGallery({
+  storyId,
+  files,
+  categoryColor,
+}: {
+  storyId: string;
+  files: string[];
+  categoryColor: string;
+}) {
+  if (files.length === 0 || !FIREBASE_BUCKET) return null;
+  return (
+    <section className="mt-12">
+      <p
+        className="text-[11px] font-semibold uppercase tracking-[0.32em]"
+        style={{ color: categoryColor }}
+      >
+        Preview
+      </p>
+      <p className="mt-2 text-sm text-white/55">
+        Photos and clips from this story — open in the app for the full AR
+        experience.
+      </p>
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {files.map((f) => {
+          const url = publicUrlFor(storyId, f);
+          if (!url) return null;
+          const isVideo = VIDEO_EXT.test(f);
+          return (
+            <div
+              key={f}
+              className="overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.02]"
+            >
+              {isVideo ? (
+                <video
+                  src={url}
+                  controls
+                  preload="metadata"
+                  className="block aspect-video w-full bg-black"
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={url}
+                  alt=""
+                  loading="lazy"
+                  className="block aspect-video w-full object-cover"
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RouteSummary({
+  startLabel,
+  endLabel,
+  waypoints,
+}: {
+  startLabel?: string;
+  endLabel?: string;
+  waypoints: Array<{ lat: number; lon: number; label?: string }>;
+}) {
+  const stops = waypoints
+    .map((w, i) => ({
+      label:
+        w.label ??
+        (i === 0
+          ? (startLabel ?? "Start")
+          : i === waypoints.length - 1
+            ? (endLabel ?? "End")
+            : `Stop ${i + 1}`),
+      lat: w.lat,
+      lon: w.lon,
+    }))
+    .filter((_, i, arr) => arr.length > 0);
+  return (
+    <section className="mt-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+      <p className="text-[11px] uppercase tracking-[0.32em] text-white/55">
+        Route
+      </p>
+      {(startLabel || endLabel) && (
+        <p className="mt-2 text-sm text-white/75">
+          {startLabel ?? "Start"} → {endLabel ?? "End"}
+        </p>
+      )}
+      {stops.length > 0 && (
+        <ol className="mt-4 space-y-2 text-sm text-white/75">
+          {stops.map((s, i) => (
+            <li key={`${i}-${s.lat}-${s.lon}`} className="flex items-center gap-3">
+              <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/15 text-[10px] tabular-nums text-white/55">
+                {i + 1}
+              </span>
+              <span>{s.label}</span>
+              <span className="ml-auto text-[11px] tabular-nums text-white/35">
+                {s.lat.toFixed(4)}, {s.lon.toFixed(4)}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
+
+function PriceBadge({
+  priceCents,
+  currency,
+}: {
+  priceCents?: number;
+  currency?: string;
+}) {
+  if (priceCents === undefined) return null;
+  if (priceCents <= 0) {
+    return (
+      <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-200">
+        Free during launch
+      </p>
+    );
+  }
+  const symbol = symbolFor(currency ?? "USD");
+  const display = (priceCents / 100).toFixed(2);
+  return (
+    <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/85">
+      One-time unlock · {symbol}
+      {display}
+    </p>
+  );
+}
+
+function symbolFor(code: string): string {
+  switch (code.toUpperCase()) {
+    case "USD":
+      return "$";
+    case "EUR":
+      return "€";
+    case "GBP":
+      return "£";
+    default:
+      return `${code} `;
+  }
 }

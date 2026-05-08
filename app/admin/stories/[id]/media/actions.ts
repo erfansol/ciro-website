@@ -2,9 +2,39 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
-import { deleteStoryMedia } from "@/lib/mediaAdmin";
+import { deleteStoryMedia, setStoryMediaPreview } from "@/lib/mediaAdmin";
 
 export type MediaActionResult = { ok: true } | { ok: false; error: string };
+
+export async function togglePreviewAction(
+  formData: FormData,
+): Promise<MediaActionResult> {
+  try {
+    const session = await requireAdmin();
+    const storyId = formData.get("storyId");
+    const filename = formData.get("filename");
+    const next = formData.get("next");
+    if (typeof storyId !== "string" || storyId.length === 0)
+      return { ok: false, error: "Missing storyId" };
+    if (typeof filename !== "string" || filename.length === 0)
+      return { ok: false, error: "Missing filename" };
+    const isPreview = next === "true";
+    await setStoryMediaPreview({
+      storyId,
+      filename,
+      isPreview,
+      actorUid: session.uid,
+    });
+    revalidatePath(`/admin/stories/${storyId}/media`);
+    revalidatePath(`/admin/stories/${storyId}`);
+    revalidatePath(`/stories/${storyId}`);
+    return { ok: true };
+  } catch (err) {
+    console.error("[media/actions] togglePreview failed:", err);
+    const msg = err instanceof Error ? err.message : "Toggle failed";
+    return { ok: false, error: msg };
+  }
+}
 
 export async function deleteMediaAction(
   formData: FormData,

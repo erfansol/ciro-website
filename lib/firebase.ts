@@ -54,6 +54,28 @@ function mapDoc(id: string, raw: Record<string, unknown>): FirestoreStory {
     ? raw.moods.filter((m): m is string => typeof m === "string")
     : [];
 
+  const route = Array.isArray(raw.routeCoords)
+    ? (raw.routeCoords as unknown[])
+        .filter(
+          (w): w is { lat: number; lon: number; label?: string } =>
+            typeof w === "object" &&
+            w !== null &&
+            typeof (w as { lat?: unknown }).lat === "number" &&
+            typeof (w as { lon?: unknown }).lon === "number",
+        )
+        .map((w) =>
+          typeof w.label === "string" && w.label.length > 0
+            ? { lat: w.lat, lon: w.lon, label: w.label }
+            : { lat: w.lat, lon: w.lon },
+        )
+    : undefined;
+
+  const previewMedia = Array.isArray(raw.previewMedia)
+    ? (raw.previewMedia as unknown[]).filter(
+        (s): s is string => typeof s === "string" && s.length > 0,
+      )
+    : undefined;
+
   return {
     id,
     title: typeof raw.title === "string" && raw.title ? raw.title : "Untitled story",
@@ -68,6 +90,10 @@ function mapDoc(id: string, raw: Record<string, unknown>): FirestoreStory {
     moods,
     hasAr,
     updatedAt: toIso(raw.updatedAt),
+    priceCents: typeof raw.priceCents === "number" ? raw.priceCents : undefined,
+    currency: typeof raw.currency === "string" ? raw.currency : undefined,
+    routeCoords: route,
+    previewMedia,
   };
 }
 
