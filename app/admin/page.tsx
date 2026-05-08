@@ -22,10 +22,10 @@ export default async function AdminOverviewPage() {
   return (
     <div className="px-8 py-8 lg:px-12">
       <header className="mb-10">
-        <p className="text-[11px] uppercase tracking-[0.32em] text-white/40">
+        <p className="text-[11px] uppercase tracking-[0.32em] text-admin-text-subtle">
           Welcome, {session.email}
         </p>
-        <h1 className="mt-2 font-display text-3xl tracking-tight text-white">
+        <h1 className="mt-2 font-display text-3xl tracking-tight text-admin-text">
           Overview
         </h1>
       </header>
@@ -38,23 +38,23 @@ export default async function AdminOverviewPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-white/45">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-admin-text-subtle">
           By category
         </h2>
         <ul className="mt-4 space-y-2">
           {perCategory.map((row) => (
             <li
               key={row.category.id}
-              className="flex items-center justify-between rounded-md border border-white/[0.06] bg-white/[0.02] px-4 py-3"
+              className="flex items-center justify-between rounded-md border border-admin-border bg-admin-surface px-4 py-3"
             >
               <span className="flex items-center gap-3">
                 <span
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ background: row.category.color }}
                 />
-                <span className="text-sm text-white/85">{row.category.label}</span>
+                <span className="text-sm text-admin-text">{row.category.label}</span>
               </span>
-              <span className="text-sm tabular-nums text-white/55">
+              <span className="text-sm tabular-nums text-admin-text-muted">
                 {row.count}
               </span>
             </li>
@@ -88,12 +88,12 @@ function Stat({
   accent?: string;
 }) {
   return (
-    <div className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+    <div className="rounded-md border border-admin-border bg-admin-surface p-5">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
         {label}
       </p>
       <p
-        className="mt-3 font-display text-3xl tracking-tight text-white"
+        className="mt-3 font-display text-3xl tracking-tight text-admin-text"
         style={accent ? { color: accent } : undefined}
       >
         {value}
@@ -114,11 +114,11 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group rounded-md border border-white/[0.06] bg-white/[0.02] p-5 transition-colors hover:border-white/15"
+      className="group rounded-md border border-admin-border bg-admin-surface p-5 transition-colors hover:border-admin-border-strong"
     >
-      <p className="font-display text-lg tracking-tight text-white">{title}</p>
-      <p className="mt-1 text-sm text-white/55">{subtitle}</p>
-      <p className="mt-3 text-xs uppercase tracking-[0.22em] text-white/40 transition-colors group-hover:text-white/70">
+      <p className="font-display text-lg tracking-tight text-admin-text">{title}</p>
+      <p className="mt-1 text-sm text-admin-text-muted">{subtitle}</p>
+      <p className="mt-3 text-xs uppercase tracking-[0.22em] text-admin-text-subtle transition-colors group-hover:text-admin-text-muted">
         Open ›
       </p>
     </Link>

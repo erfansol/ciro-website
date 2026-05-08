@@ -66,7 +66,7 @@ export function StoryEditorForm({
           <select
             name="category"
             defaultValue={story.category}
-            className="mt-1.5 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white focus:border-white/30 focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2.5 text-sm  text-admin-text focus:border-admin-border-strong focus:outline-none"
           >
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -100,11 +100,11 @@ export function StoryEditorForm({
             step="any"
           />
         </div>
-        <p className="text-[11px] text-white/40">
+        <p className="text-[11px] text-admin-text-subtle">
           Tip: open the World view to drag the pin instead of typing coordinates.
         </p>
 
-        <label className="flex items-center gap-3 rounded-md border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+        <label className="flex items-center gap-3 rounded-md border border-admin-border bg-admin-surface px-4 py-3">
           <input
             type="checkbox"
             name="published"
@@ -112,8 +112,8 @@ export function StoryEditorForm({
             className="h-4 w-4 accent-emerald-400"
           />
           <span>
-            <p className="text-sm text-white">Published on ciroai.com</p>
-            <p className="text-xs text-white/45">
+            <p className="text-sm text-admin-text">Published on ciroai.com</p>
+            <p className="text-xs text-admin-text-subtle">
               Only published stories appear on the public website. The Flutter
               app keeps showing the doc independently.
             </p>
@@ -124,7 +124,7 @@ export function StoryEditorForm({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-white px-5 py-2.5 text-sm font-medium text-[#06070d] transition-opacity hover:bg-white/90 disabled:opacity-50"
+            className="rounded-md bg-admin-accent px-5 py-2.5 text-sm font-medium text-admin-accent-fg transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {pending ? "Saving…" : "Save changes"}
           </button>
@@ -148,7 +148,7 @@ export function StoryEditorForm({
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-[11px] uppercase tracking-[0.22em] text-white/45">
+    <label className="block text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
       {children}
     </label>
   );
@@ -176,7 +176,7 @@ function Field({
   placeholder?: string;
 }) {
   const cls =
-    "mt-1.5 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-white/30 focus:outline-none";
+    "mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2.5 text-sm  text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none";
   return (
     <div>
       <Label>{label}</Label>

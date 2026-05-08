@@ -77,11 +77,11 @@ export function UserActions({
   return (
     <div className="space-y-6">
       {/* Suspend / Restore */}
-      <section className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-        <h2 className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+      <section className="rounded-md border border-admin-border bg-admin-surface p-5">
+        <h2 className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
           Sign-in access
         </h2>
-        <p className="mt-2 text-sm text-white/70">
+        <p className="mt-2 text-sm text-admin-text-muted">
           {disabled
             ? "This account is suspended — Firebase Auth refuses sign-in."
             : "Account is active. You can suspend to block sign-in immediately."}
@@ -89,7 +89,7 @@ export function UserActions({
 
         {!disabled && (
           <div className="mt-3">
-            <label className="block text-[10px] uppercase tracking-[0.22em] text-white/40">
+            <label className="block text-[10px] uppercase tracking-[0.22em] text-admin-text-subtle">
               Suspension reason (optional)
             </label>
             <input
@@ -97,7 +97,7 @@ export function UserActions({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="e.g. spam reports, policy violation"
-              className="mt-1.5 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/30 focus:outline-none"
+              className="mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2 text-sm  text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
             />
           </div>
         )}
@@ -123,7 +123,7 @@ export function UserActions({
             </button>
           )}
           {isSelf && (
-            <span className="text-[11px] text-white/45">
+            <span className="text-[11px] text-admin-text-subtle">
               You can&rsquo;t suspend your own account.
             </span>
           )}
@@ -131,13 +131,13 @@ export function UserActions({
       </section>
 
       {/* Role */}
-      <section className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-        <h2 className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+      <section className="rounded-md border border-admin-border bg-admin-surface p-5">
+        <h2 className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
           Admin role
         </h2>
-        <p className="mt-2 text-sm text-white/70">
-          Roles in <code className="text-white/55">roles/&#123;uid&#125;</code>{" "}
-          gate access to <code className="text-white/55">/admin</code>. None
+        <p className="mt-2 text-sm text-admin-text-muted">
+          Roles in <code className="text-admin-text-muted">roles/&#123;uid&#125;</code>{" "}
+          gate access to <code className="text-admin-text-muted">/admin</code>. None
           means no admin access at all.
         </p>
 
@@ -146,7 +146,7 @@ export function UserActions({
             value={draftRole}
             onChange={(e) => setDraftRole(e.target.value as Role | "")}
             disabled={pending || isSelf}
-            className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white focus:border-white/30 focus:outline-none disabled:opacity-50"
+            className="rounded-md border border-admin-border bg-admin-surface px-3 py-2 text-sm  text-admin-text focus:border-admin-border-strong focus:outline-none disabled:opacity-50"
           >
             <option value="">— none —</option>
             <option value="editor">editor</option>
@@ -156,12 +156,12 @@ export function UserActions({
           <button
             type="submit"
             disabled={pending || isSelf || draftRole === (role ?? "")}
-            className="rounded-md border border-white/10 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white disabled:opacity-50"
+            className="rounded-md border border-admin-border bg-admin-surface px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text disabled:opacity-50"
           >
             {pending ? "Saving…" : "Apply"}
           </button>
           {isSelf && (
-            <span className="text-[11px] text-white/45">
+            <span className="text-[11px] text-admin-text-subtle">
               Use another admin to change your own role.
             </span>
           )}

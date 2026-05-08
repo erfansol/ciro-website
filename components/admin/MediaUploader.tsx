@@ -82,24 +82,24 @@ export function MediaUploader({ storyId }: { storyId: string }) {
         className={
           "flex flex-col items-center justify-center rounded-md border-2 border-dashed p-8 text-center transition-colors " +
           (dragOver
-            ? "border-white/40 bg-white/[0.04]"
-            : "border-white/10 bg-white/[0.02]")
+            ? "border-admin-border-strong bg-admin-surface-2"
+            : "border-admin-border bg-admin-surface")
         }
       >
-        <p className="text-sm text-white/70">
+        <p className="text-sm text-admin-text-muted">
           {status === "uploading"
             ? `Uploading ${progress?.currentName ?? "…"} (${(progress?.completed ?? 0) + 1}/${progress?.total ?? 1})`
             : "Drop files here, or click to browse"}
         </p>
-        <p className="mt-1 text-[11px] text-white/40">
+        <p className="mt-1 text-[11px] text-admin-text-subtle">
           Max 100 MB per file. Stored at{" "}
-          <code className="text-white/55">stories/{storyId}/&lt;filename&gt;</code>.
+          <code className="text-admin-text-muted">stories/{storyId}/&lt;filename&gt;</code>.
         </p>
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={status === "uploading"}
-          className="mt-4 rounded-md border border-white/15 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/85 transition-colors hover:border-white/30 disabled:opacity-50"
+          className="mt-4 rounded-md border border-admin-border-strong bg-admin-surface-2 px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text transition-colors hover:border-admin-border-strong disabled:opacity-50"
         >
           {status === "uploading" ? "Uploading…" : "Choose files"}
         </button>

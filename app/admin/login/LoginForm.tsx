@@ -55,7 +55,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-[11px] uppercase tracking-[0.22em] text-white/45">
+        <label className="block text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
           Email
         </label>
         <input
@@ -64,12 +64,12 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="mt-1.5 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-white/30 focus:outline-none"
+          className="mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2.5 text-sm  text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
           placeholder="you@ciroai.com"
         />
       </div>
       <div>
-        <label className="block text-[11px] uppercase tracking-[0.22em] text-white/45">
+        <label className="block text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
           Password
         </label>
         <input
@@ -78,7 +78,7 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          className="mt-1.5 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white focus:border-white/30 focus:outline-none"
+          className="mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2.5 text-sm  text-admin-text focus:border-admin-border-strong focus:outline-none"
         />
       </div>
       {error && (
@@ -89,7 +89,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending || !email || !password}
-        className="w-full rounded-md bg-white px-4 py-2.5 text-sm font-medium text-[#06070d] transition-opacity hover:bg-white/90 disabled:opacity-50"
+        className="w-full rounded-md bg-admin-accent px-4 py-2.5 text-sm font-medium text-admin-accent-fg transition-opacity hover:opacity-90 disabled:opacity-50"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

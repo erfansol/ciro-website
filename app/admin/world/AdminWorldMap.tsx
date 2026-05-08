@@ -93,18 +93,18 @@ export function AdminWorldMap({
   if (!apiKey) {
     return (
       <div className="flex min-h-screen items-center justify-center px-8">
-        <div className="max-w-md rounded-md border border-white/10 bg-white/[0.02] p-8">
-          <p className="text-[11px] uppercase tracking-[0.32em] text-white/40">
+        <div className="max-w-md rounded-md border border-admin-border bg-admin-surface p-8">
+          <p className="text-[11px] uppercase tracking-[0.32em] text-admin-text-subtle">
             Google Maps not configured
           </p>
-          <h2 className="mt-3 font-display text-2xl tracking-tight text-white">
+          <h2 className="mt-3 font-display text-2xl tracking-tight text-admin-text">
             Add a web Maps key
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-white/60">
-            Set <code className="text-white/85">NEXT_PUBLIC_GOOGLE_MAPS_KEY</code>{" "}
+          <p className="mt-3 text-sm leading-relaxed text-admin-text-muted">
+            Set <code className="text-admin-text">NEXT_PUBLIC_GOOGLE_MAPS_KEY</code>{" "}
             on Hostinger to a Google Cloud key with the <em>Maps JavaScript API</em>
             {" "}enabled and HTTP-referrer restricted to{" "}
-            <code className="text-white/85">https://ciroai.com/*</code>. The iOS
+            <code className="text-admin-text">https://ciroai.com/*</code>. The iOS
             and Android keys already in the app cannot be used here because they
             are restricted to mobile bundle IDs.
           </p>
@@ -126,7 +126,7 @@ export function AdminWorldMap({
 
   if (!isLoaded) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-xs uppercase tracking-[0.32em] text-white/40">
+      <div className="flex min-h-screen items-center justify-center text-xs uppercase tracking-[0.32em] text-admin-text-subtle">
         Loading map…
       </div>
     );
@@ -167,8 +167,8 @@ export function AdminWorldMap({
       </GoogleMap>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-6">
-        <div className="pointer-events-auto mx-auto flex max-w-7xl items-center justify-between rounded-md border border-white/10 bg-[#06070d]/85 px-4 py-2.5 text-[12px] text-white/70 backdrop-blur">
-          <span className="uppercase tracking-[0.28em] text-white/45">
+        <div className="pointer-events-auto mx-auto flex max-w-7xl items-center justify-between rounded-md border border-admin-border bg-admin-bg/85 px-4 py-2.5 text-[12px] text-admin-text-muted backdrop-blur">
+          <span className="uppercase tracking-[0.28em] text-admin-text-subtle">
             World · {stories.length} pinned
           </span>
           <div className="flex items-center gap-4">
@@ -179,15 +179,15 @@ export function AdminWorldMap({
             {error && <span className="text-red-300">{error}</span>}
             <Link
               href="/admin/stories"
-              className="text-white/60 hover:text-white"
+              className="text-admin-text-muted hover:text-admin-text"
             >
               Open table view ›
             </Link>
           </div>
         </div>
 
-        <div className="pointer-events-auto mx-auto mt-3 flex max-w-7xl flex-wrap items-center gap-3 rounded-md border border-white/10 bg-[#06070d]/85 px-4 py-2.5 text-[11px] text-white/55 backdrop-blur">
-          <span className="uppercase tracking-[0.22em] text-white/40">
+        <div className="pointer-events-auto mx-auto mt-3 flex max-w-7xl flex-wrap items-center gap-3 rounded-md border border-admin-border bg-admin-bg/85 px-4 py-2.5 text-[11px] text-admin-text-muted backdrop-blur">
+          <span className="uppercase tracking-[0.22em] text-admin-text-subtle">
             Legend
           </span>
           {categories.map((c) => (
@@ -203,8 +203,8 @@ export function AdminWorldMap({
       </div>
 
       {active && (
-        <aside className="absolute right-0 top-0 z-20 flex h-screen w-full max-w-sm flex-col border-l border-white/10 bg-[#06070d]/95 backdrop-blur">
-          <div className="flex items-start justify-between gap-3 border-b border-white/[0.06] px-6 py-5">
+        <aside className="absolute right-0 top-0 z-20 flex h-screen w-full max-w-sm flex-col border-l border-admin-border bg-admin-bg/95 backdrop-blur">
+          <div className="flex items-start justify-between gap-3 border-b border-admin-border px-6 py-5">
             <div>
               <p
                 className="text-[11px] font-semibold uppercase tracking-[0.28em]"
@@ -212,21 +212,21 @@ export function AdminWorldMap({
               >
                 {categories.find((c) => c.id === active.category)?.label}
               </p>
-              <h3 className="mt-2 font-display text-xl tracking-tight text-white">
+              <h3 className="mt-2 font-display text-xl tracking-tight text-admin-text">
                 {active.title}
               </h3>
-              <p className="mt-1 text-xs text-white/40">{active.id}</p>
+              <p className="mt-1 text-xs text-admin-text-subtle">{active.id}</p>
             </div>
             <button
               type="button"
               onClick={() => setActiveId(null)}
-              className="text-white/45 transition-colors hover:text-white"
+              className="text-admin-text-subtle transition-colors hover:text-admin-text"
               aria-label="Close"
             >
               ✕
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-6 py-5 text-sm text-white/70">
+          <div className="flex-1 overflow-y-auto px-6 py-5 text-sm text-admin-text-muted">
             <p>{active.description}</p>
             <dl className="mt-6 space-y-2 text-xs">
               <Row k="City" v={active.city} />
@@ -245,14 +245,14 @@ export function AdminWorldMap({
               />
             </dl>
           </div>
-          <div className="border-t border-white/[0.06] px-6 py-4">
+          <div className="border-t border-admin-border px-6 py-4">
             <Link
               href={`/admin/stories/${active.id}`}
-              className="block w-full rounded-md bg-white px-4 py-2.5 text-center text-sm font-medium text-[#06070d] transition-opacity hover:bg-white/90"
+              className="block w-full rounded-md bg-admin-accent px-4 py-2.5 text-center text-sm font-medium text-admin-accent-fg transition-opacity hover:opacity-90"
             >
               Open in editor
             </Link>
-            <p className="mt-3 text-[11px] text-white/40">
+            <p className="mt-3 text-[11px] text-admin-text-subtle">
               Drag the pin on the map to reposition. Saves immediately.
             </p>
           </div>
@@ -264,11 +264,11 @@ export function AdminWorldMap({
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex items-baseline justify-between border-b border-white/[0.04] py-1.5">
-      <dt className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+    <div className="flex items-baseline justify-between border-b border-admin-border py-1.5">
+      <dt className="text-[10px] uppercase tracking-[0.22em] text-admin-text-subtle">
         {k}
       </dt>
-      <dd className="tabular-nums text-white/85">{v}</dd>
+      <dd className="tabular-nums text-admin-text">{v}</dd>
     </div>
   );
 }

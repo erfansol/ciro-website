@@ -64,7 +64,7 @@ export function CopyUrlButton({ url }: { url: string }) {
           window.prompt("Copy this URL:", url);
         }
       }}
-      className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+      className="rounded-md border border-admin-border bg-admin-surface px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
     >
       {copied ? "Copied" : "Copy URL"}
     </button>

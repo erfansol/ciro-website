@@ -23,20 +23,20 @@ export default async function StoryEditPage({
     <div className="px-8 py-8 lg:px-12">
       <header className="mb-8 flex items-start justify-between gap-6">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.32em] text-white/40">
-            <Link href="/admin/stories" className="hover:text-white/70">
+          <p className="text-[11px] uppercase tracking-[0.32em] text-admin-text-subtle">
+            <Link href="/admin/stories" className="hover:text-admin-text-muted">
               ← Stories
             </Link>
           </p>
-          <h1 className="mt-2 font-display text-3xl tracking-tight text-white">
+          <h1 className="mt-2 font-display text-3xl tracking-tight text-admin-text">
             {story.title}
           </h1>
-          <p className="mt-1 truncate text-xs text-white/40">{story.id}</p>
+          <p className="mt-1 truncate text-xs text-admin-text-subtle">{story.id}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href={`/admin/stories/${story.id}/media`}
-            className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            className="rounded-md border border-admin-border-strong bg-admin-surface px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
           >
             Manage media
           </Link>
@@ -44,7 +44,7 @@ export default async function StoryEditPage({
             href={`/stories/${story.id}`}
             target="_blank"
             rel="noreferrer"
-            className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            className="rounded-md border border-admin-border-strong bg-admin-surface px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
           >
             Open public page ↗
           </Link>

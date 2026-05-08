@@ -30,17 +30,17 @@ export default async function ModerationPage({
   return (
     <div className="px-8 py-8 lg:px-12">
       <header className="mb-6">
-        <p className="text-[11px] uppercase tracking-[0.32em] text-white/40">
+        <p className="text-[11px] uppercase tracking-[0.32em] text-admin-text-subtle">
           Trust &amp; safety
         </p>
-        <h1 className="mt-2 font-display text-3xl tracking-tight text-white">
+        <h1 className="mt-2 font-display text-3xl tracking-tight text-admin-text">
           Moderation
         </h1>
-        <p className="mt-2 max-w-prose text-sm leading-relaxed text-white/55">
+        <p className="mt-2 max-w-prose text-sm leading-relaxed text-admin-text-muted">
           User-submitted reports against stories. Reports are written by the
-          Flutter app to <code className="text-white/70">story_reports/</code>;
+          Flutter app to <code className="text-admin-text-muted">story_reports/</code>;
           resolutions are recorded in
-          <code className="text-white/70"> auditLog/</code>.
+          <code className="text-admin-text-muted"> auditLog/</code>.
         </p>
       </header>
 
@@ -59,26 +59,26 @@ export default async function ModerationPage({
               href={`/admin/moderation?status=${t}`}
               className={
                 active
-                  ? "rounded-md border border-white/20 bg-white/[0.06] px-3 py-1.5 text-white"
-                  : "rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-white/55 transition-colors hover:border-white/25 hover:text-white/85"
+                  ? "rounded-md border border-admin-border-strong bg-admin-surface-2 px-3 py-1.5 text-admin-text"
+                  : "rounded-md border border-admin-border bg-admin-surface px-3 py-1.5 text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
               }
             >
-              {t} <span className="ml-1 text-white/45">{count}</span>
+              {t} <span className="ml-1 text-admin-text-subtle">{count}</span>
             </Link>
           );
         })}
       </nav>
 
       {reports.length === 0 ? (
-        <p className="rounded-md border border-white/[0.06] bg-white/[0.02] p-8 text-sm text-white/55">
+        <p className="rounded-md border border-admin-border bg-admin-surface p-8 text-sm text-admin-text-muted">
           {status === "open"
             ? "No open reports. Nothing to triage right now."
             : `No ${status} reports.`}
         </p>
       ) : (
-        <div className="overflow-hidden rounded-md border border-white/[0.06]">
+        <div className="overflow-hidden rounded-md border border-admin-border">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white/[0.03] text-[10px] uppercase tracking-[0.2em] text-white/45">
+            <thead className="bg-admin-surface text-[10px] uppercase tracking-[0.2em] text-admin-text-subtle">
               <tr>
                 <th className="px-4 py-3 font-medium">Reported</th>
                 <th className="px-4 py-3 font-medium">Reason</th>
@@ -87,27 +87,27 @@ export default async function ModerationPage({
                 <th className="px-4 py-3 font-medium" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-admin-border">
               {reports.map((r) => (
-                <tr key={r.id} className="bg-[#0a0d16]/40">
+                <tr key={r.id} className="bg-admin-surface-strong/40">
                   <td className="px-4 py-3 align-top">
                     {r.storyId ? (
                       <Link
                         href={`/admin/stories/${r.storyId}`}
-                        className="font-display text-[15px] tracking-tight text-white hover:underline"
+                        className="font-display text-[15px] tracking-tight  text-admin-text hover:underline"
                       >
                         {r.storyTitle ?? "(untitled)"}
                       </Link>
                     ) : (
-                      <span className="font-display text-[15px] tracking-tight text-white">
+                      <span className="font-display text-[15px] tracking-tight text-admin-text">
                         {r.storyTitle ?? "(untitled)"}
                       </span>
                     )}
-                    <p className="mt-0.5 truncate text-xs text-white/40">
+                    <p className="mt-0.5 truncate text-xs text-admin-text-subtle">
                       {r.storyCity ?? "—"} · {r.storyId ?? "no story id"}
                     </p>
                     {r.notes && (
-                      <p className="mt-1 max-w-md text-xs text-white/65">
+                      <p className="mt-1 max-w-md text-xs text-admin-text-muted">
                         &ldquo;{r.notes}&rdquo;
                       </p>
                     )}
@@ -120,24 +120,24 @@ export default async function ModerationPage({
                   <td className="px-4 py-3 align-top">
                     <Link
                       href={`/admin/users/${r.reporterUid}`}
-                      className="text-white/85 hover:underline"
+                      className="text-admin-text hover:underline"
                     >
                       {r.reporterEmail ?? r.reporterUid}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 align-top text-xs text-white/55">
+                  <td className="px-4 py-3 align-top text-xs text-admin-text-muted">
                     {formatRelative(r.createdAt)}
                   </td>
                   <td className="px-4 py-3 align-top">
                     {status === "open" ? (
                       <ReportRowActions id={r.id} />
                     ) : (
-                      <div className="text-[11px] text-white/45">
+                      <div className="text-[11px] text-admin-text-subtle">
                         <span className="block">
                           {r.status} {r.resolvedAt && `· ${formatRelative(r.resolvedAt)}`}
                         </span>
                         {r.resolutionNotes && (
-                          <span className="block text-white/55">
+                          <span className="block text-admin-text-muted">
                             &ldquo;{r.resolutionNotes}&rdquo;
                           </span>
                         )}

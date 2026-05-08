@@ -19,6 +19,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Admin tokens — switch automatically when [data-admin-theme]
+        // flips between dark (default) and light.
+        admin: {
+          bg: "var(--admin-bg)",
+          surface: "var(--admin-surface)",
+          "surface-2": "var(--admin-surface-2)",
+          "surface-strong": "var(--admin-surface-strong)",
+          border: "var(--admin-border)",
+          "border-strong": "var(--admin-border-strong)",
+          text: "var(--admin-text)",
+          "text-muted": "var(--admin-text-muted)",
+          "text-subtle": "var(--admin-text-subtle)",
+          "text-faint": "var(--admin-text-faint)",
+          accent: "var(--admin-accent)",
+          "accent-fg": "var(--admin-accent-fg)",
+        },
         ink: {
           950: "#06070d",
           900: "#0a0d16",

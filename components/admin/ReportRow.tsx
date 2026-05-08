@@ -44,7 +44,7 @@ export function ReportRowActions({ id }: { id: string }) {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional resolution note…"
-          className="w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/30 focus:outline-none"
+          className="w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2 text-xs  text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
           autoFocus
         />
         <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export function ReportRowActions({ id }: { id: string }) {
             type="button"
             onClick={() => submit(showNotes)}
             disabled={pending}
-            className="rounded-md border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/85 transition-colors hover:border-white/30 disabled:opacity-50"
+            className="rounded-md border border-admin-border-strong bg-admin-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-admin-text transition-colors hover:border-admin-border-strong disabled:opacity-50"
           >
             {pending
               ? "Saving…"
@@ -67,7 +67,7 @@ export function ReportRowActions({ id }: { id: string }) {
               setNotes("");
               setError(null);
             }}
-            className="text-[10px] uppercase tracking-[0.22em] text-white/45 hover:text-white/85"
+            className="text-[10px] uppercase tracking-[0.22em] text-admin-text-subtle hover:text-admin-text"
           >
             Cancel
           </button>
@@ -93,7 +93,7 @@ export function ReportRowActions({ id }: { id: string }) {
         type="button"
         onClick={() => setShowNotes("dismiss")}
         disabled={pending}
-        className="rounded-md border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 disabled:opacity-50"
+        className="rounded-md border border-admin-border-strong bg-admin-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong disabled:opacity-50"
       >
         Dismiss
       </button>

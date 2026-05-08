@@ -30,16 +30,16 @@ export default async function AdminUsersPage({
     <div className="px-8 py-8 lg:px-12">
       <header className="mb-6 flex items-end justify-between gap-6">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.32em] text-white/40">
+          <p className="text-[11px] uppercase tracking-[0.32em] text-admin-text-subtle">
             Accounts
           </p>
-          <h1 className="mt-2 font-display text-3xl tracking-tight text-white">
+          <h1 className="mt-2 font-display text-3xl tracking-tight text-admin-text">
             Users
           </h1>
-          <p className="mt-2 max-w-prose text-sm leading-relaxed text-white/55">
-            Firebase Auth users in <code className="text-white/70">ciro-app-41f02</code>.
-            Suspend disables their sign-in via the Auth <code className="text-white/70">disabled</code> flag;
-            roles live in <code className="text-white/70">roles/&#123;uid&#125;</code>.
+          <p className="mt-2 max-w-prose text-sm leading-relaxed text-admin-text-muted">
+            Firebase Auth users in <code className="text-admin-text-muted">ciro-app-41f02</code>.
+            Suspend disables their sign-in via the Auth <code className="text-admin-text-muted">disabled</code> flag;
+            roles live in <code className="text-admin-text-muted">roles/&#123;uid&#125;</code>.
           </p>
         </div>
         <form action="/admin/users" method="get" className="flex items-center gap-2">
@@ -48,11 +48,11 @@ export default async function AdminUsersPage({
             name="q"
             defaultValue={search}
             placeholder="email@example.com"
-            className="w-64 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/30 focus:outline-none"
+            className="w-64 rounded-md border border-admin-border bg-admin-surface px-3 py-2 text-sm  text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-md border border-white/10 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            className="rounded-md border border-admin-border bg-admin-surface px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
           >
             Find
           </button>
@@ -65,9 +65,9 @@ export default async function AdminUsersPage({
         </p>
       )}
 
-      <div className="overflow-hidden rounded-md border border-white/[0.06]">
+      <div className="overflow-hidden rounded-md border border-admin-border">
         <table className="w-full text-left text-sm">
-          <thead className="bg-white/[0.03] text-[10px] uppercase tracking-[0.2em] text-white/45">
+          <thead className="bg-admin-surface text-[10px] uppercase tracking-[0.2em] text-admin-text-subtle">
             <tr>
               <th className="px-4 py-3 font-medium">User</th>
               <th className="px-4 py-3 font-medium">Role</th>
@@ -77,20 +77,20 @@ export default async function AdminUsersPage({
               <th className="px-4 py-3 font-medium" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.04]">
+          <tbody className="divide-y divide-admin-border">
             {users.map((u) => (
               <tr
                 key={u.uid}
-                className="bg-[#0a0d16]/40 transition-colors hover:bg-white/[0.02]"
+                className="bg-admin-surface-strong/40 transition-colors hover:bg-admin-surface"
               >
                 <td className="px-4 py-3">
                   <Link
                     href={`/admin/users/${u.uid}`}
-                    className="font-display text-[15px] tracking-tight text-white hover:underline"
+                    className="font-display text-[15px] tracking-tight  text-admin-text hover:underline"
                   >
                     {u.email ?? "(no email)"}
                   </Link>
-                  <p className="mt-0.5 truncate text-xs text-white/40">{u.uid}</p>
+                  <p className="mt-0.5 truncate text-xs text-admin-text-subtle">{u.uid}</p>
                 </td>
                 <td className="px-4 py-3">
                   {u.role ? (
@@ -98,7 +98,7 @@ export default async function AdminUsersPage({
                       {u.role}
                     </span>
                   ) : (
-                    <span className="text-xs text-white/35">—</span>
+                    <span className="text-xs text-admin-text-faint">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3">
@@ -112,16 +112,16 @@ export default async function AdminUsersPage({
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-xs text-white/55">
+                <td className="px-4 py-3 text-xs text-admin-text-muted">
                   {formatRelative(u.lastSignInAt)}
                 </td>
-                <td className="px-4 py-3 text-xs text-white/55">
+                <td className="px-4 py-3 text-xs text-admin-text-muted">
                   {formatDate(u.createdAt)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <Link
                     href={`/admin/users/${u.uid}`}
-                    className="text-xs uppercase tracking-[0.22em] text-white/55 hover:text-white"
+                    className="text-xs uppercase tracking-[0.22em] text-admin-text-muted hover:text-admin-text"
                   >
                     Open
                   </Link>
@@ -130,7 +130,7 @@ export default async function AdminUsersPage({
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-white/45">
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-admin-text-subtle">
                   No users in this page.
                 </td>
               </tr>
@@ -139,17 +139,17 @@ export default async function AdminUsersPage({
         </table>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-white/45">
+      <div className="mt-4 flex items-center justify-between text-xs text-admin-text-subtle">
         <span>Showing up to {PAGE_SIZE} per page · cursor-paginated</span>
         {nextPageToken ? (
           <Link
             href={`/admin/users?pageToken=${encodeURIComponent(nextPageToken)}`}
-            className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-1.5 uppercase tracking-[0.22em] hover:border-white/30 hover:text-white"
+            className="rounded-md border border-admin-border bg-admin-surface px-3 py-1.5 uppercase tracking-[0.22em] hover:border-admin-border-strong hover:text-admin-text"
           >
             Next page →
           </Link>
         ) : (
-          <span className="text-white/30">End of list</span>
+          <span className="text-admin-text-faint">End of list</span>
         )}
       </div>
     </div>

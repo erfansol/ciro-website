@@ -33,14 +33,14 @@ export default async function StoryMediaPage({
         <div>
           <Link
             href={`/admin/stories/${id}`}
-            className="text-[11px] uppercase tracking-[0.22em] text-white/45 hover:text-white"
+            className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle hover:text-admin-text"
           >
             ← Back to story
           </Link>
-          <h1 className="mt-2 font-display text-2xl tracking-tight text-white">
+          <h1 className="mt-2 font-display text-2xl tracking-tight text-admin-text">
             {story.title}
           </h1>
-          <p className="mt-1 text-xs text-white/45">
+          <p className="mt-1 text-xs text-admin-text-subtle">
             stories/{id}/ · {files.length} files · {formatBytes(totalBytes)}
           </p>
         </div>
@@ -51,7 +51,7 @@ export default async function StoryMediaPage({
       </div>
 
       {files.length === 0 ? (
-        <p className="rounded-md border border-white/[0.06] bg-white/[0.02] p-8 text-sm text-white/55">
+        <p className="rounded-md border border-admin-border bg-admin-surface p-8 text-sm text-admin-text-muted">
           No files yet. Drag files into the area above, or click &ldquo;Choose
           files&rdquo;.
         </p>
@@ -60,7 +60,7 @@ export default async function StoryMediaPage({
           {files.map((f) => (
             <li
               key={f.fullPath}
-              className="overflow-hidden rounded-md border border-white/[0.06] bg-white/[0.02]"
+              className="overflow-hidden rounded-md border border-admin-border bg-admin-surface"
             >
               <div className="flex aspect-video items-center justify-center bg-black/40">
                 {isImageContentType(f.contentType) ? (
@@ -73,7 +73,7 @@ export default async function StoryMediaPage({
                     className="h-full w-full object-contain"
                   />
                 ) : (
-                  <div className="flex flex-col items-center gap-1 text-white/55">
+                  <div className="flex flex-col items-center gap-1 text-admin-text-muted">
                     <span className="font-mono text-xs uppercase tracking-[0.22em]">
                       {extLabel(f.name, f.contentType)}
                     </span>
@@ -81,13 +81,13 @@ export default async function StoryMediaPage({
                 )}
               </div>
               <div className="space-y-2 p-4">
-                <p className="truncate font-mono text-[12px] text-white/85" title={f.name}>
+                <p className="truncate font-mono text-[12px] text-admin-text" title={f.name}>
                   {f.name}
                 </p>
-                <p className="text-[11px] text-white/45">
+                <p className="text-[11px] text-admin-text-subtle">
                   {formatBytes(f.size)} · {f.contentType}
                 </p>
-                <p className="text-[11px] text-white/35">
+                <p className="text-[11px] text-admin-text-faint">
                   {formatRelative(f.updatedAt)}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -95,7 +95,7 @@ export default async function StoryMediaPage({
                     href={f.signedReadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-white/30 hover:text-white"
+                    className="rounded-md border border-admin-border bg-admin-surface px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
                   >
                     Open
                   </a>
@@ -108,7 +108,7 @@ export default async function StoryMediaPage({
         </ul>
       )}
 
-      <p className="mt-8 text-[11px] text-white/35">
+      <p className="mt-8 text-[11px] text-admin-text-faint">
         Preview URLs are signed for 24h. They expire — copy the URL only for
         ad-hoc sharing, not for hard-coding into Flutter or stories docs.
       </p>

@@ -23,7 +23,7 @@ export default async function AdminUserDetailPage({
       <div className="mb-6">
         <Link
           href="/admin/users"
-          className="text-[11px] uppercase tracking-[0.22em] text-white/45 hover:text-white"
+          className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle hover:text-admin-text"
         >
           ← All users
         </Link>
@@ -33,11 +33,11 @@ export default async function AdminUserDetailPage({
       <header className="mb-8 flex items-start gap-5">
         <Avatar email={user.email} photoURL={user.photoURL} />
         <div className="flex-1">
-          <h1 className="font-display text-2xl tracking-tight text-white">
+          <h1 className="font-display text-2xl tracking-tight text-admin-text">
             {user.displayName || user.email || "(no name)"}
           </h1>
-          <p className="mt-1 text-sm text-white/70">{user.email ?? "(no email)"}</p>
-          <p className="mt-1 truncate font-mono text-[11px] text-white/35">{user.uid}</p>
+          <p className="mt-1 text-sm text-admin-text-muted">{user.email ?? "(no email)"}</p>
+          <p className="mt-1 truncate font-mono text-[11px] text-admin-text-faint">{user.uid}</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {user.role && (
               <span className="rounded-full border border-sky-400/30 bg-sky-400/[0.06] px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-sky-200">
@@ -59,7 +59,7 @@ export default async function AdminUserDetailPage({
               </span>
             )}
             {isSelf && (
-              <span className="rounded-full border border-white/15 bg-white/[0.04] px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-white/55">
+              <span className="rounded-full border border-admin-border-strong bg-admin-surface-2 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-admin-text-muted">
                 You
               </span>
             )}
@@ -70,8 +70,8 @@ export default async function AdminUserDetailPage({
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Left: stats + activity */}
         <div className="space-y-6">
-          <section className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-            <h2 className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+          <section className="rounded-md border border-admin-border bg-admin-surface p-5">
+            <h2 className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
               Account
             </h2>
             <dl className="mt-4 grid grid-cols-2 gap-y-3 text-sm">
@@ -80,8 +80,8 @@ export default async function AdminUserDetailPage({
             </dl>
           </section>
 
-          <section className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-            <h2 className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+          <section className="rounded-md border border-admin-border bg-admin-surface p-5">
+            <h2 className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
               In-app stats
             </h2>
             {user.stats ? (
@@ -101,26 +101,26 @@ export default async function AdminUserDetailPage({
                 </Field>
               </dl>
             ) : (
-              <p className="mt-4 text-sm text-white/55">
-                This user has no <code className="text-white/70">users/{user.uid}/stats/summary</code> doc yet.
+              <p className="mt-4 text-sm text-admin-text-muted">
+                This user has no <code className="text-admin-text-muted">users/{user.uid}/stats/summary</code> doc yet.
                 Stats appear once they walk a step or complete a story in the app.
               </p>
             )}
           </section>
 
-          <section className="rounded-md border border-white/[0.06] bg-white/[0.02] p-5">
-            <h2 className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+          <section className="rounded-md border border-admin-border bg-admin-surface p-5">
+            <h2 className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
               Activity timeline
             </h2>
-            <p className="mt-2 text-xs text-white/45">
+            <p className="mt-2 text-xs text-admin-text-subtle">
               Story views and reports from the Flutter app, interleaved with
               admin actions affecting this account. Up to 50 most-recent entries.
             </p>
             {user.recentActivity.length === 0 ? (
-              <p className="mt-4 text-sm text-white/45">
+              <p className="mt-4 text-sm text-admin-text-subtle">
                 No activity recorded yet. If the Flutter app is writing events
                 but nothing appears here, the composite indexes in
-                <code className="text-white/65"> firestore.indexes.json </code>
+                <code className="text-admin-text-muted"> firestore.indexes.json </code>
                 may need to be deployed.
               </p>
             ) : (
@@ -134,7 +134,7 @@ export default async function AdminUserDetailPage({
                     <div className="min-w-0 flex-1">
                       <ActivityRow entry={e} />
                     </div>
-                    <span className="shrink-0 text-[11px] text-white/45">
+                    <span className="shrink-0 text-[11px] text-admin-text-subtle">
                       {formatRelative(e.ts)}
                     </span>
                   </li>
@@ -161,8 +161,8 @@ function ActivityRow({ entry }: { entry: ActivityEntry }) {
   if (entry.kind === "view") {
     return (
       <div>
-        <p className="text-white/85">
-          <span className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+        <p className="text-admin-text">
+          <span className="text-[10px] uppercase tracking-[0.22em] text-admin-text-subtle">
             {entry.event ?? "viewed"}
           </span>{" "}
           <Link
@@ -171,13 +171,13 @@ function ActivityRow({ entry }: { entry: ActivityEntry }) {
                 ? `/admin/stories/${entry.storyId}`
                 : "#"
             }
-            className="text-white hover:underline"
+            className="text-admin-text hover:underline"
           >
             {entry.storyTitle ?? "(unknown story)"}
           </Link>
         </p>
         {entry.storyCity && (
-          <p className="mt-0.5 text-[11px] text-white/40">{entry.storyCity}</p>
+          <p className="mt-0.5 text-[11px] text-admin-text-subtle">{entry.storyCity}</p>
         )}
       </div>
     );
@@ -185,22 +185,22 @@ function ActivityRow({ entry }: { entry: ActivityEntry }) {
   if (entry.kind === "report") {
     return (
       <div>
-        <p className="text-white/85">
+        <p className="text-admin-text">
           <span className="text-[10px] uppercase tracking-[0.22em] text-amber-200/80">
             report · {entry.reason ?? "—"}
           </span>{" "}
           <Link
             href={entry.storyId ? `/admin/stories/${entry.storyId}` : "#"}
-            className="text-white hover:underline"
+            className="text-admin-text hover:underline"
           >
             {entry.storyTitle ?? "(unknown story)"}
           </Link>
         </p>
         {entry.notes && (
-          <p className="mt-0.5 text-xs text-white/55">&ldquo;{entry.notes}&rdquo;</p>
+          <p className="mt-0.5 text-xs text-admin-text-muted">&ldquo;{entry.notes}&rdquo;</p>
         )}
         {entry.status && entry.status !== "open" && (
-          <p className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-white/35">
+          <p className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-admin-text-faint">
             {entry.status}
           </p>
         )}
@@ -210,14 +210,14 @@ function ActivityRow({ entry }: { entry: ActivityEntry }) {
   // audit
   return (
     <div>
-      <span className="font-mono text-[11px] text-white/75">
+      <span className="font-mono text-[11px] text-admin-text">
         {entry.action ?? "(unknown)"}
       </span>
       {entry.reason && (
-        <p className="mt-0.5 text-xs text-white/55">{entry.reason}</p>
+        <p className="mt-0.5 text-xs text-admin-text-muted">{entry.reason}</p>
       )}
       {entry.actorUid && (
-        <p className="mt-0.5 truncate text-[11px] text-white/35">
+        <p className="mt-0.5 truncate text-[11px] text-admin-text-faint">
           by {entry.actorUid}
         </p>
       )}
@@ -245,10 +245,10 @@ function Field({
 }) {
   return (
     <>
-      <dt className="text-[11px] uppercase tracking-[0.22em] text-white/40">
+      <dt className="text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
         {label}
       </dt>
-      <dd className="text-white/85">{children}</dd>
+      <dd className="text-admin-text">{children}</dd>
     </>
   );
 }
@@ -268,13 +268,13 @@ function Avatar({
       <img
         src={photoURL}
         alt=""
-        className="h-14 w-14 shrink-0 rounded-md border border-white/10 object-cover"
+        className="h-14 w-14 shrink-0 rounded-md border border-admin-border object-cover"
       />
     );
   }
   const initial = (email ?? "?").trim().charAt(0).toUpperCase();
   return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] font-display text-xl text-white/70">
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-admin-border bg-admin-surface-2 font-display text-xl text-admin-text-muted">
       {initial}
     </div>
   );

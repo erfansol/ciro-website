@@ -49,3 +49,40 @@ body {
 .text-balance {
   text-wrap: balance;
 }
+
+/* =============================================================================
+ * Admin theme tokens — referenced via `bg-admin-bg` / `text-admin-text` etc.
+ * defined in tailwind.config.ts. Default is dark to preserve the existing
+ * /admin look. Light mode is opt-in by setting `data-admin-theme="light"`
+ * on <html> via the ThemeToggle.
+ * ============================================================================= */
+[data-admin-theme] {
+  /* Dark — original aesthetic. */
+  --admin-bg: #06070d;
+  --admin-surface: rgba(255, 255, 255, 0.02);
+  --admin-surface-2: rgba(255, 255, 255, 0.04);
+  --admin-surface-strong: #0a0d16;
+  --admin-border: rgba(255, 255, 255, 0.06);
+  --admin-border-strong: rgba(255, 255, 255, 0.15);
+  --admin-text: #ffffff;
+  --admin-text-muted: rgba(255, 255, 255, 0.55);
+  --admin-text-subtle: rgba(255, 255, 255, 0.4);
+  --admin-text-faint: rgba(255, 255, 255, 0.25);
+  --admin-accent: #ffffff;
+  --admin-accent-fg: #06070d;
+}
+
+[data-admin-theme="light"] {
+  --admin-bg: #f8fafc;
+  --admin-surface: rgba(15, 23, 42, 0.03);
+  --admin-surface-2: rgba(15, 23, 42, 0.06);
+  --admin-surface-strong: #ffffff;
+  --admin-border: rgba(15, 23, 42, 0.08);
+  --admin-border-strong: rgba(15, 23, 42, 0.18);
+  --admin-text: #0f172a;
+  --admin-text-muted: rgba(15, 23, 42, 0.65);
+  --admin-text-subtle: rgba(15, 23, 42, 0.5);
+  --admin-text-faint: rgba(15, 23, 42, 0.3);
+  --admin-accent: #0f172a;
+  --admin-accent-fg: #ffffff;
+}
