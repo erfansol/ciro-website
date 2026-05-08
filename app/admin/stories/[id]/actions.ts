@@ -62,7 +62,32 @@ export async function saveStoryAction(id: string, fd: FormData) {
     patch.lon = lon;
   }
 
-  patch.published = readBool(fd, "published");
+  // Tristate publish control: draft / published / scheduled. Falls back
+  // to the legacy boolean if the form didn't include it (e.g. during a
+  // partial migration).
+  const publishMode = readStr(fd, "publishMode");
+  if (publishMode === "draft") {
+    patch.published = false;
+    patch.publishAt = null;
+  } else if (publishMode === "published") {
+    patch.published = true;
+    patch.publishAt = null;
+  } else if (publishMode === "scheduled") {
+    const at = readStr(fd, "publishAt");
+    if (!at) throw new Error("Schedule time missing.");
+    const ts = new Date(at).getTime();
+    if (!Number.isFinite(ts)) throw new Error("Schedule time is invalid.");
+    if (ts <= Date.now()) {
+      // User picked a past time → publish immediately.
+      patch.published = true;
+      patch.publishAt = null;
+    } else {
+      patch.published = false;
+      patch.publishAt = at;
+    }
+  } else if (fd.has("published")) {
+    patch.published = readBool(fd, "published");
+  }
 
   await updateStory(id, patch, session.uid);
 

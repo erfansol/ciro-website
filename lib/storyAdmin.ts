@@ -12,6 +12,15 @@ export type AdminStory = FirestoreStory & {
   completions?: number;
 };
 
+export type StoryPublishStatus = "draft" | "scheduled" | "published";
+
+/** Convenience: derive the lifecycle bucket the admin UI displays. */
+export function publishStatus(s: AdminStory): StoryPublishStatus {
+  if (s.published) return "published";
+  if (s.publishAt && new Date(s.publishAt).getTime() > 0) return "scheduled";
+  return "draft";
+}
+
 type RawDoc = Record<string, unknown>;
 
 function readNumber(v: unknown): number | undefined {
@@ -48,6 +57,7 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
       : [],
     hasAr: Boolean(bundle?.iosUrl || bundle?.androidUrl),
     published: raw.published === true,
+    publishAt: typeof raw.publishAt === "string" ? raw.publishAt : null,
     authorUid: readString(raw.authorUid),
     source: (readString(raw.source) as AdminStory["source"]) ?? undefined,
     moderationStatus:
@@ -59,11 +69,66 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
 }
 
 export async function listAdminStories(): Promise<AdminStory[]> {
+  // Fold any due-but-not-yet-published scheduled stories first so the
+  // list reflects what the public site will actually see this minute.
+  await autoPublishDueStories();
+
   const snap = await getAdminDb().collection("stories").get();
   const docs = snap.docs as Array<{ id: string; data: () => RawDoc }>;
   return docs
     .map((d) => mapAdminDoc(d.id, d.data()))
     .sort((a, b) => a.title.localeCompare(b.title));
+}
+
+/**
+ * Lazy cron-replacement: scan for stories whose `publishAt` has passed
+ * and flip them to `published: true`, clearing the schedule. Called
+ * from the admin stories list and the public listing fetch — runs
+ * cheaply (a single query) and writes only when there's something due.
+ *
+ * For higher-volume deployments, swap this for a Cloud Function on a
+ * 1-minute Pub/Sub schedule and remove the call sites.
+ */
+export async function autoPublishDueStories(): Promise<number> {
+  const db = getAdminDb();
+  const nowIso = new Date().toISOString();
+  const snap = await db
+    .collection("stories")
+    .where("published", "==", false)
+    .where("publishAt", "<=", nowIso)
+    .get()
+    // Composite index missing on first run — handled gracefully.
+    .catch(() => null);
+  if (!snap || snap.empty) return 0;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const docs = snap.docs as Array<any>;
+  const batch = db.batch();
+  for (const d of docs) {
+    batch.update(d.ref, {
+      published: true,
+      publishAt: null,
+      updatedAt: nowIso,
+    });
+  }
+  await batch.commit();
+
+  // Audit each one. Done after the batch so a logging failure doesn't
+  // block the publish itself.
+  await Promise.all(
+    docs.map((d) =>
+      logAdmin({
+        actorUid: "system:scheduler",
+        action: "story.publish",
+        targetCollection: "stories",
+        targetId: d.id,
+        before: d.data(),
+        after: { published: true, publishAt: null, updatedAt: nowIso },
+        reason: "scheduled publish reached",
+      }),
+    ),
+  );
+  return docs.length;
 }
 
 export async function getAdminStory(id: string): Promise<AdminStory | null> {
@@ -81,6 +146,8 @@ export type StoryPatch = {
   lat?: number;
   lon?: number;
   published?: boolean;
+  /** ISO timestamp; pass `null` to clear an existing schedule. */
+  publishAt?: string | null;
 };
 
 /**
@@ -113,20 +180,26 @@ export async function updateStory(
     update.mapCenter = { lat: patch.lat, lon: patch.lon };
   }
   if (patch.published !== undefined) update.published = patch.published;
+  if (patch.publishAt !== undefined) update.publishAt = patch.publishAt;
 
   await ref.update(update);
 
   const after = await ref.get();
-  await logAdmin({
-    actorUid,
-    action:
-      patch.published === true
+  // Choose the most-specific audit action so the activity timeline
+  // reads naturally. Schedule wins over publish when both move.
+  const action: "story.publish" | "story.unpublish" | "story.schedule" | "story.move" | "story.update" =
+    patch.publishAt && patch.published === false
+      ? "story.schedule"
+      : patch.published === true
         ? "story.publish"
         : patch.published === false
           ? "story.unpublish"
           : patch.lat !== undefined
             ? "story.move"
-            : "story.update",
+            : "story.update";
+  await logAdmin({
+    actorUid,
+    action,
     targetCollection: "stories",
     targetId: id,
     before: before.data() as Record<string, unknown>,
@@ -148,4 +221,170 @@ export async function deleteStory(id: string, actorUid: string): Promise<void> {
     targetId: id,
     before: before.data() as Record<string, unknown>,
   });
+}
+
+// ── Bulk export / import ──────────────────────────────────────────────
+
+export type ExportedStory = { id: string } & Record<string, unknown>;
+
+/**
+ * Dump every story doc as a JSON-serialisable object. Round-trippable
+ * via `importStories`. Field order isn't guaranteed.
+ */
+export async function exportAllStories(): Promise<ExportedStory[]> {
+  const snap = await getAdminDb().collection("stories").get();
+  const docs = snap.docs as Array<{ id: string; data: () => RawDoc }>;
+  return docs
+    .map((d) => ({ id: d.id, ...d.data() } as ExportedStory))
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export type ImportPlan = {
+  toCreate: Array<{ id: string; title: string }>;
+  toUpdate: Array<{ id: string; title: string }>;
+  invalid: Array<{ index: number; reason: string }>;
+};
+
+export type ImportResult = ImportPlan & {
+  createdIds: string[];
+  updatedIds: string[];
+};
+
+const MIN_REQUIRED_FIELDS = ["id", "title", "city", "category"] as const;
+
+function validateImportEntry(
+  raw: unknown,
+  index: number,
+): { ok: true; value: ExportedStory } | { ok: false; reason: string } {
+  if (typeof raw !== "object" || raw === null) {
+    return { ok: false, reason: `entry ${index} is not an object` };
+  }
+  const obj = raw as Record<string, unknown>;
+  for (const k of MIN_REQUIRED_FIELDS) {
+    if (typeof obj[k] !== "string" || (obj[k] as string).length === 0) {
+      return { ok: false, reason: `entry ${index} missing required string ${k}` };
+    }
+  }
+  const id = obj.id as string;
+  if (id.includes("/") || id.includes("..")) {
+    return { ok: false, reason: `entry ${index} has unsafe id ${id}` };
+  }
+  return { ok: true, value: obj as ExportedStory };
+}
+
+/**
+ * Plan an import without writing — used for the dry-run preview the
+ * UI shows before the operator confirms.
+ */
+export async function planStoryImport(
+  payload: unknown,
+): Promise<ImportPlan> {
+  if (!Array.isArray(payload)) {
+    throw new Error("Import payload must be a JSON array of story objects.");
+  }
+  const db = getAdminDb();
+  const validated: ExportedStory[] = [];
+  const invalid: ImportPlan["invalid"] = [];
+  payload.forEach((raw, i) => {
+    const v = validateImportEntry(raw, i);
+    if (v.ok) validated.push(v.value);
+    else invalid.push({ index: i, reason: v.reason });
+  });
+
+  if (validated.length === 0) {
+    return { toCreate: [], toUpdate: [], invalid };
+  }
+
+  // Single multi-doc fetch instead of N gets.
+  const refs = validated.map((s) => db.collection("stories").doc(s.id));
+  const snaps = await db.getAll(...refs);
+  const toCreate: ImportPlan["toCreate"] = [];
+  const toUpdate: ImportPlan["toUpdate"] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (snaps as any[]).forEach((snap: { exists: boolean }, i: number) => {
+    const s = validated[i];
+    const summary = { id: s.id, title: String(s.title) };
+    if (snap.exists) toUpdate.push(summary);
+    else toCreate.push(summary);
+  });
+  return { toCreate, toUpdate, invalid };
+}
+
+/**
+ * Apply an import plan after the operator confirms. Each create /
+ * update writes a single doc and a single audit entry; one summary
+ * `story.import` row records who triggered the bulk action.
+ */
+export async function importStories(
+  payload: unknown,
+  actorUid: string,
+): Promise<ImportResult> {
+  const plan = await planStoryImport(payload);
+  if (plan.invalid.length > 0 && plan.toCreate.length === 0 && plan.toUpdate.length === 0) {
+    throw new Error(
+      `Import payload had no valid entries (${plan.invalid.length} invalid).`,
+    );
+  }
+  const db = getAdminDb();
+  const now = new Date().toISOString();
+
+  // We already validated; resolve back to the validated objects.
+  if (!Array.isArray(payload)) {
+    throw new Error("Import payload must be an array.");
+  }
+  const validated: ExportedStory[] = [];
+  payload.forEach((raw, i) => {
+    const v = validateImportEntry(raw, i);
+    if (v.ok) validated.push(v.value);
+  });
+
+  const createdIds: string[] = [];
+  const updatedIds: string[] = [];
+
+  // Write one doc at a time so partial failures can be diagnosed
+  // (a 500-story batch error would otherwise be opaque).
+  for (const s of validated) {
+    const ref = db.collection("stories").doc(s.id);
+    const before = await ref.get();
+    const exists = before.exists;
+    const next: Record<string, unknown> = { ...s, updatedAt: now };
+    delete (next as { id?: string }).id; // id lives in the doc path, not the body.
+    await ref.set(next, { merge: true });
+    if (exists) {
+      updatedIds.push(s.id);
+      await logAdmin({
+        actorUid,
+        action: "story.update",
+        targetCollection: "stories",
+        targetId: s.id,
+        before: before.data() as Record<string, unknown>,
+        after: next,
+        reason: "bulk import",
+      });
+    } else {
+      createdIds.push(s.id);
+      await logAdmin({
+        actorUid,
+        action: "story.create",
+        targetCollection: "stories",
+        targetId: s.id,
+        after: next,
+        reason: "bulk import",
+      });
+    }
+  }
+
+  await logAdmin({
+    actorUid,
+    action: "story.import",
+    targetCollection: "stories",
+    targetId: "_summary",
+    after: {
+      created: createdIds.length,
+      updated: updatedIds.length,
+      invalid: plan.invalid.length,
+    },
+  });
+
+  return { ...plan, createdIds, updatedIds };
 }

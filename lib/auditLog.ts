@@ -18,7 +18,9 @@ export type AuditAction =
   | "report.resolve"
   | "report.dismiss"
   | "media.upload"
-  | "media.delete";
+  | "media.delete"
+  | "story.schedule"
+  | "story.import";
 
 export type AuditEntry = {
   actorUid: string;

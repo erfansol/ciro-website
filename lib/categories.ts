@@ -102,6 +102,13 @@ export type FirestoreStory = {
   moods: string[];
   hasAr: boolean;
   updatedAt?: string;
+  /**
+   * ISO timestamp at which an admin scheduled this story to flip to
+   * `published: true`. The admin list page lazily auto-publishes
+   * stories whose `publishAt <= now`; until then the story stays a
+   * draft so the public site doesn't pick it up early.
+   */
+  publishAt?: string | null;
 };
 
 /** Story plus its resolved category meta. JSON-serialisable. */
