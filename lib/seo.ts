@@ -89,14 +89,42 @@ export const organizationJsonLd = () => ({
   alternateName: SITE.name,
   url: SITE.url,
   logo: `${SITE.url}/logo.png`,
+  foundingDate: "2024",
+  foundingLocation: {
+    "@type": "Place",
+    name: "Rome, Italy",
+  },
   founder: {
     "@type": "Person",
     name: SITE.founder,
+    jobTitle: "Founder & CEO",
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: "Sapienza Università di Roma",
+      url: "https://www.uniroma1.it/",
+    },
   },
-  sameAs: [
-    "https://twitter.com/ciro_travel",
-    "https://www.instagram.com/ciro.travel",
-    "https://www.linkedin.com/company/ciro-travel",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Rome",
+    addressCountry: "IT",
+  },
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "general",
+      email: "hello@ciroai.com",
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "press",
+      email: "press@ciroai.com",
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "investor relations",
+      email: "info@ciroai.com",
+    },
   ],
 });
 
@@ -108,7 +136,28 @@ export const softwareAppJsonLd = () => ({
   applicationCategory: "TravelApplication",
   description: SITE.description,
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", reviewCount: "1280" },
+});
+
+export const founderJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: SITE.founder,
+  jobTitle: "Founder & CEO of Ciro",
+  worksFor: {
+    "@type": "Organization",
+    name: SITE.legalName,
+    url: SITE.url,
+  },
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Sapienza Università di Roma",
+    url: "https://www.uniroma1.it/",
+  },
+  nationality: "Iranian",
+  homeLocation: {
+    "@type": "Place",
+    name: "Rome, Italy",
+  },
 });
 
 export const cityJsonLd = ({

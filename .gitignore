@@ -8,6 +8,7 @@ out/
 # env (use Hostinger panel or .env on server, never commit)
 .env
 .env.*
+*.env
 !.env.example
 
 # runtime data (form submissions land here in mock mode)

@@ -2,6 +2,7 @@ import { HeroBalloons } from "@/components/sections/HeroBalloons";
 import { ActsSpine } from "@/components/sections/ActsSpine";
 import { Finale } from "@/components/sections/Finale";
 import { Waitlist } from "@/components/sections/Waitlist";
+import { RecognitionStrip } from "@/components/sections/RecognitionStrip";
 import { loadStories, pickFeaturedPerCategory } from "@/lib/stories";
 import { softwareAppJsonLd } from "@/lib/seo";
 
@@ -21,6 +22,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppJsonLd()) }}
       />
       <HeroBalloons />
+      <RecognitionStrip />
       <ActsSpine acts={acts} />
       <Finale />
       <Waitlist />

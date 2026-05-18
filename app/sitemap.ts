@@ -10,6 +10,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE.url}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${SITE.url}/stories`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE.url}/product`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE.url}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE.url}/partners`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE.url}/press`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   const cityRoutes: MetadataRoute.Sitemap = CITIES.map((c) => ({

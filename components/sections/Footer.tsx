@@ -6,11 +6,15 @@ import { Logo } from "../ui/Logo";
 import { CITIES } from "@/lib/cities";
 
 const company = [
-  { label: "Stories", href: "/stories" },
-  { label: "Press", href: "mailto:press@ciroai.com" },
+  { label: "About", href: "/about" },
+  { label: "Press", href: "/press" },
+  { label: "Partners", href: "/partners" },
+  { label: "Contact", href: "mailto:hello@ciroai.com" },
 ];
 
 const product = [
+  { label: "How it works", href: "/product" },
+  { label: "Stories", href: "/stories" },
   { label: "Waitlist", href: "/#waitlist" },
   { label: "iOS", href: process.env.NEXT_PUBLIC_IOS_URL ?? "#" },
   { label: "Android", href: process.env.NEXT_PUBLIC_ANDROID_URL ?? "#" },
@@ -34,11 +38,15 @@ export function Footer() {
             <p className="mt-6 max-w-sm text-sm text-ink-900/70 dark:text-white/60 leading-relaxed">
               Ciro turns every place into a short, real story you can walk through — by voice, in chat, and in AR. Open the app at any street and Ciro tells you what happened there, in your language.
             </p>
-            <p className="mt-6 text-xs text-ink-900/50 dark:text-white/40">
-              A startup &amp; mobile app founded by{" "}
-              <span className="font-medium text-ink-900/80 dark:text-white/70">
+            <p className="mt-6 text-xs text-ink-900/55 dark:text-white/45">
+              Headquartered in <span className="text-ink-900/80 dark:text-white/70">Rome, Italy</span>.
+              Founded in 2024 by{" "}
+              <Link
+                href="/about"
+                className="font-medium text-ink-900/80 underline-offset-4 hover:underline dark:text-white/70"
+              >
                 Erfan Soleymanzadeh
-              </span>
+              </Link>
               .
             </p>
             <p className="mt-2 text-xs text-ink-900/50 dark:text-white/40">
@@ -57,17 +65,26 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-start gap-4 border-t border-ink-900/8 dark:border-white/5 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <a
-            href="mailto:hello@ciroai.com"
-            className="text-sm text-ink-900/70 hover:text-ink-900 dark:text-white/70 dark:hover:text-white"
-          >
-            hello@ciroai.com
-          </a>
-          <div className="flex items-center gap-3">
-            <Social label="Twitter" href="https://twitter.com/ciro_travel" />
-            <Social label="Instagram" href="https://instagram.com/ciro.travel" />
-            <Social label="LinkedIn" href="https://linkedin.com/company/ciro-travel" />
+        <div className="mt-12 flex flex-col items-start gap-3 border-t border-ink-900/8 dark:border-white/5 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 text-sm">
+            <a
+              href="mailto:hello@ciroai.com"
+              className="text-ink-900/80 hover:text-ink-900 dark:text-white/75 dark:hover:text-white"
+            >
+              hello@ciroai.com
+            </a>
+            <a
+              href="mailto:press@ciroai.com"
+              className="text-ink-900/60 hover:text-ink-900 dark:text-white/55 dark:hover:text-white"
+            >
+              press@ciroai.com
+            </a>
+            <a
+              href="mailto:info@ciroai.com"
+              className="text-ink-900/60 hover:text-ink-900 dark:text-white/55 dark:hover:text-white"
+            >
+              info@ciroai.com · investors & partners
+            </a>
           </div>
         </div>
       </div>
@@ -97,16 +114,3 @@ function FooterCol({ title, items }: { title: string; items: { label: string; hr
   );
 }
 
-function Social({ label, href }: { label: string; href: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-900/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-ink-900/70 dark:text-white/70 hover:text-ink-900 dark:hover:text-white"
-    >
-      <span className="text-xs font-medium">{label[0]}</span>
-    </a>
-  );
-}

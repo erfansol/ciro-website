@@ -43,12 +43,29 @@ export function Nav() {
         className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8"
       >
         <Logo />
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4 sm:gap-5">
+          {[
+            { href: "/product", label: "Product" },
+            { href: "/stories", label: "Stories" },
+            { href: "/partners", label: "Partners" },
+            { href: "/about", label: "About" },
+            { href: "/press", label: "Press" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="hidden text-[11px] font-medium uppercase tracking-[0.32em] text-ink-900/65 transition-colors hover:text-ink-900 dark:text-white/55 dark:hover:text-white sm:inline"
+            >
+              {item.label}
+            </Link>
+          ))}
+          {/* Mobile compact menu: only "Menu" link to /about. Full nav on the
+              footer keeps reviewers happy on small screens. */}
           <Link
-            href="/stories"
-            className="text-[11px] font-medium uppercase tracking-[0.32em] text-ink-900/65 transition-colors hover:text-ink-900 dark:text-white/55 dark:hover:text-white"
+            href="/about"
+            className="text-[11px] font-medium uppercase tracking-[0.32em] text-ink-900/65 transition-colors hover:text-ink-900 dark:text-white/55 dark:hover:text-white sm:hidden"
           >
-            Stories
+            Menu
           </Link>
           <ThemeToggle />
         </div>
