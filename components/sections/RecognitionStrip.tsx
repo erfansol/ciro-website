@@ -33,6 +33,26 @@ export function RecognitionStrip() {
           ))}
         </ul>
 
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 dark:border-white/15 dark:text-white/75">
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+            />
+            iOS · TestFlight pre-release
+          </span>
+          <a
+            href="mailto:info@ciroai.com?subject=Ciro%20investor%20enquiry"
+            className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 transition-colors hover:border-ink-900/40 hover:text-ink-900 dark:border-white/15 dark:text-white/75 dark:hover:border-white/40 dark:hover:text-white"
+          >
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 rounded-full bg-amber-500"
+            />
+            Currently raising · info@ciroai.com
+          </a>
+        </div>
+
         <p className="mt-6 text-center text-xs text-ink-900/55 dark:text-white/45">
           <Link
             href="/press"
