@@ -50,6 +50,23 @@ body {
   text-wrap: balance;
 }
 
+/* GPS-style pulse — expanding ring + fade out, looped. Used by the
+ * hero brand anchor on the homepage to give the map pin a sense of
+ * "live location ping." */
+@keyframes ciroPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
 /* =============================================================================
  * Admin theme tokens — referenced via `bg-admin-bg` / `text-admin-text` etc.
  * defined in tailwind.config.ts. Default is dark to preserve the existing

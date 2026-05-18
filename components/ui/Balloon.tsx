@@ -2,7 +2,8 @@ import type { CategoryIconKey } from "@/lib/categories";
 
 type Props = {
   color: string;
-  iconKey: CategoryIconKey;
+  /** Kept for callsite compatibility — no longer rendered. */
+  iconKey?: CategoryIconKey;
   /** Pixel size of the rendered balloon. The SVG scales proportionally. */
   size?: number;
   /** Optional extra Tailwind classes (e.g. for filter / blur). */
@@ -17,12 +18,11 @@ type Props = {
  */
 export function Balloon({
   color,
-  iconKey,
   size = 240,
   className,
   ariaLabel,
 }: Props) {
-  const id = `b-${iconKey}-${color.replace("#", "")}`;
+  const id = `b-${color.replace("#", "")}`;
   return (
     <svg
       width={size}
@@ -122,11 +122,6 @@ export function Balloon({
         opacity="0.4"
       />
 
-      {/* Icon centered on the balloon body */}
-      <g transform="translate(70, 78)" fill="#ffffff" opacity="0.95">
-        <Icon iconKey={iconKey} />
-      </g>
-
       <defs>
         <pattern
           id="weave"
@@ -140,61 +135,4 @@ export function Balloon({
       </defs>
     </svg>
   );
-}
-
-function Icon({ iconKey }: { iconKey: CategoryIconKey }) {
-  // Each icon is drawn in a 60x60 box so it sits centered when the
-  // parent <g> is translated to (70, 78).
-  switch (iconKey) {
-    case "temple":
-      return (
-        <g>
-          <rect x="6" y="46" width="48" height="6" rx="1" />
-          <rect x="2" y="44" width="56" height="3" rx="1" />
-          <rect x="10" y="20" width="6" height="26" />
-          <rect x="22" y="20" width="6" height="26" />
-          <rect x="34" y="20" width="6" height="26" />
-          <rect x="46" y="20" width="6" height="26" />
-          <path d="M2 20 L30 6 L58 20 Z" />
-        </g>
-      );
-    case "eye":
-      return (
-        <g>
-          <path
-            d="M2 30 C12 12, 48 12, 58 30 C48 48, 12 48, 2 30 Z"
-            stroke="#ffffff"
-            strokeWidth="3"
-            fill="none"
-          />
-          <circle cx="30" cy="30" r="9" />
-        </g>
-      );
-    case "controller":
-      return (
-        <g>
-          <path
-            d="M14 18 H46 C54 18, 60 24, 60 32 C60 40, 54 46, 46 46 H42 L36 40 H24 L18 46 H14 C6 46, 0 40, 0 32 C0 24, 6 18, 14 18 Z"
-          />
-          <circle cx="14" cy="32" r="3" fill="#1b1f2c" />
-          <circle cx="46" cy="32" r="3" fill="#1b1f2c" />
-          <rect x="9" y="28" width="10" height="2" rx="1" fill="#1b1f2c" />
-          <rect x="13" y="24" width="2" height="10" rx="1" fill="#1b1f2c" />
-        </g>
-      );
-    case "clapper":
-      return (
-        <g>
-          <rect x="2" y="22" width="56" height="32" rx="3" />
-          <path
-            d="M2 22 L14 8 L24 22 Z M22 22 L34 8 L44 22 Z M42 22 L54 8 L60 22 Z"
-            fill="#1b1f2c"
-          />
-        </g>
-      );
-    case "heart":
-      return (
-        <path d="M30 54 C8 40, 0 28, 0 18 C0 10, 6 4, 14 4 C20 4, 26 8, 30 14 C34 8, 40 4, 46 4 C54 4, 60 10, 60 18 C60 28, 52 40, 30 54 Z" />
-      );
-  }
 }

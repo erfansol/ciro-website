@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Balloon } from "@/components/ui/Balloon";
@@ -7,10 +8,11 @@ import { CATEGORIES } from "@/lib/categories";
 import { APP_LINKS } from "@/lib/site";
 
 /**
- * Hero. Five balloons drift across the sky. One plain-English line tells
- * the visitor exactly what Ciro is, then two app-store buttons. The
- * background flips with the theme: a soft daytime sky in light mode, a
- * starry night with an aurora wash in dark mode.
+ * Hero. Five balloons drift across the sky and a brand "anchor" pulses
+ * at the bottom of the section — the visual idea is that every floating
+ * story (balloon) is tethered to a real location (the pin holding the
+ * Ciro mark). The background flips with the theme: a soft daytime sky
+ * in light mode, a starry night with an aurora wash in dark mode.
  */
 export function HeroBalloons() {
   const reduced = useReducedMotion();
@@ -97,7 +99,6 @@ export function HeroBalloons() {
             >
               <Balloon
                 color={cat.color}
-                iconKey={cat.iconKey}
                 size={l.size}
                 ariaLabel={`${cat.label} balloon`}
                 className="drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
@@ -132,6 +133,10 @@ export function HeroBalloons() {
           you&rsquo;re standing in — written, voiced, and optionally with
           an AR overlay. Live in Rome.
         </motion.p>
+
+        {/* Brand anchor — the Ciro mark held by a map pin, tethered up
+            into the balloons. Visualizes "a story tied to a location." */}
+        <LocationAnchor reduced={!!reduced} />
 
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 12 }}
@@ -170,6 +175,92 @@ export function HeroBalloons() {
         </motion.a>
       </div>
     </section>
+  );
+}
+
+/**
+ * The brand anchor. A map pin holding the Ciro mark, sitting at the
+ * "ground" of the hero. Three concentric GPS rings ping outward; a thin
+ * dashed line rises from the pin into the balloon layer — the visual
+ * grammar of "this floating story is tethered to a real place."
+ */
+function LocationAnchor({ reduced }: { reduced: boolean }) {
+  return (
+    <motion.div
+      initial={reduced ? false : { opacity: 0, scale: 0.85, y: 8 }}
+      animate={reduced ? undefined : { opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 1.1, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
+      className="relative mx-auto mt-12 flex h-28 w-28 items-center justify-center sm:h-32 sm:w-32"
+      aria-hidden
+    >
+      {/* Tether — a thin dashed line rising from the pin up toward the
+          balloons above. Sits behind the pin so the pin overlaps it. */}
+      <span className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[160px] w-px -translate-x-1/2 -translate-y-full bg-gradient-to-b from-transparent via-ink-900/15 to-ink-900/30 sm:h-[220px] dark:via-white/15 dark:to-white/30" />
+
+      {/* GPS pulse rings */}
+      {!reduced && (
+        <>
+          <span
+            className="absolute inset-0 rounded-full border border-ink-900/15 dark:border-white/15"
+            style={{
+              animation: "ciroPing 2.6s cubic-bezier(0,0,0.2,1) infinite",
+            }}
+          />
+          <span
+            className="absolute inset-0 rounded-full border border-ink-900/10 dark:border-white/10"
+            style={{
+              animation: "ciroPing 2.6s cubic-bezier(0,0,0.2,1) infinite",
+              animationDelay: "1.0s",
+            }}
+          />
+        </>
+      )}
+
+      {/* The pin — teardrop holding the Ciro mark */}
+      <svg
+        viewBox="0 0 100 130"
+        className="relative h-full w-auto drop-shadow-[0_18px_28px_rgba(0,0,0,0.18)] dark:drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]"
+      >
+        <defs>
+          <linearGradient id="pinFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0f1320" />
+            <stop offset="100%" stopColor="#1b1f2c" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 4 C25 4 8 22 8 46 C8 76 36 102 50 124 C64 102 92 76 92 46 C92 22 75 4 50 4 Z"
+          fill="url(#pinFill)"
+          className="dark:hidden"
+        />
+        <path
+          d="M50 4 C25 4 8 22 8 46 C8 76 36 102 50 124 C64 102 92 76 92 46 C92 22 75 4 50 4 Z"
+          fill="#fff"
+          className="hidden dark:block"
+        />
+        {/* Inner circle for the Ciro mark */}
+        <circle
+          cx="50"
+          cy="46"
+          r="26"
+          className="fill-white dark:fill-[#06070d]"
+        />
+      </svg>
+
+      {/* Ciro mark sits inside the pin's circular head */}
+      <span className="absolute left-1/2 top-[28%] -translate-x-1/2 -translate-y-1/2">
+        <Image
+          src="/icon.png"
+          alt=""
+          width={64}
+          height={64}
+          priority
+          className="h-9 w-9 sm:h-10 sm:w-10"
+        />
+      </span>
+
+      {/* Ground shadow under the pin */}
+      <span className="pointer-events-none absolute -bottom-2 left-1/2 h-2 w-12 -translate-x-1/2 rounded-full bg-ink-900/20 blur-md dark:bg-white/15" />
+    </motion.div>
   );
 }
 
