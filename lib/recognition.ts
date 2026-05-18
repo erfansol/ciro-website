@@ -96,18 +96,6 @@ export const RECOGNITION: ReadonlyArray<Recognition> = [
     body:
       "Founder Erfan Soleymanzadeh defended his master's thesis on Ciro at Sapienza University of Rome (M.Des. in Design, Visual & Multimedia Communication, LM-12). The thesis frames Ciro as an applied research artefact at the intersection of geospatial AI and AR for cultural engagement.",
   },
-  {
-    id: "creuin-heritage",
-    short: "CR.EU.IN. Heritage · Innovation Grant track",
-    title: "CR.EU.IN. Heritage — Cultural Heritage Innovation Grant",
-    issuer: "CR.EU.IN. Heritage programme",
-    location: "European Union",
-    date: "2026",
-    isoDate: "2026-04-01",
-    kind: "grant",
-    body:
-      "Ciro is participating in the CR.EU.IN. Heritage cultural-innovation grant track (Step 1 · Strand 1 · Product Innovation), targeting a 12-month €120K product-innovation grant for the Story Atlas applied to European heritage sites.",
-  },
 ] as const;
 
 /** Date-descending sort for press lists. */

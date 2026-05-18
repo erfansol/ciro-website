@@ -38,6 +38,17 @@ export default async function StoriesPage() {
             Streets that won&rsquo;t stay quiet.
           </h1>
         </div>
+
+        <div className="mx-auto mt-12 max-w-3xl px-6 lg:px-8">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm text-white/75">
+            <span className="mr-2 align-middle text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+              In progress
+            </span>
+            Stories below are a first set. New cards are being added every
+            week — full Rome catalogue lands this summer, Milan and Paris
+            follow.
+          </div>
+        </div>
       </header>
 
       <section className="pb-24">

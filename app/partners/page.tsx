@@ -3,30 +3,30 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Partners & business model · Ciro for cities, museums and creators",
+  title: "Partners & business · Ciro for cities, museums and travel",
   description:
-    "Ciro is a digital-native, three-layer SaaS platform: B2C freemium app, B2B Story Atlas licensing for museums and cities, and B2B2C distribution through OTAs, hotels and an embeddable SDK. Headquartered in Rome.",
+    "Ciro is a software company. We sell a consumer subscription, licence the same engine to museums and cities, and let other apps embed it. Headquartered in Rome.",
   path: "/partners",
 });
 
 const layers = [
   {
-    tag: "B2C",
-    title: "Consumer app — freemium",
+    tag: "Consumer",
+    title: "Mobile app — free, with a paid tier",
     detail:
-      "Free tier with limits, plus Ciro Plus at €6.99 / month or €49 / year and à-la-carte story packs. Target B2C ARPU €38 / year, gross margin ~75%. Live on iOS; Android beta in test flight.",
+      "A free tier with daily limits, and Ciro Plus at €6.99 / month or €49 / year for unlimited stories and offline downloads. Single-story unlocks are also planned. iOS live today; Android in beta.",
   },
   {
-    tag: "B2B",
-    title: "Story Atlas licensing for museums, sites and cities",
+    tag: "Licensing",
+    title: "Engine for museums, sites and cities",
     detail:
-      "Heritage institutions and cultural foundations license the Story Atlas for their portfolios — typical ACV €25K–€250K / year, multi-year, ~90% gross margin. Includes white-label deployments and branded AR routes.",
+      "Museums, heritage sites and city operators licence the same engine to publish their own places — multilingual voice, written stories, optional AR. Annual licence, multi-year terms.",
   },
   {
-    tag: "B2B2C",
-    title: "Distribution — OTAs, hotels, in-car, smart-glasses",
+    tag: "Distribution",
+    title: "Embedded inside other apps",
     detail:
-      "Co-branded story routes with cities and tourism boards, hotel concierge bundles, and an embeddable SDK for OTAs and travel super-apps. The same Story Atlas, surfaced where travellers already are.",
+      "Travel apps, hotel concierge tools and in-car systems can embed Ciro through an SDK so their users get the same place-aware stories without leaving the host app.",
   },
 ];
 
@@ -34,48 +34,40 @@ const segments = [
   {
     title: "Cities & tourism boards",
     body:
-      "Co-branded city-wide story routes that work in any language. Replace static plaques and PDF guides with a living, measurable storytelling layer.",
+      "Operator-curated story routes per neighbourhood, in the languages your visitors actually speak. A measurable layer on top of plaques and printed guides.",
     cta: "Partner as a city",
   },
   {
     title: "Museums & heritage sites",
     body:
-      "Story Atlas portfolios for permanent collections, temporary exhibitions, and outdoor archaeological sites. Voice + AR + chat in 30+ languages from a single licence.",
-    cta: "Licence the Story Atlas",
+      "Publish your collection or outdoor site as a Ciro portfolio — written, voiced and (optionally) AR-anchored. White-label is available.",
+    cta: "License the engine",
   },
   {
-    title: "OTAs & travel super-apps",
+    title: "Travel apps & in-car",
     body:
-      "Embed the Ciro SDK inside Booking, Expedia-class apps, airline apps, and in-car infotainment. Revenue share on Plus subscriptions and story packs.",
+      "Embed Ciro inside an existing travel, booking or in-car app via SDK. Revenue share on subscriptions and individual story purchases.",
     cta: "Embed the SDK",
   },
   {
-    title: "Schools & EdTech",
+    title: "Schools & education",
     body:
-      "Field-trip and classroom programmes that turn cities into a curriculum. Bundle pricing for school districts and university programmes.",
+      "Field-trip and classroom programmes that use real streets as the curriculum. Programme-level pricing for schools and universities.",
     cta: "Bring Ciro to your school",
   },
   {
-    title: "Creators & storytellers",
+    title: "Writers & local historians",
     body:
-      "Writers, historians, and travel creators publish their own story packs through the Ciro creator programme and earn a revenue share on every sale.",
-    cta: "Apply as a creator",
-  },
-  {
-    title: "EU & public grants",
-    body:
-      "Ciro stacks public funding (CR.EU.IN. Heritage, Horizon, Italian PNI / Startcup Lazio) against the same product roadmap — non-dilutive capital aligned to a digital-native model.",
-    cta: "Co-apply for grants",
+      "Local writers, historians and guides can publish their own story packs through Ciro and earn a share on every sale.",
+    cta: "Apply as a contributor",
   },
 ];
 
 const unitTargets = [
-  { k: "B2C ARPU target", v: "€38 / user / year" },
-  { k: "B2C gross margin", v: "~75%" },
-  { k: "B2B ACV target", v: "€60K average" },
-  { k: "B2B gross margin", v: "~90%" },
-  { k: "Round target end-of-seed MAU", v: "250K across 6 Italian cities" },
-  { k: "Round target end-of-seed ARR", v: "€1.5M (B2C + first B2B contracts)" },
+  { k: "Consumer pricing", v: "€6.99 / month or €49 / year" },
+  { k: "Free tier", v: "Daily story quota; first three Rome stories free" },
+  { k: "Licensing model", v: "Annual licence, per portfolio, multi-year terms" },
+  { k: "First commercial market", v: "Italy (Rome, then north and south)" },
 ];
 
 export default function PartnersPage() {
@@ -83,23 +75,22 @@ export default function PartnersPage() {
     <div className="relative pb-24 pt-32 sm:pt-40">
       <div className="mx-auto max-w-5xl px-6 lg:px-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-ink-900/55 dark:text-white/45">
-          For partners
+          Partners &amp; business
         </p>
         <h1 className="mt-4 font-display text-balance text-[clamp(2.4rem,5.5vw,4.4rem)] leading-[1.05] tracking-tight">
-          A three-layer, digital-native business.
+          Three ways the business is paid.
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65">
-          Ciro is a software platform, not a tour-operator. We monetize across
-          three reinforcing layers — consumer subscriptions, B2B licensing of
-          the Story Atlas to cultural institutions, and B2B2C distribution
-          through OTAs, hotels and an embeddable SDK. Everything compounds on
-          the same software backbone.
+          Ciro is a software company. We sell a consumer subscription, we
+          license the same engine to museums and cities, and we let other
+          apps embed it. The product is one piece of software; the
+          customers are three.
         </p>
 
         {/* Three layers */}
         <section className="mt-16">
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
-            The three layers
+            How the business is paid
           </h2>
           <ol className="mt-8 space-y-4">
             {layers.map((l) => (
@@ -151,14 +142,14 @@ export default function PartnersPage() {
           </div>
         </section>
 
-        {/* Unit targets */}
+        {/* Pricing snapshot */}
         <section className="mt-20">
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
-            Unit economics &amp; round targets
+            Pricing &amp; model, today
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
-            Working targets from the 2026 seed plan. Updated as contracts
-            close.
+            Current published terms. Detailed financials and forward
+            targets are shared under NDA with serious investors.
           </p>
           <dl className="mt-8 grid gap-x-10 gap-y-5 sm:grid-cols-2">
             {unitTargets.map((t) => (
@@ -183,8 +174,9 @@ export default function PartnersPage() {
             Talk to us
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
-            Investor decks, financial model, technical architecture, and the
-            seed-round data room are available on request.
+            Investor materials, financials, technical detail and product
+            roadmap are shared under NDA. Write a short email — we reply
+            in person.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <a
@@ -193,12 +185,12 @@ export default function PartnersPage() {
             >
               info@ciroai.com
             </a>
-            <Link
-              href="/about"
+            <a
+              href="mailto:erfan@ciroai.com"
               className="inline-flex items-center justify-center rounded-full border border-ink-900/15 bg-white/60 px-6 py-3 text-sm font-medium text-ink-900 transition-colors hover:bg-white dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
             >
-              About the company
-            </Link>
+              erfan@ciroai.com · founder
+            </a>
           </div>
         </section>
       </div>

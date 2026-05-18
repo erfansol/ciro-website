@@ -4,9 +4,9 @@ import { buildMetadata, SITE, founderJsonLd } from "@/lib/seo";
 import { RECOGNITION_BY_DATE } from "@/lib/recognition";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About Ciro · Company, founder and mission",
+  title: "About Ciro · Company, founder and team",
   description:
-    "Ciro is a Rome-based AI startup building the Story Atlas — a platform that turns every street, monument, and city into a personalized, voice-narrated, AR-anchored story. Founded by Erfan Soleymanzadeh.",
+    "Ciro is a Rome-based company building location-aware storytelling software for cities, museums and travellers. Founded in 2024 by Erfan Soleymanzadeh out of Sapienza Università di Roma.",
   path: "/about",
 });
 
@@ -22,30 +22,30 @@ export default function AboutPage() {
           About
         </p>
         <h1 className="mt-4 font-display text-balance text-[clamp(2.4rem,5.5vw,4.4rem)] leading-[1.05] tracking-tight">
-          A small Rome company teaching places how to speak.
+          A Rome company building location-aware storytelling.
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65">
-          Ciro is an AI &amp; AR storytelling platform headquartered in Rome,
-          Italy. We turn every street, square, and monument into a personalized,
-          voice-narrated, AR-anchored story experience — in any language, on
-          demand. The company was founded in 2024 by Erfan Soleymanzadeh out of
+          Ciro is an early-stage company headquartered in Rome. We make a
+          mobile app and a back-end that, given where you are, plays a short
+          story about that place — in your language, with the option of an
+          AR overlay anchored to the real building in front of you. The
+          company was founded in 2024 by Erfan Soleymanzadeh, building on
           his master&rsquo;s research at Sapienza Università di Roma.
         </p>
 
-        {/* Mission */}
+        {/* What we do */}
         <section className="mt-16">
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
-            Mission
+            What we do
           </h2>
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-900/75 dark:text-white/70">
-            Tourism is the world&rsquo;s largest cultural industry — an $11T
-            economy with 1.4 billion international travellers a year — and the
-            content layer hasn&rsquo;t changed in fifty years. Plaques are
-            static, audio guides are linear, human guides are scarce. Ciro
-            fuses generative AI, geospatial AR, and a proprietary cultural
-            corpus into a single product so that every place can finally tell
-            its own story, to the right person, in the right language, in the
-            right tone.
+            Audio guides are linear, plaques are static, human guides are
+            scarce. We think the most useful piece of software a traveller
+            can carry is one that knows where they&rsquo;re standing and can
+            tell them why it matters. That is the product we are building.
+            The same engine licenses out to museums, cities and education
+            programmes that want to publish their own places — a software
+            layer rather than a one-off audio tour.
           </p>
         </section>
 
@@ -82,13 +82,19 @@ export default function AboutPage() {
           </div>
 
           <p className="mt-6 text-sm text-ink-900/60 dark:text-white/55">
-            We are actively hiring our first senior engineering and content
-            roles for the seed round. Reach out at{" "}
+            Investors and partners: please write to{" "}
             <a
               className="underline-offset-4 hover:underline"
               href="mailto:info@ciroai.com"
             >
               info@ciroai.com
+            </a>
+            . For a direct line to the founder,{" "}
+            <a
+              className="underline-offset-4 hover:underline"
+              href="mailto:erfan@ciroai.com"
+            >
+              erfan@ciroai.com
             </a>
             .
           </p>
@@ -153,9 +159,9 @@ export default function AboutPage() {
             Contact
           </h2>
           <dl className="mt-6 grid gap-3 text-sm sm:grid-cols-2">
-            <Fact term="General" detail="hello@ciroai.com" />
-            <Fact term="Press & partnerships" detail="press@ciroai.com" />
-            <Fact term="Investors & partners" detail="info@ciroai.com" />
+            <Fact term="Investors & business" detail="info@ciroai.com" />
+            <Fact term="Founder, direct" detail="erfan@ciroai.com" />
+            <Fact term="Headquarters" detail="Rome, Italy" />
             <Fact term="Web" detail={SITE.url.replace("https://", "")} />
           </dl>
         </section>

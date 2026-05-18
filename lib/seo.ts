@@ -112,18 +112,13 @@ export const organizationJsonLd = () => ({
   contactPoint: [
     {
       "@type": "ContactPoint",
-      contactType: "general",
-      email: "hello@ciroai.com",
-    },
-    {
-      "@type": "ContactPoint",
-      contactType: "press",
-      email: "press@ciroai.com",
-    },
-    {
-      "@type": "ContactPoint",
       contactType: "investor relations",
       email: "info@ciroai.com",
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "founder",
+      email: "erfan@ciroai.com",
     },
   ],
 });

@@ -128,9 +128,9 @@ export function HeroBalloons() {
           transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65"
         >
-          Open the app at any street, square, or monument. Ciro plays a
-          short, real story made just for you — by voice, in chat, and
-          in AR. In your language.
+          A mobile app that plays a short story about the place
+          you&rsquo;re standing in — written, voiced, and optionally with
+          an AR overlay. Live in Rome.
         </motion.p>
 
         <motion.div

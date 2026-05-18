@@ -9,7 +9,7 @@ const company = [
   { label: "About", href: "/about" },
   { label: "Press", href: "/press" },
   { label: "Partners", href: "/partners" },
-  { label: "Contact", href: "mailto:hello@ciroai.com" },
+  { label: "Contact", href: "mailto:info@ciroai.com" },
 ];
 
 const product = [
@@ -68,22 +68,16 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-start gap-3 border-t border-ink-900/8 dark:border-white/5 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1 text-sm">
             <a
-              href="mailto:hello@ciroai.com"
+              href="mailto:info@ciroai.com"
               className="text-ink-900/80 hover:text-ink-900 dark:text-white/75 dark:hover:text-white"
             >
-              hello@ciroai.com
+              info@ciroai.com · investors &amp; business
             </a>
             <a
-              href="mailto:press@ciroai.com"
+              href="mailto:erfan@ciroai.com"
               className="text-ink-900/60 hover:text-ink-900 dark:text-white/55 dark:hover:text-white"
             >
-              press@ciroai.com
-            </a>
-            <a
-              href="mailto:info@ciroai.com"
-              className="text-ink-900/60 hover:text-ink-900 dark:text-white/55 dark:hover:text-white"
-            >
-              info@ciroai.com · investors & partners
+              erfan@ciroai.com · founder, direct
             </a>
           </div>
         </div>

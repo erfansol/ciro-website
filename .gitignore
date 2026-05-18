@@ -27,3 +27,6 @@ npm-debug.log*
 
 # misc
 .vercel/
+
+# Local raw screenshots — only the compressed versions under public/app/ ship
+/screenshot/
