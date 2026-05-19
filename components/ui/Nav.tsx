@@ -4,17 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
-import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/cn";
 
 /**
- * Marketing nav. Brand mark on the left, a Stories link plus a
- * sun/moon theme toggle on the right. The toggle picks dark or light;
- * the default is set by [InitialThemeScript] based on local time.
- *
- * On scroll a hairline border + blur fade in so the bar stays legible
- * over both palettes (white over light, blackish over dark).
+ * Marketing nav. Brand mark on the left, primary section links on the
+ * right. A soft white backdrop + blur is applied from the first pixel
+ * (not only on scroll) so the headline below never reads through the
+ * nav and overlap stops happening on wide viewports.
  */
+const links = [
+  { href: "/product", label: "Product" },
+  { href: "/stories", label: "Stories" },
+  { href: "/partners", label: "Partners" },
+  { href: "/about", label: "About" },
+  { href: "/press", label: "Press" },
+];
+
 export function Nav() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -32,42 +37,39 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        "bg-white/80 backdrop-blur-xl",
         scrolled
-          ? "border-b border-ink-900/[0.07] bg-white/65 backdrop-blur-xl dark:border-white/[0.06] dark:bg-[#06070d]/55"
-          : "border-b border-transparent bg-transparent",
+          ? "border-b border-ink-900/[0.08] shadow-[0_1px_0_rgba(15,23,42,0.04)]"
+          : "border-b border-transparent",
       )}
     >
       <nav
         aria-label="Primary"
-        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8"
       >
         <Logo />
-        <div className="flex items-center gap-4 sm:gap-5">
-          {[
-            { href: "/product", label: "Product" },
-            { href: "/stories", label: "Stories" },
-            { href: "/partners", label: "Partners" },
-            { href: "/about", label: "About" },
-            { href: "/press", label: "Press" },
-          ].map((item) => (
+        <div className="flex items-center gap-5 sm:gap-7">
+          {links.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="hidden text-[11px] font-medium uppercase tracking-[0.32em] text-ink-900/65 transition-colors hover:text-ink-900 dark:text-white/55 dark:hover:text-white sm:inline"
+              className={cn(
+                "hidden text-[11px] font-medium uppercase tracking-[0.28em] transition-colors sm:inline",
+                pathname === item.href
+                  ? "text-ink-900"
+                  : "text-ink-900/55 hover:text-ink-900",
+              )}
             >
               {item.label}
             </Link>
           ))}
-          {/* Mobile compact menu: only "Menu" link to /about. Full nav on the
-              footer keeps reviewers happy on small screens. */}
           <Link
             href="/about"
-            className="text-[11px] font-medium uppercase tracking-[0.32em] text-ink-900/65 transition-colors hover:text-ink-900 dark:text-white/55 dark:hover:text-white sm:hidden"
+            className="text-[11px] font-medium uppercase tracking-[0.28em] text-ink-900/65 transition-colors hover:text-ink-900 sm:hidden"
           >
             Menu
           </Link>
-          <ThemeToggle />
         </div>
       </nav>
     </header>

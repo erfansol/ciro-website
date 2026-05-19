@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
 import { CATEGORIES, loadStories, type Story } from "@/lib/stories";
@@ -11,7 +10,7 @@ export const revalidate = 60;
 export const metadata: Metadata = buildMetadata({
   title: "Stories that turn streets into chapters",
   description:
-    "Live, location-based stories from Rome (and soon Milan, Paris, Barcelona). Walk a corner of a city and the world rearranges itself around you.",
+    "Live, location-based stories from Rome. Each story is short, walkable, and tied to a single real place.",
   path: "/stories",
 });
 
@@ -20,18 +19,18 @@ export default async function StoriesPage() {
   const grouped = groupByCategory(stories);
 
   return (
-    <main className="bg-[#06070d] text-white">
+    <main className="bg-white text-ink-900">
       <header className="relative isolate overflow-hidden pt-32 pb-16 sm:pt-40">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 0%, rgba(110,76,163,0.30) 0%, transparent 60%)",
+              "linear-gradient(180deg, #fff8e7 0%, #ffffff 70%, #ffffff 100%)",
           }}
         />
         <div className="mx-auto max-w-5xl px-6 text-center lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/45">
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-ink-900/45">
             The Library
           </p>
           <h1 className="mt-6 font-display text-balance text-[clamp(2.4rem,5.5vw,4.6rem)] leading-[1.05] tracking-tight">
@@ -40,13 +39,18 @@ export default async function StoriesPage() {
         </div>
 
         <div className="mx-auto mt-12 max-w-3xl px-6 lg:px-8">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm text-white/75">
-            <span className="mr-2 align-middle text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-ink-900/10 bg-white px-6 py-4 text-center text-sm text-ink-900/70 sm:flex-row sm:justify-center sm:gap-3">
+            <span className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-ink-900/55">
+              <span className="relative inline-flex h-1.5 w-1.5">
+                <span className="absolute inset-0 animate-ping rounded-full bg-amber-500 opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-500" />
+              </span>
               In progress
             </span>
-            Stories below are a first set. New cards are being added every
-            week — full Rome catalogue lands this summer, Milan and Paris
-            follow.
+            <span>
+              First set of stories below. New cards every week — full Rome
+              this summer, Italy next.
+            </span>
           </div>
         </div>
       </header>
@@ -66,11 +70,11 @@ export default async function StoriesPage() {
                     >
                       {cat.label}
                     </p>
-                    <h2 className="mt-2 font-display text-2xl tracking-tight text-white sm:text-3xl">
+                    <h2 className="mt-2 font-display text-2xl tracking-tight text-ink-900 sm:text-3xl">
                       {cat.tagline}
                     </h2>
                   </div>
-                  <span className="text-xs uppercase tracking-[0.28em] text-white/30">
+                  <span className="text-xs uppercase tracking-[0.28em] text-ink-900/35">
                     {items.length} {items.length === 1 ? "story" : "stories"}
                   </span>
                 </div>
@@ -94,11 +98,11 @@ export default async function StoriesPage() {
 function StoryCard({ story }: { story: Story }) {
   return (
     <Link href={`/stories/${story.id}`} className="block h-full">
-      <Card className="group h-full overflow-hidden border-white/5 bg-white/[0.03] transition-transform hover:-translate-y-0.5 hover:border-white/15">
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ink-900/10 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:border-ink-900/25 hover:shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
         <div
           className="relative h-44"
           style={{
-            background: `linear-gradient(135deg, ${story.meta.color} 0%, rgba(10,13,22,0.85) 100%)`,
+            background: `linear-gradient(135deg, ${story.meta.color} 0%, ${story.meta.color}aa 50%, #ffffff 100%)`,
           }}
         >
           <div className="absolute right-4 top-4 flex gap-2">
@@ -108,23 +112,23 @@ function StoryCard({ story }: { story: Story }) {
             )}
           </div>
           <div className="absolute bottom-4 left-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/85">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/95">
               {story.city}
             </p>
           </div>
         </div>
         <div className="flex flex-1 flex-col p-6">
-          <h3 className="font-display text-xl tracking-tight text-white">
+          <h3 className="font-display text-xl tracking-tight text-ink-900">
             {story.title}
           </h3>
-          <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-white/55">
+          <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-900/65">
             {story.description}
           </p>
-          <p className="mt-5 text-[11px] uppercase tracking-[0.28em] text-white/40">
+          <p className="mt-5 text-[11px] uppercase tracking-[0.28em] text-ink-900/40">
             {story.meta.label}
           </p>
         </div>
-      </Card>
+      </article>
     </Link>
   );
 }

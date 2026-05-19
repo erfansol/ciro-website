@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 import {
   motion,
@@ -11,12 +10,12 @@ import {
 } from "framer-motion";
 import { Balloon } from "@/components/ui/Balloon";
 import { CATEGORIES, type StoryCategoryMeta } from "@/lib/categories";
-import { APP_LINKS } from "@/lib/site";
 
 /**
- * Closing act. The five balloons converge over a single point and the
- * page calls the visitor to install. One direct line, two app buttons,
- * one cities list. Theme-aware so it reads in both light and dark.
+ * Closing act. The five balloons converge toward the centre and the
+ * page makes one quiet, honest ask — the app is on TestFlight, write
+ * to us and we'll add you. No app-store buttons (there's no public
+ * App Store listing yet) and no fake city availability claims.
  */
 export function Finale() {
   const ref = useRef<HTMLElement>(null);
@@ -37,22 +36,14 @@ export function Finale() {
   return (
     <section
       ref={ref}
-      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-white text-ink-900 dark:bg-[#06070d] dark:text-white"
+      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-white text-ink-900"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(circle at 50% 50%, rgba(15,23,42,0.06) 0%, transparent 55%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 hidden dark:block"
-        style={{
-          background:
-            "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0%, transparent 55%)",
+            "radial-gradient(circle at 50% 50%, rgba(15,23,42,0.05) 0%, transparent 55%)",
         }}
       />
 
@@ -76,10 +67,10 @@ export function Finale() {
           viewport={{ once: true, margin: "-25%" }}
           className="font-display text-balance text-[clamp(2.4rem,5.5vw,4.6rem)] leading-[1.05] tracking-tight"
         >
-          Open Ciro and start walking.
+          Walk Rome with us.
           <br />
-          <span className="text-ink-900/55 dark:text-white/55">
-            The first three stories are free.
+          <span className="text-ink-900/55">
+            We&rsquo;re adding testers manually.
           </span>
         </motion.h2>
 
@@ -88,20 +79,23 @@ export function Finale() {
           whileInView={reduced ? undefined : { opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
           viewport={{ once: true, margin: "-25%" }}
-          className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          className="mt-12 flex flex-col items-center justify-center gap-2"
         >
-          <Link
-            href={APP_LINKS.ios}
-            className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-ink-900/90 dark:bg-white dark:text-[#06070d] dark:hover:bg-white/90"
+          <a
+            href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%20—%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
+            className="group inline-flex items-center gap-3 rounded-full bg-ink-900 px-7 py-3.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-ink-900/95"
           >
-            Get it on iOS
-          </Link>
-          <Link
-            href={APP_LINKS.android}
-            className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 bg-white/60 px-7 py-3.5 text-sm font-medium text-ink-900 backdrop-blur transition-colors hover:bg-white dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-          >
-            Get it on Android
-          </Link>
+            Request TestFlight access
+            <span
+              aria-hidden
+              className="inline-block transition-transform duration-300 group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </a>
+          <p className="mt-2 text-xs text-ink-900/45">
+            iOS only for now. Send your Apple ID email — we add you the same day.
+          </p>
         </motion.div>
 
         <motion.p
@@ -109,9 +103,9 @@ export function Finale() {
           whileInView={reduced ? undefined : { opacity: 1 }}
           transition={{ duration: 1, delay: 0.7 }}
           viewport={{ once: true, margin: "-25%" }}
-          className="mt-12 text-xs uppercase tracking-[0.32em] text-ink-900/50 dark:text-white/35"
+          className="mt-12 text-[10px] uppercase tracking-[0.32em] text-ink-900/40"
         >
-          Live in Rome · Milan, Paris and Barcelona coming soon
+          Live in Rome · Italy expansion next
         </motion.p>
       </div>
     </section>
@@ -160,9 +154,8 @@ function ConvergingBalloon({
     >
       <Balloon
         color={category.color}
-        iconKey={category.iconKey}
         size={130}
-        className="drop-shadow-[0_25px_60px_rgba(0,0,0,0.55)]"
+        className="drop-shadow-[0_20px_40px_rgba(15,23,42,0.18)]"
       />
     </motion.div>
   );

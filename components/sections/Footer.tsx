@@ -15,9 +15,8 @@ const company = [
 const product = [
   { label: "How it works", href: "/product" },
   { label: "Stories", href: "/stories" },
+  { label: "TestFlight access", href: "mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access" },
   { label: "Waitlist", href: "/#waitlist" },
-  { label: "iOS", href: process.env.NEXT_PUBLIC_IOS_URL ?? "#" },
-  { label: "Android", href: process.env.NEXT_PUBLIC_ANDROID_URL ?? "#" },
 ];
 
 const legal = [
