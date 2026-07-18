@@ -8,7 +8,12 @@ import {
   updateStory,
   type StoryPatch,
 } from "@/lib/storyAdmin";
-import { CATEGORY_BY_ID, type StoryCategoryId } from "@/lib/categories";
+import {
+  CATEGORY_BY_ID,
+  type StoryCategoryId,
+  type BundleData,
+  type AnchorData,
+} from "@/lib/categories";
 
 const VALID_CATEGORIES = new Set<StoryCategoryId>(
   Object.keys(CATEGORY_BY_ID) as StoryCategoryId[],
@@ -54,6 +59,9 @@ export async function saveStoryAction(id: string, fd: FormData) {
 
   const durationLabel = readStr(fd, "durationLabel");
   if (durationLabel !== undefined) patch.durationLabel = durationLabel;
+
+  const stepsLabel = readStr(fd, "stepsLabel");
+  if (stepsLabel !== undefined) patch.stepsLabel = stepsLabel;
 
   const startLabel = readStr(fd, "startLabel");
   if (startLabel !== undefined) patch.startLabel = startLabel;
@@ -125,6 +133,64 @@ export async function saveStoryAction(id: string, fd: FormData) {
     }
   } else if (fd.has("published")) {
     patch.published = readBool(fd, "published");
+  }
+
+  // ── Moods ────────────────────────────────────────────────────────────────
+  const moodsJson = readStr(fd, "moods");
+  if (moodsJson !== undefined) {
+    try {
+      const parsed = JSON.parse(moodsJson);
+      if (Array.isArray(parsed)) {
+        patch.moods = parsed.filter(
+          (m): m is string => typeof m === "string" && m.trim().length > 0,
+        );
+      }
+    } catch {
+      // Ignore malformed JSON; moods are optional.
+    }
+  }
+
+  // ── Bundle ───────────────────────────────────────────────────────────────
+  const bundleIosUrl = readStr(fd, "bundleIosUrl");
+  const bundleAndroidUrl = readStr(fd, "bundleAndroidUrl");
+  const bundleSizeBytes = readNum(fd, "bundleSizeBytes");
+  if (
+    bundleIosUrl !== undefined ||
+    bundleAndroidUrl !== undefined ||
+    bundleSizeBytes !== undefined
+  ) {
+    const bundle: BundleData = {};
+    if (bundleIosUrl !== undefined) bundle.iosUrl = bundleIosUrl || undefined;
+    if (bundleAndroidUrl !== undefined) bundle.androidUrl = bundleAndroidUrl || undefined;
+    if (bundleSizeBytes !== undefined && bundleSizeBytes >= 0)
+      bundle.sizeBytes = Math.round(bundleSizeBytes);
+    patch.bundle = bundle;
+  }
+
+  // ── AR Anchor ────────────────────────────────────────────────────────────
+  const anchorLat = readNum(fd, "anchorLat");
+  const anchorLon = readNum(fd, "anchorLon");
+  const anchorAlt = readNum(fd, "anchorAltitude");
+  const anchorHeading = readNum(fd, "anchorHeading");
+  const anchorTrigger = readNum(fd, "anchorTriggerRadius");
+  const anchorSpawnAtUser = fd.get("anchorSpawnAtUser") === "on";
+
+  if (
+    anchorLat !== undefined ||
+    anchorLon !== undefined ||
+    anchorAlt !== undefined ||
+    anchorHeading !== undefined ||
+    anchorTrigger !== undefined
+  ) {
+    const anchor: AnchorData = {};
+    if (anchorLat !== undefined) anchor.latitude = anchorLat;
+    if (anchorLon !== undefined) anchor.longitude = anchorLon;
+    if (anchorAlt !== undefined) anchor.altitudeMeters = anchorAlt;
+    if (anchorHeading !== undefined) anchor.headingDeg = anchorHeading;
+    if (anchorTrigger !== undefined && anchorTrigger > 0)
+      anchor.triggerRadiusM = anchorTrigger;
+    anchor.spawnAtUser = anchorSpawnAtUser;
+    patch.anchor = anchor;
   }
 
   await updateStory(id, patch, session.uid);

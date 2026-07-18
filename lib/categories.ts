@@ -95,6 +95,35 @@ export type Waypoint = {
   label?: string;
 };
 
+/** Mirrors Flutter's StoryBundle — Unity AssetBundle delivery metadata. */
+export type BundleData = {
+  iosUrl?: string;
+  androidUrl?: string;
+  sizeBytes?: number;
+  sha256?: string;
+  version?: number;
+};
+
+/** Mirrors Flutter's StoryAnchor — where Unity places the AR scene. */
+export type AnchorData = {
+  /** Degrees north; same as Firestore `anchor.latitude`. */
+  latitude?: number;
+  /** Degrees east; same as Firestore `anchor.longitude`. */
+  longitude?: number;
+  /** WGS-84 ellipsoidal altitude in metres. Optional. */
+  altitudeMeters?: number;
+  /** True north heading in degrees [0–360). Used for initial AR orientation. */
+  headingDeg?: number;
+  /** Radius in metres at which the app triggers the geofence/AR overlay. */
+  triggerRadiusM?: number;
+  /**
+   * When true Unity spawns the AR prefab at the user's live Geospatial
+   * pose rather than at latitude/longitude — useful for character stories
+   * where "appear next to me" makes more sense than a fixed pin.
+   */
+  spawnAtUser?: boolean;
+};
+
 export type FirestoreStory = {
   id: string;
   title: string;
@@ -102,12 +131,17 @@ export type FirestoreStory = {
   city: string;
   category: StoryCategoryId;
   durationLabel?: string;
+  stepsLabel?: string;
   startLabel?: string;
   endLabel?: string;
   lat?: number;
   lon?: number;
   moods: string[];
   hasAr: boolean;
+  /** Full Unity AssetBundle delivery metadata. Drives the download UI in Flutter. */
+  bundle?: BundleData;
+  /** AR anchor describing where Unity places the scene in the real world. */
+  anchor?: AnchorData;
   updatedAt?: string;
   /**
    * ISO timestamp at which an admin scheduled this story to flip to

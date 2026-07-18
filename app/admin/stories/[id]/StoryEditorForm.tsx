@@ -8,6 +8,14 @@ import type { StoryCategoryMeta } from "@/lib/categories";
 
 type PublishMode = "draft" | "published" | "scheduled";
 
+/** Parse a comma/newline-separated tag string into a clean string[]. */
+function parseMoods(raw: string): string[] {
+  return raw
+    .split(/[,\n]+/)
+    .map((s) => s.trim().replace(/^#/, ""))
+    .filter((s) => s.length > 0);
+}
+
 function initialMode(story: AdminStory): PublishMode {
   if (story.published) return "published";
   if (story.publishAt) return "scheduled";
@@ -49,6 +57,9 @@ export function StoryEditorForm({
       label: w.label ?? "",
     })),
   );
+  const [moodsInput, setMoodsInput] = useState<string>(
+    (story.moods ?? []).join(", "),
+  );
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,6 +90,9 @@ export function StoryEditorForm({
         (w) => Number.isFinite(w.lat) && Number.isFinite(w.lon),
       );
     fd.set("routeCoords", JSON.stringify(wp));
+
+    // Serialise moods from the controlled textarea.
+    fd.set("moods", JSON.stringify(parseMoods(moodsInput)));
 
     startTransition(async () => {
       try {
@@ -133,12 +147,20 @@ export function StoryEditorForm({
             ))}
           </select>
         </div>
-        <Field
-          label="Duration label"
-          name="durationLabel"
-          defaultValue={story.durationLabel ?? ""}
-          placeholder="e.g. 8 min"
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <Field
+            label="Duration label"
+            name="durationLabel"
+            defaultValue={story.durationLabel ?? ""}
+            placeholder="e.g. 8 min"
+          />
+          <Field
+            label="Steps label"
+            name="stepsLabel"
+            defaultValue={story.stepsLabel ?? ""}
+            placeholder="e.g. 4 stops"
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Field
@@ -176,6 +198,22 @@ export function StoryEditorForm({
             defaultValue={story.endLabel ?? ""}
             placeholder="e.g. Tiber Island"
           />
+        </div>
+
+        {/* ── Moods ─────────────────────────────────────────────── */}
+        <div>
+          <Label>Moods</Label>
+          <textarea
+            rows={2}
+            value={moodsInput}
+            onChange={(e) => setMoodsInput(e.target.value)}
+            placeholder="romantic, mysterious, cinematic"
+            className="mt-1.5 w-full rounded-md border border-admin-border bg-admin-surface px-3 py-2.5 text-sm text-admin-text placeholder:text-admin-text-faint focus:border-admin-border-strong focus:outline-none"
+          />
+          <p className="mt-1 text-[11px] text-admin-text-faint">
+            Comma-separated hashtag labels. These appear on Flutter story
+            cards and power the Explore mood filter. # prefix is optional.
+          </p>
         </div>
       </div>
 
@@ -289,6 +327,108 @@ export function StoryEditorForm({
           >
             Add waypoint
           </button>
+        </fieldset>
+
+        {/* ── AR Bundle ─────────────────────────────────────────── */}
+        <fieldset className="rounded-md border border-admin-border bg-admin-surface p-4">
+          <legend className="px-1 text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
+            AR Bundle
+          </legend>
+          <p className="pt-1 text-[11px] text-admin-text-faint">
+            Unity AssetBundle delivery. Flutter reads these URLs to download
+            the bundle before launching AR. Leave blank for Flutter-native stories.
+          </p>
+          <div className="mt-3 space-y-3">
+            <Field
+              label="iOS bundle URL"
+              name="bundleIosUrl"
+              defaultValue={story.bundle?.iosUrl ?? ""}
+              placeholder="https://storage.googleapis.com/…/story.bundle"
+            />
+            <Field
+              label="Android bundle URL"
+              name="bundleAndroidUrl"
+              defaultValue={story.bundle?.androidUrl ?? ""}
+              placeholder="https://storage.googleapis.com/…/story.bundle"
+            />
+            <Field
+              label="Bundle size (bytes)"
+              name="bundleSizeBytes"
+              type="number"
+              step="1"
+              defaultValue={story.bundle?.sizeBytes !== undefined ? String(story.bundle.sizeBytes) : ""}
+              placeholder="0"
+            />
+          </div>
+        </fieldset>
+
+        {/* ── AR Anchor ─────────────────────────────────────────── */}
+        <fieldset className="rounded-md border border-admin-border bg-admin-surface p-4">
+          <legend className="px-1 text-[11px] uppercase tracking-[0.22em] text-admin-text-subtle">
+            AR Anchor
+          </legend>
+          <p className="pt-1 text-[11px] text-admin-text-faint">
+            Where Unity places the AR scene. Lat/lon drive the world map pin;
+            altitude + heading refine the spawn orientation. Trigger radius
+            controls when the geofence fires.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <Field
+              label="Anchor latitude"
+              name="anchorLat"
+              type="number"
+              step="any"
+              defaultValue={story.anchor?.latitude !== undefined ? String(story.anchor.latitude) : (story.lat !== undefined ? String(story.lat) : "")}
+              placeholder="41.9028"
+            />
+            <Field
+              label="Anchor longitude"
+              name="anchorLon"
+              type="number"
+              step="any"
+              defaultValue={story.anchor?.longitude !== undefined ? String(story.anchor.longitude) : (story.lon !== undefined ? String(story.lon) : "")}
+              placeholder="12.4964"
+            />
+            <Field
+              label="Altitude (metres)"
+              name="anchorAltitude"
+              type="number"
+              step="any"
+              defaultValue={story.anchor?.altitudeMeters !== undefined ? String(story.anchor.altitudeMeters) : ""}
+              placeholder="optional"
+            />
+            <Field
+              label="Heading (degrees)"
+              name="anchorHeading"
+              type="number"
+              step="any"
+              defaultValue={story.anchor?.headingDeg !== undefined ? String(story.anchor.headingDeg) : ""}
+              placeholder="0–360"
+            />
+            <Field
+              label="Trigger radius (m)"
+              name="anchorTriggerRadius"
+              type="number"
+              step="1"
+              defaultValue={story.anchor?.triggerRadiusM !== undefined ? String(story.anchor.triggerRadiusM) : "40"}
+              placeholder="40"
+            />
+            <div className="flex items-center gap-3 pt-5">
+              <input
+                type="checkbox"
+                id="anchorSpawnAtUser"
+                name="anchorSpawnAtUser"
+                defaultChecked={story.anchor?.spawnAtUser === true}
+                className="h-4 w-4 accent-admin-accent"
+              />
+              <label htmlFor="anchorSpawnAtUser" className="text-sm text-admin-text">
+                Spawn at user
+                <span className="block text-[11px] text-admin-text-faint">
+                  Ignores lat/lon; spawns next to user&apos;s live position
+                </span>
+              </label>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset className="rounded-md border border-admin-border bg-admin-surface p-4">

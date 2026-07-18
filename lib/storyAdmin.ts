@@ -1,6 +1,6 @@
 import "server-only";
 import { getAdminDb } from "./firebaseAdmin";
-import { CATEGORY_BY_ID, type FirestoreStory } from "./categories";
+import { CATEGORY_BY_ID, type FirestoreStory, type BundleData, type AnchorData } from "./categories";
 import { logAdmin } from "./auditLog";
 
 export type AdminStory = FirestoreStory & {
@@ -52,9 +52,31 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
     : "historical") as AdminStory["category"];
 
   const center = raw.mapCenter as { lat?: number; lon?: number } | undefined;
-  const bundle = raw.bundle as { iosUrl?: string; androidUrl?: string } | undefined;
+  const rawBundle = raw.bundle as Record<string, unknown> | undefined;
+  const rawAnchor = raw.anchor as Record<string, unknown> | undefined;
   const moderation = raw.moderation as { status?: string } | undefined;
   const stats = raw.stats as { views?: number; completions?: number } | undefined;
+
+  const bundle: BundleData | undefined = rawBundle
+    ? {
+        iosUrl: readString(rawBundle.iosUrl),
+        androidUrl: readString(rawBundle.androidUrl),
+        sizeBytes: readNumber(rawBundle.sizeBytes),
+        sha256: readString(rawBundle.sha256),
+        version: readNumber(rawBundle.version),
+      }
+    : undefined;
+
+  const anchor: AnchorData | undefined = rawAnchor
+    ? {
+        latitude: readNumber(rawAnchor.latitude),
+        longitude: readNumber(rawAnchor.longitude),
+        altitudeMeters: readNumber(rawAnchor.altitudeMeters),
+        headingDeg: readNumber(rawAnchor.headingDeg),
+        triggerRadiusM: readNumber(rawAnchor.triggerRadiusM),
+        spawnAtUser: rawAnchor.spawnAtUser === true,
+      }
+    : undefined;
 
   return {
     id,
@@ -63,6 +85,7 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
     city: readString(raw.city) ?? "Rome",
     category,
     durationLabel: readString(raw.durationLabel),
+    stepsLabel: readString(raw.stepsLabel),
     startLabel: readString(raw.startLabel),
     endLabel: readString(raw.endLabel),
     lat: readNumber(center?.lat),
@@ -70,7 +93,9 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
     moods: Array.isArray(raw.moods)
       ? raw.moods.filter((m): m is string => typeof m === "string")
       : [],
-    hasAr: Boolean(bundle?.iosUrl || bundle?.androidUrl),
+    hasAr: Boolean(rawBundle?.iosUrl || rawBundle?.androidUrl),
+    bundle,
+    anchor,
     published: raw.published === true,
     publishAt: typeof raw.publishAt === "string" ? raw.publishAt : null,
     priceCents: readNumber(raw.priceCents),
@@ -170,6 +195,7 @@ export type StoryPatch = {
   city?: string;
   category?: AdminStory["category"];
   durationLabel?: string;
+  stepsLabel?: string;
   startLabel?: string;
   endLabel?: string;
   lat?: number;
@@ -185,6 +211,12 @@ export type StoryPatch = {
   routeCoords?: import("./categories").Waypoint[];
   /** Filename under `stories/{id}/`. `null` clears. */
   bannerImage?: string | null;
+  /** Free-form mood tags used by Explore filter + story card chips. */
+  moods?: string[];
+  /** Unity AssetBundle delivery metadata — drives Flutter download UI. */
+  bundle?: BundleData;
+  /** AR anchor — where Unity places the scene in the real world. */
+  anchor?: AnchorData;
 };
 
 /**
@@ -213,6 +245,7 @@ export async function updateStory(
   if (patch.category !== undefined) update.category = patch.category;
   if (patch.durationLabel !== undefined)
     update.durationLabel = patch.durationLabel;
+  if (patch.stepsLabel !== undefined) update.stepsLabel = patch.stepsLabel;
   if (patch.lat !== undefined && patch.lon !== undefined) {
     update.mapCenter = { lat: patch.lat, lon: patch.lon };
   }
@@ -231,6 +264,23 @@ export async function updateStory(
     });
   }
   if (patch.bannerImage !== undefined) update.bannerImage = patch.bannerImage;
+  if (patch.moods !== undefined) update.moods = patch.moods;
+  if (patch.bundle !== undefined) {
+    // Merge into the existing bundle sub-map rather than replacing it
+    // entirely, so fields not exposed in the editor (sha256, version)
+    // survive a save.
+    const existing = (before.data() as RawDoc).bundle as Record<string, unknown> | undefined ?? {};
+    update.bundle = { ...existing, ...patch.bundle };
+  }
+  if (patch.anchor !== undefined) {
+    const existing = (before.data() as RawDoc).anchor as Record<string, unknown> | undefined ?? {};
+    update.anchor = { ...existing, ...patch.anchor };
+    // Keep mapCenter in sync with the anchor lat/lon so the world map
+    // pin moves when the anchor is updated from the editor.
+    if (patch.anchor.latitude !== undefined && patch.anchor.longitude !== undefined) {
+      update.mapCenter = { lat: patch.anchor.latitude, lon: patch.anchor.longitude };
+    }
+  }
 
   await ref.update(update);
 

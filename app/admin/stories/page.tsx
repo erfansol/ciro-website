@@ -32,6 +32,12 @@ export default async function AdminStoriesPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
+            href="/admin/stories/new"
+            className="inline-flex items-center gap-2 rounded-md bg-admin-accent px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-admin-accent-fg transition-opacity hover:opacity-90"
+          >
+            + New story
+          </Link>
+          <Link
             href="/admin/stories/import"
             className="inline-flex items-center gap-2 rounded-md border border-admin-border-strong bg-admin-surface px-4 py-2 text-xs uppercase tracking-[0.22em] text-admin-text-muted transition-colors hover:border-admin-border-strong hover:text-admin-text"
           >
