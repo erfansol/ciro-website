@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
+// 5-min ISR so redeploys propagate through Hostinger's CDN (see about/page.tsx).
+export const revalidate = 300;
+
 export const metadata: Metadata = buildMetadata({
   title: "Partners & business · Ciro for cities, museums and travel",
   description:

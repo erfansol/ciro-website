@@ -15,6 +15,9 @@ import { Reveal } from "@/components/ui/Reveal";
 
 type Params = { slug: string };
 
+// 5-min ISR so redeploys propagate through Hostinger's CDN (see about/page.tsx).
+export const revalidate = 300;
+
 export function generateStaticParams() {
   return CITIES.map((c) => ({ slug: c.slug }));
 }

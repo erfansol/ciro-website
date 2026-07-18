@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 import { buildMetadata, SITE, founderJsonLd } from "@/lib/seo";
 import { RECOGNITION_BY_DATE } from "@/lib/recognition";
 
+// Re-render at most every 5 minutes. Without this the page is fully
+// static and ships with a 1-year s-maxage, which Hostinger's CDN edges
+// obey — a redeploy then can't replace stale copies without a manual
+// CDN purge.
+export const revalidate = 300;
+
 export const metadata: Metadata = buildMetadata({
   title: "About Ciro · Company, founder and team",
   description:
