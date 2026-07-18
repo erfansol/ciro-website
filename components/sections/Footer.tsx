@@ -29,7 +29,7 @@ export function Footer() {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
   return (
-    <footer className="relative border-t border-ink-900/8 dark:border-white/5 bg-white/40 dark:bg-ink-950/60 backdrop-blur">
+    <footer className="relative border-t border-ink-900/10 dark:border-white/5 bg-paper dark:bg-ink-950">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">

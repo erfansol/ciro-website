@@ -92,14 +92,14 @@ function Act({
     <section
       ref={ref}
       id={`act-${category.id.replace(/_/g, "-")}`}
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-white text-ink-900 dark:bg-[#06070d] dark:text-white"
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-paper text-ink-900 dark:bg-[#06070d] dark:text-white"
     >
-      {/* Color wash that bleeds in mid-section */}
+      {/* Flat category tint that fades in mid-section */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
-          background: `radial-gradient(ellipse at ${index % 2 === 0 ? "80%" : "20%"} 50%, ${category.color}55 0%, ${category.color}1a 35%, transparent 70%)`,
+          backgroundColor: `${category.color}26`,
           opacity: washOpacity,
         }}
       />
@@ -116,7 +116,7 @@ function Act({
           color={category.color}
           iconKey={category.iconKey}
           size={460}
-          className="drop-shadow-[0_40px_80px_rgba(0,0,0,0.7)]"
+          className="drop-shadow-[0_24px_48px_rgba(15,23,42,0.25)]"
         />
       </motion.div>
 

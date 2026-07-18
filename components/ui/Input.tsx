@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes, type SelectHTMLAttributes, type T
 import { cn } from "@/lib/cn";
 
 const fieldBase =
-  "w-full rounded-2xl border border-ink-900/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-4 py-3 text-sm text-ink-900 dark:text-white placeholder:text-ink-900/40 dark:placeholder:text-white/40 backdrop-blur focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition-colors";
+  "w-full rounded-md border border-ink-900/15 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm text-ink-900 dark:text-white placeholder:text-ink-900/40 dark:placeholder:text-white/40 focus:outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 transition-colors";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;

@@ -11,23 +11,16 @@ html {
 }
 
 body {
-  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Headline serif — set at the largest optical size Newsreader offers so
+ * big headings render with the fine, high-contrast strokes of print. */
 .font-display {
-  font-variation-settings: "opsz" 144, "SOFT" 100;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-/* Subtle grain over cinematic backgrounds */
-.bg-aurora {
-  background-image:
-    linear-gradient(135deg, #4c1d95 0%, #1e1b4b 40%, #0a0d16 100%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  background-blend-mode: screen;
+  font-variation-settings: "opsz" 72;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -42,29 +35,12 @@ body {
 }
 
 ::selection {
-  background: rgba(244, 63, 94, 0.35);
-  color: white;
+  background: rgba(217, 155, 30, 0.3);
+  color: inherit;
 }
 
 .text-balance {
   text-wrap: balance;
-}
-
-/* GPS-style pulse — expanding ring + fade out, looped. Used by the
- * hero brand anchor on the homepage to give the map pin a sense of
- * "live location ping." */
-@keyframes ciroPing {
-  0% {
-    transform: scale(1);
-    opacity: 0.85;
-  }
-  80% {
-    opacity: 0;
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
 }
 
 /* =============================================================================

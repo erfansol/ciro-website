@@ -12,7 +12,7 @@ export function SectionHeading({ eyebrow, title, description, align = "left", cl
   return (
     <div className={cn("max-w-3xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow && (
-        <span className="inline-block text-xs font-semibold uppercase tracking-[0.18em] text-brand-500 dark:text-brand-400 mb-3">
+        <span className="inline-block text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-400 mb-3">
           {eyebrow}
         </span>
       )}

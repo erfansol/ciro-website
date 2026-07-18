@@ -36,17 +36,8 @@ export function Finale() {
   return (
     <section
       ref={ref}
-      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-white text-ink-900"
+      className="relative isolate flex min-h-[110svh] items-center justify-center overflow-hidden bg-paper text-ink-900"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(circle at 50% 50%, rgba(15,23,42,0.05) 0%, transparent 55%)",
-        }}
-      />
-
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-0">
         {CATEGORIES.map((cat, i) => (
           <ConvergingBalloon
@@ -70,7 +61,7 @@ export function Finale() {
           Walk Rome with us.
           <br />
           <span className="text-ink-900/55">
-            We&rsquo;re adding testers manually.
+            <em className="italic">We&rsquo;re adding testers manually.</em>
           </span>
         </motion.h2>
 
@@ -83,15 +74,10 @@ export function Finale() {
         >
           <a
             href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%20—%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
-            className="group inline-flex items-center gap-3 rounded-full bg-ink-900 px-7 py-3.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-ink-900/95"
+            className="group inline-flex items-center gap-3 rounded-md bg-ink-900 px-7 py-3.5 text-sm font-medium text-paper-50 transition-colors duration-200 hover:bg-ink-800"
           >
             Request TestFlight access
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
+            <span aria-hidden>→</span>
           </a>
           <p className="mt-2 text-xs text-ink-900/45">
             iOS only for now. Send your Apple ID email — we add you the same day.

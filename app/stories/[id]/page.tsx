@@ -88,14 +88,6 @@ export default async function StoryDetailPage({
       />
 
       <main className="relative isolate min-h-screen overflow-hidden bg-[#06070d] text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background: `radial-gradient(ellipse at 50% -10%, ${category.color}55 0%, transparent 50%)`,
-          }}
-        />
-
         {story.bannerImage && (
           <BannerHero storyId={story.id} filename={story.bannerImage} />
         )}
@@ -166,7 +158,7 @@ export default async function StoryDetailPage({
               {story.moods.map((m) => (
                 <li
                   key={m}
-                  className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/55"
+                  className="rounded-sm border border-white/15 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/55"
                 >
                   #{m}
                 </li>
@@ -175,7 +167,7 @@ export default async function StoryDetailPage({
           )}
 
           <section
-            className="mt-16 rounded-3xl border p-8"
+            className="mt-16 rounded-lg border p-8"
             style={{ borderColor: `${category.color}55`, background: "rgba(255,255,255,0.02)" }}
           >
             <p className="text-xs uppercase tracking-[0.32em] text-white/55">
@@ -187,13 +179,13 @@ export default async function StoryDetailPage({
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={APP_LINKS.ios}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-[#06070d] transition-colors hover:bg-white/90"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-medium text-[#06070d] transition-colors hover:bg-white/90"
               >
                 Open on iOS
               </Link>
               <Link
                 href={APP_LINKS.android}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-medium text-white backdrop-blur transition-colors hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/25 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
               >
                 Open on Android
               </Link>
@@ -323,7 +315,7 @@ function RouteSummary({
     }))
     .filter((_, i, arr) => arr.length > 0);
   return (
-    <section className="mt-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+    <section className="mt-10 rounded-lg border border-white/[0.06] bg-white/[0.02] p-6">
       <p className="text-[11px] uppercase tracking-[0.32em] text-white/55">
         Route
       </p>
@@ -361,7 +353,7 @@ function PriceBadge({
   if (priceCents === undefined) return null;
   if (priceCents <= 0) {
     return (
-      <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-200">
+      <p className="mt-6 inline-flex items-center gap-2 rounded-sm border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-200">
         Free during launch
       </p>
     );
@@ -369,7 +361,7 @@ function PriceBadge({
   const symbol = symbolFor(currency ?? "USD");
   const display = (priceCents / 100).toFixed(2);
   return (
-    <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/85">
+    <p className="mt-6 inline-flex items-center gap-2 rounded-sm border border-white/15 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/85">
       One-time unlock · {symbol}
       {display}
     </p>

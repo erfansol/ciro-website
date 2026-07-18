@@ -6,13 +6,13 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-ink-900 disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-tight transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-paper dark:focus-visible:ring-offset-ink-900 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-sunset text-white shadow-[0_8px_32px_-8px_rgba(124,58,237,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(124,58,237,0.7)] hover:-translate-y-0.5 active:translate-y-0",
+    "bg-ink-900 text-paper-50 hover:bg-ink-800 dark:bg-white dark:text-ink-950 dark:hover:bg-white/90",
   secondary:
-    "bg-white/10 backdrop-blur border border-white/15 text-white hover:bg-white/15 dark:bg-white/5 dark:hover:bg-white/10",
+    "border border-ink-900/25 text-ink-900 hover:border-ink-900/60 dark:border-white/25 dark:text-white dark:hover:border-white/60",
   ghost:
     "text-ink-900 hover:bg-ink-900/5 dark:text-white dark:hover:bg-white/10",
 };

@@ -67,7 +67,6 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
             className="object-cover"
             priority
           />
-          <div className={`absolute inset-0 bg-gradient-to-tr ${city.gradient} mix-blend-multiply opacity-40`} />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
         </div>
 
@@ -102,7 +101,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
               {city.highlights.map((h, i) => (
                 <Reveal key={i} as="li" delay={i * 0.06}>
                   <div className="flex items-start gap-3">
-                    <span className="mt-1.5 h-2 w-2 flex-none rounded-full bg-sunset" />
+                    <span className="mt-1.5 h-2 w-2 flex-none rounded-full bg-brand-500" />
                     <span className="text-sm leading-relaxed text-ink-900/80 dark:text-white/75">
                       {h}
                     </span>
@@ -129,7 +128,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
 
           <aside className="lg:col-span-5">
             <Card className="p-7">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-500 dark:text-brand-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-400">
                 {live ? "Travelers in town" : `Be first into ${city.name}`}
               </p>
               <h2 className="mt-2 font-display text-2xl tracking-tight text-ink-900 dark:text-white">
@@ -166,12 +165,10 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
               {stories.map((s, i) => (
                 <Reveal key={s.id} as="li" delay={(i % 3) * 0.06}>
                   <Link href={`/stories/${s.id}`} className="block h-full">
-                    <Card className="h-full overflow-hidden transition-transform hover:-translate-y-0.5">
+                    <Card className="h-full overflow-hidden">
                       <div
                         className="relative h-40"
-                        style={{
-                          background: `linear-gradient(135deg, ${s.meta.color} 0%, rgba(10,13,22,0.85) 100%)`,
-                        }}
+                        style={{ background: s.meta.color }}
                       >
                         <span className="absolute left-5 top-5 text-xs font-semibold uppercase tracking-[0.16em] text-white/90">
                           {s.meta.label}
@@ -208,7 +205,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
               <li key={c.slug}>
                 <Link
                   href={`/city/${c.slug}`}
-                  className="block rounded-2xl border border-ink-900/8 dark:border-white/10 bg-white/40 dark:bg-white/[0.04] p-5 hover:border-ink-900/15 dark:hover:border-white/20 transition-colors"
+                  className="block rounded-lg border border-ink-900/10 dark:border-white/10 bg-white dark:bg-white/[0.04] p-5 hover:border-ink-900/30 dark:hover:border-white/25 transition-colors"
                 >
                   <p className="text-xs uppercase tracking-wider text-ink-900/50 dark:text-white/40">
                     {c.country}

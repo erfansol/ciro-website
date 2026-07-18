@@ -26,18 +26,8 @@ export function HeroBalloons() {
   return (
     <section
       id="hero"
-      className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden bg-white pt-28 pb-24 text-ink-900 sm:pt-36 sm:pb-32"
+      className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden bg-paper pt-28 pb-24 text-ink-900 sm:pt-36 sm:pb-32"
     >
-      {/* Soft daytime wash */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(180deg, #fff8e7 0%, #fff 60%, #fff 100%)",
-        }}
-      />
-
       {/* Balloons — kept calm, smaller, and pushed to the sides so the
           centred headline reads cleanly. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-0">
@@ -87,7 +77,7 @@ export function HeroBalloons() {
         >
           Every place has a story.
           <br />
-          <span className="text-ink-900/55">Ciro tells you, on the spot.</span>
+          <em className="italic text-ink-900/60">Ciro tells you, on the spot.</em>
         </motion.h1>
 
         <motion.p
@@ -111,10 +101,7 @@ export function HeroBalloons() {
         >
           <span className="h-px w-10 bg-ink-900/15" />
           <span className="flex items-center gap-1.5">
-            <span className="relative inline-flex h-1.5 w-1.5">
-              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500 opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            </span>
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-600" />
             Roma · 41.890°N · 12.492°E
           </span>
           <span className="h-px w-10 bg-ink-900/15" />
@@ -129,15 +116,10 @@ export function HeroBalloons() {
         >
           <a
             href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%20—%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
-            className="group inline-flex items-center gap-3 rounded-full bg-ink-900 px-7 py-3.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-ink-900/95"
+            className="group inline-flex items-center gap-3 rounded-md bg-ink-900 px-7 py-3.5 text-sm font-medium text-paper-50 transition-colors duration-200 hover:bg-ink-800"
           >
             Request TestFlight access
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
+            <span aria-hidden>→</span>
           </a>
           <p className="mt-2 text-xs text-ink-900/45">
             Email{" "}

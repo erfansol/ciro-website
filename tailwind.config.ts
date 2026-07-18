@@ -8,14 +8,6 @@ const config: Config = {
     "./lib/**/*.{ts,tsx}",
     "./content/**/*.{ts,tsx}",
   ],
-  safelist: [
-    {
-      pattern: /^(from|via|to)-(amber|rose|violet|fuchsia|indigo|sky|red|stone|slate|emerald|teal|orange|pink|brand)-(300|400|500|600|700|800)$/,
-    },
-    "bg-gradient-to-tr",
-    "bg-gradient-to-br",
-    "bg-gradient-to-t",
-  ],
   theme: {
     extend: {
       colors: {
@@ -41,53 +33,39 @@ const config: Config = {
           800: "#0f1320",
           700: "#161b2e",
         },
-        brand: {
-          50: "#f5f3ff",
-          100: "#ede9fe",
-          400: "#a78bfa",
-          500: "#8b5cf6",
-          600: "#7c3aed",
-          700: "#6d28d9",
-          900: "#4c1d95",
+        // Warm off-white page ground — printed paper, not screen white.
+        paper: {
+          DEFAULT: "#faf7f0",
+          50: "#fdfbf7",
+          100: "#f5f0e4",
         },
-        sun: {
-          300: "#FFE082",
-          400: "#FFD54F",
-          500: "#FFC107",
-          600: "#F4A613",
+        // Single flat accent, taken from the golden knot of the app icon.
+        brand: {
+          50: "#fbf6e9",
+          100: "#f5ebd0",
+          300: "#ebc46e",
+          400: "#e3af3f",
+          500: "#d99b1e",
+          600: "#b27c12",
+          700: "#8a5f0d",
+          900: "#573b08",
         },
         rose: {
           500: "#f43f5e",
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "var(--font-inter)", "system-ui", "sans-serif"],
-      },
-      backgroundImage: {
-        "sunset": "linear-gradient(120deg, #FFD54F 0%, #f43f5e 50%, #7c3aed 100%)",
-        "aurora": "linear-gradient(135deg, #4c1d95 0%, #1e1b4b 40%, #0a0d16 100%)",
-        "grid-light": "linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px)",
-        "grid-dark": "linear-gradient(rgba(167,139,250,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.08) 1px, transparent 1px)",
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       keyframes: {
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "drift": {
-          "0%, 100%": { transform: "translate3d(0,0,0)" },
-          "50%": { transform: "translate3d(20px,-30px,0)" },
-        },
-        "pulse-soft": {
-          "0%, 100%": { opacity: "0.6" },
-          "50%": { opacity: "1" },
-        },
       },
       animation: {
         "fade-up": "fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both",
-        "drift": "drift 14s ease-in-out infinite",
-        "pulse-soft": "pulse-soft 4s ease-in-out infinite",
       },
     },
   },

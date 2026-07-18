@@ -38,7 +38,7 @@ export function Nav() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        "bg-white/80 backdrop-blur-xl",
+        "bg-paper",
         scrolled
           ? "border-b border-ink-900/[0.08] shadow-[0_1px_0_rgba(15,23,42,0.04)]"
           : "border-b border-transparent",

@@ -54,7 +54,7 @@ export default function AboutPage() {
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
             Founder
           </h2>
-          <div className="mt-6 rounded-2xl border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
+          <div className="mt-6 rounded-lg border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
             <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-ink-900/45 dark:text-white/40">
               Founder &amp; CEO
             </p>
@@ -154,7 +154,7 @@ export default function AboutPage() {
         </section>
 
         {/* Contact */}
-        <section className="mt-16 rounded-2xl border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
+        <section className="mt-16 rounded-lg border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
             Contact
           </h2>

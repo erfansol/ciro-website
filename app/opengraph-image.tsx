@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Ciro — Experience cities through AI-powered stories";
+export const alt = "Ciro — Every place has a story";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -16,10 +16,10 @@ export default async function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 80,
-          background:
-            "linear-gradient(135deg, #4c1d95 0%, #1e1b4b 45%, #06070d 100%)",
-          color: "white",
-          fontFamily: "sans-serif",
+          background: "#faf7f0",
+          color: "#0a0d16",
+          fontFamily: "Georgia, serif",
+          borderBottom: "16px solid #d99b1e",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
@@ -27,8 +27,8 @@ export default async function OpengraphImage() {
             style={{
               width: 64,
               height: 64,
-              borderRadius: 14,
-              background: "#FFD54F",
+              borderRadius: 8,
+              background: "#d99b1e",
               display: "flex",
             }}
           >
@@ -36,43 +36,38 @@ export default async function OpengraphImage() {
               <path
                 d="M 152 70 A 60 60 0 1 0 152 130"
                 fill="none"
-                stroke="white"
+                stroke="#faf7f0"
                 strokeWidth={32}
                 strokeLinecap="round"
               />
-              <circle cx={158} cy={82} r={10} fill="white" />
+              <circle cx={158} cy={82} r={10} fill="#faf7f0" />
             </svg>
           </div>
-          <div style={{ fontSize: 40, fontWeight: 600, letterSpacing: -1 }}>Ciro</div>
+          <div style={{ fontSize: 40, fontWeight: 600, letterSpacing: 6 }}>CIRO</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div
             style={{
               fontSize: 84,
-              lineHeight: 1.05,
-              fontWeight: 600,
-              letterSpacing: -2,
+              lineHeight: 1.08,
+              fontWeight: 500,
               maxWidth: 980,
             }}
           >
-            Experience cities through{" "}
-            <span
-              style={{
-                background:
-                  "linear-gradient(120deg, #FFD54F 0%, #f43f5e 50%, #a78bfa 100%)",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              AI-powered stories
-            </span>
-            .
+            Every place has a story.
           </div>
-          <div style={{ display: "flex", gap: 12, fontSize: 22, color: "rgba(255,255,255,0.7)" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              fontSize: 22,
+              color: "rgba(10,13,22,0.6)",
+            }}
+          >
             <span>Live in Rome</span>
             <span>·</span>
-            <span>Milan, Paris, Barcelona soon</span>
+            <span>Short stories tied to real places</span>
             <span>·</span>
             <span>By Erfan Soleymanzadeh</span>
           </div>

@@ -25,7 +25,7 @@ export function RecognitionStrip() {
   return (
     <section
       aria-label="Recognition"
-      className="relative border-y border-ink-900/10 bg-white py-12 dark:border-white/10 dark:bg-[#06070d]"
+      className="relative border-y border-ink-900/10 bg-paper py-12 dark:border-white/10 dark:bg-[#06070d]"
     >
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <p className="text-center text-[11px] font-semibold uppercase tracking-[0.32em] text-ink-900/45 dark:text-white/40">
@@ -39,7 +39,7 @@ export function RecognitionStrip() {
                 href={r.verifyUrl ?? "/press"}
                 target={r.verifyUrl ? "_blank" : undefined}
                 rel={r.verifyUrl ? "noopener noreferrer" : undefined}
-                className="group flex h-full flex-col justify-between gap-3 rounded-2xl border border-ink-900/10 bg-white px-5 py-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-ink-900/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] dark:border-white/10 dark:bg-white/[0.02] dark:hover:border-white/30 dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+                className="group flex h-full flex-col justify-between gap-3 rounded-lg border border-ink-900/10 bg-white px-5 py-4 text-left transition-colors duration-200 hover:border-ink-900/35 dark:border-white/10 dark:bg-white/[0.02] dark:hover:border-white/35"
               >
                 <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink-900/45 dark:text-white/40">
                   {r.date}
@@ -62,13 +62,13 @@ export function RecognitionStrip() {
         </ul>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 dark:border-white/15 dark:text-white/75">
+          <span className="inline-flex items-center gap-2 rounded-sm border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 dark:border-white/15 dark:text-white/75">
             <PulseDot color="emerald" />
             iOS · TestFlight pre-release
           </span>
           <a
             href="mailto:info@ciroai.com?subject=Ciro%20investor%20enquiry"
-            className="inline-flex items-center gap-2 rounded-full border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 transition-colors hover:border-ink-900/40 hover:text-ink-900 dark:border-white/15 dark:text-white/75 dark:hover:border-white/40 dark:hover:text-white"
+            className="inline-flex items-center gap-2 rounded-sm border border-ink-900/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-900/75 transition-colors hover:border-ink-900/40 hover:text-ink-900 dark:border-white/15 dark:text-white/75 dark:hover:border-white/40 dark:hover:text-white"
           >
             <PulseDot color="amber" />
             Currently raising · info@ciroai.com
@@ -89,13 +89,11 @@ export function RecognitionStrip() {
 }
 
 function PulseDot({ color }: { color: "emerald" | "amber" }) {
-  const bg = color === "emerald" ? "bg-emerald-500" : "bg-amber-500";
+  const bg = color === "emerald" ? "bg-emerald-600" : "bg-amber-500";
   return (
-    <span aria-hidden className="relative inline-flex h-1.5 w-1.5">
-      <span
-        className={`absolute inset-0 animate-ping rounded-full ${bg} opacity-60`}
-      />
-      <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${bg}`} />
-    </span>
+    <span
+      aria-hidden
+      className={`inline-flex h-1.5 w-1.5 rounded-full ${bg}`}
+    />
   );
 }

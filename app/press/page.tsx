@@ -38,10 +38,10 @@ export default function PressPage() {
           {RECOGNITION_BY_DATE.map((r) => (
             <li
               key={r.id}
-              className="rounded-2xl border border-ink-900/10 bg-white p-6 dark:border-white/10 dark:bg-white/[0.02] sm:p-8"
+              className="rounded-lg border border-ink-900/10 bg-white p-6 dark:border-white/10 dark:bg-white/[0.02] sm:p-8"
             >
               <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em]">
-                <span className="rounded-full border border-ink-900/15 px-3 py-1 text-ink-900/70 dark:border-white/15 dark:text-white/65">
+                <span className="rounded-sm border border-ink-900/15 px-3 py-1 text-ink-900/70 dark:border-white/15 dark:text-white/65">
                   {kindLabel[r.kind] ?? r.kind}
                 </span>
                 <span className="text-ink-900/45 dark:text-white/40">
@@ -79,7 +79,7 @@ export default function PressPage() {
           ))}
         </ul>
 
-        <section className="mt-16 rounded-2xl border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
+        <section className="mt-16 rounded-lg border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
           <h2 className="font-display text-2xl tracking-tight">
             For journalists &amp; investors
           </h2>
@@ -91,13 +91,13 @@ export default function PressPage() {
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <a
               href="mailto:info@ciroai.com?subject=Ciro%20media%20kit"
-              className="inline-flex items-center justify-center rounded-full bg-ink-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-ink-900/90 dark:bg-white dark:text-[#06070d] dark:hover:bg-white/90"
+              className="inline-flex items-center justify-center rounded-md bg-ink-900 px-6 py-3 text-sm font-medium text-paper-50 transition-colors hover:bg-ink-800 dark:bg-white dark:text-[#06070d] dark:hover:bg-white/90"
             >
               info@ciroai.com
             </a>
             <a
               href="mailto:erfan@ciroai.com"
-              className="inline-flex items-center justify-center rounded-full border border-ink-900/15 bg-white/60 px-6 py-3 text-sm font-medium text-ink-900 transition-colors hover:bg-white dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+              className="inline-flex items-center justify-center rounded-md border border-ink-900/25 px-6 py-3 text-sm font-medium text-ink-900 transition-colors hover:border-ink-900/60 dark:border-white/25 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
             >
               erfan@ciroai.com · founder
             </a>
