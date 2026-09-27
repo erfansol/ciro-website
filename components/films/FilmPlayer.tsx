@@ -66,42 +66,57 @@ export function FilmPlayer({
     draw(time);
   }, [draw]);
 
-  // audio clock when sound is available, wall clock otherwise
-  const now = () => {
-    if (!silentRef.current && audioRef.current) return audioRef.current.currentTime;
+  // The picture never waits for the network: a wall clock drives it from the
+  // moment you press play, and the soundtrack joins at the same position as
+  // soon as it has loaded. Once sound is running, its clock takes over.
+  const audioLiveRef = useRef(false);
+  const playingRef = useRef(false);
+  const clockNow = () => {
     const c = clockRef.current;
     return c ? c.from + (performance.now() - c.start) / 1000 : posRef.current;
   };
+  const now = () => (audioLiveRef.current && audioRef.current ? audioRef.current.currentTime : clockNow());
 
-  const play = useCallback(async () => {
-    const from = !started || ended || posRef.current >= film.duration - 0.05 ? 0 : posRef.current;
+  const joinSound = useCallback(async () => {
+    await loadSound();
+    const a = audioRef.current;
+    if (!a || silentRef.current || !playingRef.current || audioLiveRef.current) return;
+    a.currentTime = clockNow();
+    try {
+      await a.play();
+      if (playingRef.current) audioLiveRef.current = true;
+      else a.pause();
+    } catch {
+      silentRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadSound]);
+
+  const startAt = useCallback((from: number) => {
     setStarted(true);
     setEnded(false);
     setPos(from);
     clockRef.current = { start: performance.now(), from };
-    await loadSound();
-    const a = audioRef.current;
-    if (a && !silentRef.current) {
-      a.currentTime = from;
-      try {
-        await a.play();
-      } catch {
-        silentRef.current = true;
-        clockRef.current = { start: performance.now(), from };
-      }
-    }
+    playingRef.current = true;
     setPlaying(true);
-  }, [started, ended, film.duration, setPos, loadSound]);
+    joinSound();
+  }, [setPos, joinSound]);
+
+  const play = useCallback(() => {
+    startAt(!started || ended || posRef.current >= film.duration - 0.05 ? 0 : posRef.current);
+  }, [started, ended, film.duration, startAt]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
+    audioLiveRef.current = false;
+    playingRef.current = false;
     clockRef.current = null;
     setPlaying(false);
   }, []);
 
   const seek = useCallback((time: number) => {
     const x = Math.max(0, Math.min(time, film.duration - 0.01));
-    if (audioRef.current) audioRef.current.currentTime = x;
+    if (audioLiveRef.current && audioRef.current) audioRef.current.currentTime = x;
     clockRef.current = { start: performance.now(), from: x };
     setStarted(true);
     setEnded(false);
@@ -115,6 +130,8 @@ export function FilmPlayer({
       const time = now();
       if (time >= film.duration) {
         setPos(film.duration);
+        audioLiveRef.current = false;
+        playingRef.current = false;
         setPlaying(false);
         setEnded(true);
         return;
@@ -225,7 +242,7 @@ export function FilmPlayer({
         ref={audioRef}
         preload="auto"
         onError={() => { silentRef.current = true; }}
-        onEnded={() => { setPlaying(false); setEnded(true); }}
+        onEnded={() => { audioLiveRef.current = false; playingRef.current = false; setPlaying(false); setEnded(true); }}
       />
 
       {/* controls */}
@@ -280,14 +297,7 @@ export function FilmPlayer({
             <li key={c.t}>
               <button
                 type="button"
-                onClick={async () => {
-                  if (playing) return seek(c.t);
-                  await loadSound();
-                  seek(c.t);
-                  audioRef.current?.play().catch(() => { silentRef.current = true; });
-                  clockRef.current = { start: performance.now(), from: c.t };
-                  setPlaying(true);
-                }}
+                onClick={() => (playing ? seek(c.t) : startAt(c.t))}
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
                   active.t === c.t
