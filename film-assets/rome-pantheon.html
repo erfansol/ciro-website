@@ -158,7 +158,7 @@ function crow(parent) {
 function endCard(parent, tagline, cy = 820) {
   const g = el("g", {}, parent);
   const logoG = el("g", {}, g);
-  el("image", { href: "/films/logo.png", x: -150, y: -150, width: 300, height: 300 }, logoG);
+  el("image", { href: "/icon.png", x: -150, y: -150, width: 300, height: 300 }, logoG);
   const word = el("g", {}, g);
   const ul = el("path", { d: `M${W / 2 - 150} ${cy + 330} C${W / 2 - 70} ${cy + 316} ${W / 2 + 30} ${cy + 340} ${W / 2 + 130} ${cy + 324}`,
     fill: "none", stroke: C.gold, "stroke-width": 5, "stroke-linecap": "round" }, el("g", { filter: "url(#wob)" }, g));

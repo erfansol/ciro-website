@@ -32,12 +32,9 @@ const nextConfig: NextConfig = {
       },
       {
         // The Ciro films are drawn inside same-origin iframes by FilmPlayer.
-        // Later rules win, so this relaxes DENY for /films/* only.
-        source: "/films/:path*",
-        headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
-        ],
+        // Later rules win, so this relaxes DENY for the film assets only.
+        source: "/api/film/:path+",
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
       },
     ];
   },

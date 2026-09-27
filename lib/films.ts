@@ -1,7 +1,8 @@
 /**
  * The Ciro films — hand-drawn motion pieces rendered live in the browser.
  *
- * Each film is a small HTML/SVG page in /public/films that exposes a
+ * Each film is a small HTML/SVG page in /film-assets (served by
+ * app/api/film) that exposes a
  * frame-exact `renderAt(t)` function. The site plays the film's mixed
  * soundtrack (MP3) and drives the drawing from the audio clock, so picture
  * and sound stay locked and every chapter is seekable.
@@ -187,7 +188,7 @@ export const filmById = (id: string) => FILMS.find((f) => f.id === id);
 export const filmsOfKind = (kind: FilmKind) => FILMS.filter((f) => f.kind === kind);
 
 export const FILM_ASSET = (id: string) => ({
-  src: `/films/${id}.html?render`,
-  audio: `/films/${id}.mp3`,
-  poster: `/films/${id}.webp`,
+  src: `/api/film/${id}/html?render`,
+  audio: `/api/film/${id}/audio`,
+  poster: `/api/film/${id}/poster`,
 });

@@ -39,6 +39,20 @@ export function FilmPlayer({
   const [muted, setMuted] = useState(false);
   const [t, setT] = useState(film.posterT);
   const silentRef = useRef(false);
+  const soundRef = useRef<Promise<void> | null>(null);
+  const loadSound = useCallback(() => {
+    if (!soundRef.current) {
+      soundRef.current = fetch(asset.audio)
+        .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+        .then((b) => {
+          if (audioRef.current) audioRef.current.src = URL.createObjectURL(b);
+        })
+        .catch(() => {
+          silentRef.current = true;
+        });
+    }
+    return soundRef.current;
+  }, [asset.audio]);
   const posRef = useRef(film.posterT);
 
   const draw = useCallback((time: number) => {
@@ -65,6 +79,7 @@ export function FilmPlayer({
     setEnded(false);
     setPos(from);
     clockRef.current = { start: performance.now(), from };
+    await loadSound();
     const a = audioRef.current;
     if (a && !silentRef.current) {
       a.currentTime = from;
@@ -76,7 +91,7 @@ export function FilmPlayer({
       }
     }
     setPlaying(true);
-  }, [started, ended, film.duration, setPos]);
+  }, [started, ended, film.duration, setPos, loadSound]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
@@ -141,6 +156,7 @@ export function FilmPlayer({
     }
     setReady(true);
     draw(film.posterT);
+    loadSound();
     if (autoPlay) play();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -207,8 +223,7 @@ export function FilmPlayer({
 
       <audio
         ref={audioRef}
-        src={asset.audio}
-        preload="none"
+        preload="auto"
         onError={() => { silentRef.current = true; }}
         onEnded={() => { setPlaying(false); setEnded(true); }}
       />
@@ -265,7 +280,14 @@ export function FilmPlayer({
             <li key={c.t}>
               <button
                 type="button"
-                onClick={() => { seek(c.t); if (!playing) { audioRef.current?.play().catch(() => { silentRef.current = true; }); clockRef.current = { start: performance.now(), from: c.t }; setPlaying(true); } }}
+                onClick={async () => {
+                  if (playing) return seek(c.t);
+                  await loadSound();
+                  seek(c.t);
+                  audioRef.current?.play().catch(() => { silentRef.current = true; });
+                  clockRef.current = { start: performance.now(), from: c.t };
+                  setPlaying(true);
+                }}
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
                   active.t === c.t
