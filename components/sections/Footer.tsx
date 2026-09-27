@@ -36,7 +36,7 @@ export function Footer() {
           <div className="md:col-span-5">
             <Logo />
             <p className="mt-6 max-w-sm text-sm text-ink-900/70 dark:text-white/60 leading-relaxed">
-              Ciro turns every place into a short, real story you can walk through — by voice, in chat, and in AR. Open the app at any street and Ciro tells you what happened there, in your language.
+              Ciro turns every place into a short, real story you can walk through, by voice, in chat and in AR. Open the app at any street and Ciro tells you what happened there, in your language.
             </p>
             <p className="mt-6 text-xs text-ink-900/55 dark:text-white/45">
               Headquartered in <span className="text-ink-900/80 dark:text-white/70">Rome, Italy</span>.

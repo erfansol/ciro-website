@@ -5,9 +5,9 @@ export const SITE = {
   legalName: "Ciro Travel",
   founder: "Erfan Soleymanzadeh",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ciroai.com",
-  defaultTitle: "Ciro — Walk through any place with AI",
+  defaultTitle: "Ciro · Every street has a story",
   description:
-    "Ciro is a travel app that tells you the real story of any street, square, or monument — by voice, in chat, and in AR. Made by Erfan Soleymanzadeh. Live in Rome, with Milan, Paris and Barcelona next.",
+    "Ciro is a travel app that tells you the real story of any street, square or monument, by voice, in chat and in AR. Made by Erfan Soleymanzadeh. Live in Rome, with Milan, Paris and Barcelona next.",
   keywords: [
     "AI travel app",
     "AR city exploration",

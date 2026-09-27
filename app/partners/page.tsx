@@ -15,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
 const layers = [
   {
     tag: "Consumer",
-    title: "Mobile app — free, with a paid tier",
+    title: "Mobile app: free, with a paid tier",
     detail:
       "A free tier with daily limits, and Ciro Plus at €6.99 / month or €49 / year for unlimited stories and offline downloads. Single-story unlocks are also planned. iOS live today; Android in beta.",
   },
@@ -23,7 +23,7 @@ const layers = [
     tag: "Licensing",
     title: "Engine for museums, sites and cities",
     detail:
-      "Museums, heritage sites and city operators licence the same engine to publish their own places — multilingual voice, written stories, optional AR. Annual licence, multi-year terms.",
+      "Museums, heritage sites and city operators licence the same engine to publish their own places: multilingual voice, written stories, optional AR. Annual licence, multi-year terms.",
   },
   {
     tag: "Distribution",
@@ -43,7 +43,7 @@ const segments = [
   {
     title: "Museums & heritage sites",
     body:
-      "Publish your collection or outdoor site as a Ciro portfolio — written, voiced and (optionally) AR-anchored. White-label is available.",
+      "Publish your collection or outdoor site as a Ciro portfolio: written, voiced and, if you want, anchored in AR. White-label is available.",
     cta: "License the engine",
   },
   {
@@ -178,7 +178,7 @@ export default function PartnersPage() {
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
             Investor materials, financials, technical detail and product
-            roadmap are shared under NDA. Write a short email — we reply
+            roadmap are shared under NDA. Write a short email and we&rsquo;ll reply
             in person.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">

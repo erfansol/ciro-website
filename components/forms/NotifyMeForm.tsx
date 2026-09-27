@@ -39,7 +39,7 @@ export function NotifyMeForm({ citySlug, cityName }: { citySlug: string; cityNam
 
   if (status === "success") {
     return (
-      <p className="text-sm text-emerald-300">
+      <p className="text-sm text-brand-300">
         We'll email you the moment {cityName} goes live.
       </p>
     );

@@ -33,7 +33,7 @@ export default function AboutPage() {
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65">
           Ciro is an early-stage company headquartered in Rome. We make a
           mobile app and a back-end that, given where you are, plays a short
-          story about that place — in your language, with the option of an
+          story about that place, in your language, with the option of an
           AR overlay anchored to the real building in front of you. The
           company was founded in 2024 by Erfan Soleymanzadeh, building on
           his master&rsquo;s research at Sapienza Università di Roma.
@@ -50,7 +50,7 @@ export default function AboutPage() {
             can carry is one that knows where they&rsquo;re standing and can
             tell them why it matters. That is the product we are building.
             The same engine licenses out to museums, cities and education
-            programmes that want to publish their own places — a software
+            programmes that want to publish their own places: a software
             layer rather than a one-off audio tour.
           </p>
         </section>
@@ -98,7 +98,7 @@ export default function AboutPage() {
               Rome, Italy
             </p>
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-900/75 dark:text-white/70">
-              Leads interactive storytelling — the characters, the routes and
+              Leads interactive storytelling: the characters, the routes and
               the moments where a story asks something of you. Media graduate
               of Sapienza Università di Roma.
             </p>
@@ -134,7 +134,7 @@ export default function AboutPage() {
             <Fact term="Stage" detail="Pre-seed → Seed" />
             <Fact term="Founder" detail="Erfan Soleymanzadeh" />
             <Fact term="Academic home" detail="Sapienza Università di Roma" />
-            <Fact term="Live in" detail="Rome — Italy expansion next" />
+            <Fact term="Live in" detail="Rome, with more of Italy next" />
           </dl>
         </section>
 

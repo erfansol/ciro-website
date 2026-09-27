@@ -336,10 +336,10 @@ function build() {
   el("line", { x1: -270, y1: -148, x2: 270, y2: -148, stroke: C.ink, "stroke-opacity": .25, "stroke-width": 1.5 }, ct);
   serif(-270, -78, 50, "Michelangelo Merisi", ct);
   serif(-270, -34, 26, "called Caravaggio, painter", ct, { "font-style": "italic", "fill-opacity": .7 });
-  sans(-270, 40, 18, "Charge — the death of Ranuccio Tomassoni", ct, { "fill-opacity": .8 });
-  sans(-270, 74, 18, "Place — Via della Pallacorda, Rome", ct, { "fill-opacity": .8 });
-  sans(-270, 108, 18, "Date — 28 May 1606", ct, { "fill-opacity": .8 });
-  serif(-270, 180, 24, "Your verdict —", ct, { "font-style": "italic" });
+  sans(-270, 40, 18, "Charge: the death of Ranuccio Tomassoni", ct, { "fill-opacity": .8 });
+  sans(-270, 74, 18, "Place: Via della Pallacorda, Rome", ct, { "fill-opacity": .8 });
+  sans(-270, 108, 18, "Date: 28 May 1606", ct, { "fill-opacity": .8 });
+  serif(-270, 180, 24, "Your verdict:", ct, { "font-style": "italic" });
   R.stamp = el("g", { filter: "url(#ink)" }, ct);
   const si = el("g", {}, R.stamp);
   el("rect", { x: -150, y: -42, width: 300, height: 84, rx: 9, fill: "none", stroke: C.terra, "stroke-width": 6 }, si);

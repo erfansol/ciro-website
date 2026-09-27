@@ -46,9 +46,9 @@ export function WaitlistForm({ source = "landing", variant = "default" }: Props)
 
   if (status === "success") {
     return (
-      <div className="rounded-lg border border-emerald-700/30 bg-emerald-600/10 p-6 text-emerald-900 dark:text-emerald-200">
+      <div className="rounded-lg border border-brand-600/30 bg-brand-50 p-6 text-ink-900">
         <p className="font-display text-lg">You're on the list.</p>
-        <p className="mt-1 text-sm text-emerald-900/80 dark:text-emerald-200/80">
+        <p className="mt-1 text-sm text-ink-900/70">
           We'll send your invitation when Ciro opens in your city.
         </p>
       </div>

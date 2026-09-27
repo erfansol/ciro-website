@@ -73,14 +73,14 @@ export function Finale() {
           className="mt-12 flex flex-col items-center justify-center gap-2"
         >
           <a
-            href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%20—%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
+            href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%2C%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
             className="group inline-flex items-center gap-3 rounded-md bg-ink-900 px-7 py-3.5 text-sm font-medium text-paper-50 transition-colors duration-200 hover:bg-ink-800"
           >
             Request TestFlight access
             <span aria-hidden>→</span>
           </a>
           <p className="mt-2 text-xs text-ink-900/45">
-            iOS only for now. Send your Apple ID email — we add you the same day.
+            iOS only for now. Send your Apple ID email and we add you the same day.
           </p>
         </motion.div>
 
@@ -141,7 +141,6 @@ function ConvergingBalloon({
       <Balloon
         color={category.color}
         size={130}
-        className="drop-shadow-[0_20px_40px_rgba(15,23,42,0.18)]"
       />
     </motion.div>
   );

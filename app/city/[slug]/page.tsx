@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
   const status = city.status === "live" ? "Live now" : `Coming ${city.releaseTarget}`;
   return buildMetadata({
-    title: `${city.name}, ${city.country} — AI-powered city stories & AR tours`,
+    title: `${city.name}, ${city.country} · City stories and AR walks`,
     description: `${city.teaser} ${status} on Ciro.`,
     path: `/city/${city.slug}`,
   });
@@ -70,7 +70,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-ink-950/55" />
         </div>
 
         <div className="absolute inset-x-0 bottom-0">
@@ -96,7 +96,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
           <div className="lg:col-span-7">
             <SectionHeading
               eyebrow="The city"
-              title={`What makes ${city.name} a Ciro city`}
+              title={`${city.name}, the way Ciro tells it`}
               description={city.description}
             />
 
@@ -132,17 +132,17 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
           <aside className="lg:col-span-5">
             <Card className="p-7">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-400">
-                {live ? "Travelers in town" : `Be first into ${city.name}`}
+                {live ? "Visiting now" : `${city.name} is next`}
               </p>
               <h2 className="mt-2 font-display text-2xl tracking-tight text-ink-900 dark:text-white">
                 {live
-                  ? `Get the Ciro experience in ${city.name}`
+                  ? `In ${city.name} now?`
                   : `Notify me when ${city.name} launches`}
               </h2>
               <p className="mt-3 text-sm text-ink-900/70 dark:text-white/65 leading-relaxed">
                 {live
-                  ? "Download the app, open it within the city, and the streets begin telling their stories."
-                  : `We're opening ${city.name} ${city.releaseTarget?.toLowerCase()}. Drop your email and we'll send your invitation the moment it goes live.`}
+                  ? "The app is in beta on iOS. Leave your email and we will add you to the TestFlight build, usually the same day."
+                  : `${city.name} comes after Rome. Leave your email and we will write once, when it opens.`}
               </p>
               <div className="mt-5">
                 {live ? (
@@ -162,7 +162,7 @@ export default async function CityPage({ params }: { params: Promise<Params> }) 
             <SectionHeading
               eyebrow="Featured stories"
               title={`Inside ${city.name}`}
-              description={`A taste of the ${city.storiesCount || stories.length}+ stories ready to walk.`}
+              description={`A few of the stories you can walk today.`}
             />
             <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {stories.map((s, i) => (

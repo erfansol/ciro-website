@@ -24,16 +24,16 @@ export const CITIES: City[] = [
     name: "Rome",
     country: "Italy",
     status: "live",
-    storiesCount: 47,
+    storiesCount: 0,
     teaser:
-      "Walk where emperors plotted, where Bernini chiseled, where Caravaggio brawled. Rome is layers — every step uncovers another century.",
+      "Walk where emperors plotted, where Bernini carved and where Caravaggio picked his fights. Most streets here hold more than one century.",
     description:
-      "Rome is the first city fully mapped by Ciro. From the underground basilicas of San Clemente to the conspiratorial cafes of Trastevere, Ciro narrates the city in real time as you walk — surfacing the stories textbooks skip and locals whisper. Hidden frescoes, gladiator gossip, and the truth behind the obelisks: Rome, unlocked layer by layer.",
+      "Rome is Ciro’s first city. From the basilicas buried under San Clemente to the small squares of Trastevere, a narrator tells you what happened where you are standing, while you walk. Frescoes you would walk past, what the crowds said about gladiators, and how Egyptian obelisks ended up in Roman piazzas.",
     highlights: [
-      "47 hand-crafted location stories across 9 neighborhoods",
-      "AR overlays at the Colosseum, Pantheon, and Forum",
-      "Audio in English, Italian, and Farsi — narrated cinematic-style",
-      "Hidden-gem trails curated with Roman storytellers",
+      "Hand-written stories tied to real places in the historic centre",
+      "AR moments at selected landmarks",
+      "Narrated in English, Italian and Farsi",
+      "Walking routes checked on foot before they ship",
     ],
     keywords: [
       "things to do in Rome",
@@ -42,7 +42,7 @@ export const CITIES: City[] = [
       "Rome travel app",
       "best Rome walking tour",
     ],
-    gradient: "from-amber-400 via-rose-500 to-violet-600",
+    gradient: "bg-[#c4573a]",
     image: {
       src: "/cities/rome.jpg",
       alt: "Colosseum at golden hour",
@@ -54,11 +54,11 @@ export const CITIES: City[] = [
     country: "Italy",
     status: "soon",
     storiesCount: 0,
-    releaseTarget: "Summer 2026",
+    releaseTarget: "later",
     teaser:
       "Beyond the catwalks, Milan hides Leonardo's locks, Verdi's grief, and the engineers who built modern Italy in a single courtyard.",
     description:
-      "Milan is more than fashion — it's the city of canals, manifestos, and quiet genius. Ciro's Milan edition pairs the Duomo's rooftop with the studios where postwar design was born, the Navigli with the espresso bars where La Scala's stars still argue.",
+      "Milan is not only fashion. It is a city of canals, manifestos and quiet engineering. The Milan stories will pair the Duomo’s roof with the studios where post-war design began, and the Navigli with the bars where singers from La Scala still argue after the show.",
     highlights: [
       "Stories rooted in design, opera, and industrial history",
       "AR previews of Leonardo's lost canals",
@@ -70,7 +70,7 @@ export const CITIES: City[] = [
       "hidden places Milan",
       "Milan AR experience",
     ],
-    gradient: "from-fuchsia-500 via-violet-600 to-indigo-700",
+    gradient: "bg-[#1f2a44]",
     image: {
       src: "/cities/milan.jpg",
       alt: "Milan Duomo facade",
@@ -82,11 +82,11 @@ export const CITIES: City[] = [
     country: "France",
     status: "soon",
     storiesCount: 0,
-    releaseTarget: "Autumn 2026",
+    releaseTarget: "later",
     teaser:
       "Hemingway's bar tabs, Nadar's hot air balloon, and a sewer system once toured by candlelight. Paris was never just romantic.",
     description:
-      "Ciro's Paris journey moves past the postcard. Each story is a lens — onto the Commune, the salons, the surrealists, the Algerian cafés of Belleville — narrated as you cross the city on foot or by metro.",
+      "The Paris stories go past the postcard: the Commune, the salons, the surrealists and the Algerian cafés of Belleville, told as you cross the city on foot or by metro.",
     highlights: [
       "Literary trails through the Latin Quarter and Montmartre",
       "AR moments at the Louvre, Père Lachaise, and the Catacombs",
@@ -98,7 +98,7 @@ export const CITIES: City[] = [
       "Paris AR tour",
       "hidden Paris",
     ],
-    gradient: "from-rose-400 via-pink-500 to-violet-600",
+    gradient: "bg-[#6b8ca6]",
     image: {
       src: "/cities/paris.jpg",
       alt: "Eiffel Tower at dusk",
@@ -110,11 +110,11 @@ export const CITIES: City[] = [
     country: "Spain",
     status: "soon",
     storiesCount: 0,
-    releaseTarget: "Winter 2026",
+    releaseTarget: "later",
     teaser:
       "Gaudí's unfinished cathedral, the anarchist printshops of Raval, and a beach that didn't exist before the '92 Olympics.",
     description:
-      "Barcelona's Ciro edition threads Gothic stone, Modernisme, and the politics that shaped Catalonia — surfacing the city as a living argument about identity, art, and play.",
+      "The Barcelona stories will follow Gothic stone, Modernisme and the politics that shaped Catalonia, street by street.",
     highlights: [
       "Modernisme architecture trail with AR reveals",
       "Stories in Catalan, Spanish, and English",
@@ -126,7 +126,7 @@ export const CITIES: City[] = [
       "Barcelona travel app",
       "hidden Barcelona",
     ],
-    gradient: "from-amber-300 via-orange-500 to-rose-600",
+    gradient: "bg-[#d99b1e]",
     image: {
       src: "/cities/barcelona.jpg",
       alt: "Sagrada Familia at sunset",

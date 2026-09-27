@@ -52,9 +52,9 @@ export function PartnershipForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-lg border border-emerald-700/30 bg-emerald-600/10 p-8 text-emerald-900 dark:text-emerald-200">
+      <div className="rounded-lg border border-brand-600/30 bg-brand-50 p-8 text-ink-900">
         <p className="font-display text-xl">Thank you.</p>
-        <p className="mt-2 text-sm text-emerald-900/80 dark:text-emerald-200/80">
+        <p className="mt-2 text-sm text-ink-900/70">
           A founder will be in touch within 48 hours.
         </p>
       </div>

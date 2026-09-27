@@ -89,7 +89,7 @@ export function RecognitionStrip() {
 }
 
 function PulseDot({ color }: { color: "emerald" | "amber" }) {
-  const bg = color === "emerald" ? "bg-emerald-600" : "bg-amber-500";
+  const bg = color === "emerald" ? "bg-[#d99b1e]" : "bg-[#c4573a]";
   return (
     <span
       aria-hidden

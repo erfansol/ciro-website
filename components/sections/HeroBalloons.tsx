@@ -17,11 +17,11 @@ export function HeroBalloons() {
   const reduced = useReducedMotion();
 
   const layout = [
-    { left: "6%",  top: "30%", size: 140, delay: 0,   amp: 16, dur: 11 },
-    { left: "22%", top: "46%", size: 170, delay: 0.6, amp: 20, dur: 13 },
-    { left: "76%", top: "32%", size: 180, delay: 0.4, amp: 22, dur: 12 },
-    { left: "90%", top: "48%", size: 130, delay: 0.9, amp: 18, dur: 15 },
-    { left: "50%", top: "70%", size: 110, delay: 1.1, amp: 14, dur: 14 },
+    { left: "5%",  top: "24%", size: 140, delay: 0,   amp: 16, dur: 11 },
+    { left: "12%", top: "58%", size: 150, delay: 0.6, amp: 20, dur: 13 },
+    { left: "79%", top: "22%", size: 170, delay: 0.4, amp: 22, dur: 12 },
+    { left: "90%", top: "50%", size: 125, delay: 0.9, amp: 18, dur: 15 },
+    { left: "81%", top: "74%", size: 100, delay: 1.1, amp: 14, dur: 14 },
   ];
 
   return (
@@ -61,7 +61,6 @@ export function HeroBalloons() {
                 color={cat.color}
                 size={l.size}
                 ariaLabel={`${cat.label} balloon`}
-                className="drop-shadow-[0_18px_30px_rgba(15,23,42,0.18)]"
               />
             </motion.div>
           );
@@ -88,7 +87,7 @@ export function HeroBalloons() {
           className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-ink-900/65 sm:text-lg"
         >
           Stand anywhere in Rome and a narrator tells you what happened right
-          there — then answers your questions, in your language. Real history,
+          there, then answers your questions, in your language. Real history,
           walkable routes, and a little mystery. Live in Rome.
         </motion.p>
 
@@ -102,7 +101,7 @@ export function HeroBalloons() {
         >
           <span className="h-px w-10 bg-ink-900/15" />
           <span className="flex items-center gap-1.5">
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-600" />
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-[#d99b1e]" />
             Roma · 41.890°N · 12.492°E
           </span>
           <span className="h-px w-10 bg-ink-900/15" />
@@ -116,7 +115,7 @@ export function HeroBalloons() {
           className="mt-8 flex flex-col items-center justify-center gap-2"
         >
           <a
-            href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%20—%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
+            href="mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access&body=Hi%2C%20I%27d%20like%20to%20try%20the%20Ciro%20iOS%20beta.%20My%20Apple%20ID%20email%20is%3A%0A%0A"
             className="group inline-flex items-center gap-3 rounded-md bg-ink-900 px-7 py-3.5 text-sm font-medium text-paper-50 transition-colors duration-200 hover:bg-ink-800"
           >
             Request TestFlight access

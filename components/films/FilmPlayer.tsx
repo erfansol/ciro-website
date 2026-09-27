@@ -198,7 +198,7 @@ export function FilmPlayer({
     >
       <div
         className={cn(
-          "relative overflow-hidden bg-[#f3eee2] shadow-[0_30px_60px_-30px_rgba(10,13,22,0.45)] ring-1 ring-ink-900/10",
+          "relative overflow-hidden bg-[#f3eee2] ring-1 ring-ink-900/10",
           vertical ? "mx-auto aspect-[9/16] rounded-[2rem]" : "aspect-video rounded-2xl",
           frameClassName,
         )}

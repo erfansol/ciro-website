@@ -68,7 +68,7 @@ export function RomeSeries({ showLink = true }: { showLink?: boolean }) {
               Every stone has a story. <em className="italic text-ink-900/60">Here are six.</em>
             </h2>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-900/65">
-              One question, three true facts, and the place to stand when you want the rest. Each chapter is a fact — skip straight to the one you want.
+              One question, three true facts, and the place to stand when you want the rest. Each chapter is a fact, so you can skip straight to the one you want.
             </p>
           </div>
           {showLink && (

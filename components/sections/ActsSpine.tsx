@@ -116,7 +116,6 @@ function Act({
           color={category.color}
           iconKey={category.iconKey}
           size={460}
-          className="drop-shadow-[0_24px_48px_rgba(15,23,42,0.25)]"
         />
       </motion.div>
 

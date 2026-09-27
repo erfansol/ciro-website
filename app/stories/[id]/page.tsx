@@ -231,7 +231,7 @@ function BannerHero({
         alt=""
         className="h-full w-full object-cover opacity-50"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#06070d]/70 to-[#06070d]" />
+      <div className="absolute inset-0 bg-[#06070d]/65" />
     </div>
   );
 }
@@ -255,7 +255,7 @@ function PreviewGallery({
         Preview
       </p>
       <p className="mt-2 text-sm text-white/55">
-        Photos and clips from this story — open in the app for the full AR
+        Photos and clips from this story. Open it in the app for the full AR
         experience.
       </p>
       <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -353,7 +353,7 @@ function PriceBadge({
   if (priceCents === undefined) return null;
   if (priceCents <= 0) {
     return (
-      <p className="mt-6 inline-flex items-center gap-2 rounded-sm border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-emerald-200">
+      <p className="mt-6 inline-flex items-center gap-2 rounded-sm border border-brand-300/40 bg-brand-400/10 px-3 py-1 text-xs uppercase tracking-[0.22em] text-brand-300">
         Free during launch
       </p>
     );

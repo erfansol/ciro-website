@@ -37,8 +37,8 @@ export default async function StoriesPage() {
               In progress
             </span>
             <span>
-              First set of stories below. New cards every week — full Rome
-              this summer, Italy next.
+              First set of stories below. New stories arrive every week,
+              with more of Italy to follow.
             </span>
           </div>
         </div>

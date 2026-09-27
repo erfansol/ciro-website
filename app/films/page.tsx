@@ -13,7 +13,7 @@ export const revalidate = 300;
 export const metadata: Metadata = buildMetadata({
   title: "Films · Ciro, drawn by hand",
   description:
-    "Short hand-drawn films about Ciro and about Rome — the Colosseum, the Pantheon, Trevi and more. Played live in your browser with sound; jump to any chapter.",
+    "Short hand-drawn films about Ciro and about Rome: the Colosseum, the Pantheon, Trevi and more. They play live in your browser, with sound, and you can jump to any chapter.",
   path: "/films",
 });
 
@@ -28,7 +28,7 @@ export default function FilmsPage() {
             Drawn by hand. <em className="italic text-ink-900/60">Played <Scribble>live</Scribble>, with sound.</em>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-900/70 sm:text-lg">
-            These aren’t videos. Each film is drawn line by line in your browser, in time with its soundtrack — so it stays sharp on any screen, and every chapter is a click away. Space to play, arrows to skip, M to mute.
+            These aren’t videos. Each film is drawn line by line in your browser, in time with its soundtrack. That keeps it sharp on any screen, and every chapter is a click away. Space to play, arrows to skip, M to mute.
           </p>
         </Reveal>
         <Reveal delay={0.1} className="mt-14">
@@ -55,7 +55,7 @@ export default function FilmsPage() {
       <section className="mx-auto max-w-6xl border-t border-ink-900/10 px-6 py-12 lg:px-8">
         <h2 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-ink-900/45">Credits</h2>
         <p className="mt-4 max-w-3xl text-sm leading-relaxed text-ink-900/60">
-          Drawings, animation and sound design by Ciro. Ambient recordings from Wikimedia Commons (public domain / CC0). Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0 —{" "}
+          Drawings, animation and sound design by Ciro. Ambient recordings from Wikimedia Commons (public domain / CC0). Music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0:{" "}
           {credits.map((c, i) => (
             <span key={c}>
               {c.replace(" by Kevin MacLeod", "")}

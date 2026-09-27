@@ -9,7 +9,7 @@ const PRINCIPLES = [
   },
   {
     title: "Walked, not imagined",
-    body: "Before a route ships we walk it ourselves — timing each leg, checking opening hours, standing where you will stand.",
+    body: "Before a route ships we walk it ourselves. We time each leg, check the opening hours and stand where you will stand.",
   },
   {
     title: "Eyes up, not down",

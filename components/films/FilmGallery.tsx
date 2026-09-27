@@ -33,7 +33,7 @@ export function FilmGallery({
         {films.map((f, i) => (
           <li key={f.id} className="w-[46vw] max-w-[15rem] shrink-0 snap-start sm:w-[30vw] lg:w-auto lg:max-w-none">
             <button type="button" onClick={() => setOpen(f)} className="group block w-full text-left" aria-label={`Play “${f.title}”`}>
-              <span className="relative block aspect-[9/16] overflow-hidden rounded-[1.4rem] bg-[#f3eee2] ring-1 ring-ink-900/10 transition-all duration-500 group-hover:-translate-y-1.5 group-hover:rotate-[-0.6deg] group-hover:shadow-[0_24px_40px_-24px_rgba(10,13,22,0.5)]">
+              <span className="relative block aspect-[9/16] overflow-hidden rounded-[1.4rem] bg-[#f3eee2] ring-1 ring-ink-900/10 transition-all duration-500 group-hover:-translate-y-1.5 group-hover:rotate-[-0.6deg]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={FILM_ASSET(f.id).poster} alt="" loading="lazy" className="h-full w-full object-cover" />
                 <span className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-full bg-ink-900/90 text-paper-50 transition-transform duration-300 group-hover:scale-110">
@@ -83,7 +83,7 @@ export function FilmModal({ film, onClose }: { film: Film; onClose: () => void }
       role="dialog"
       aria-modal="true"
       aria-label={film.title}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/75 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/80 p-4"
       onClick={(e) => e.target === e.currentTarget && close()}
     >
       <div

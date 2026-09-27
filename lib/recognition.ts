@@ -41,22 +41,22 @@ export type Recognition = {
 export const RECOGNITION: ReadonlyArray<Recognition> = [
   {
     id: "startcup-lazio-2025",
-    short: "Startcup Lazio 2025 — Finalist",
+    short: "Startcup Lazio 2025 · Finalist",
     title: "Startcup Lazio 2025 · Regional Business Plan Competition",
-    issuer: "Start Cup Lazio — network of Lazio region universities",
+    issuer: "Start Cup Lazio, the network of Lazio region universities",
     location: "Rome, Italy",
     date: "2025",
     isoDate: "2025-09-01",
     kind: "competition",
     body:
-      "Selected as a finalist in the student-team track of Start Cup Lazio 2025 under the title \"Ciro — AI & AR per il turismo intelligente.\" Start Cup Lazio is the regional qualifier for the Italian PNI national innovation prize, run by the consortium of universities in Lazio.",
+      "Selected as a finalist in the student-team track of Start Cup Lazio 2025 under the title \"Ciro: AI & AR per il turismo intelligente.\" Start Cup Lazio is the regional qualifier for the Italian PNI national innovation prize, run by the consortium of universities in Lazio.",
     verifyUrl: "https://startcuplazio.it/formazione-scl-2025/",
     verifyLabel: "startcuplazio.it",
   },
   {
     id: "edeh-2025",
     short: "European Parliament · EDEH 2025",
-    title: "European Digital Education Hub — Selected Project, Spazio Europa",
+    title: "European Digital Education Hub · Selected project, Spazio Europa",
     issuer:
       "Sapienza Università di Roma · European Parliament and European Commission Office in Italy",
     location: "Spazio Europa, Via IV Novembre 149, Rome",
@@ -64,7 +64,7 @@ export const RECOGNITION: ReadonlyArray<Recognition> = [
     isoDate: "2025-12-09",
     kind: "award",
     body:
-      "Ciro was selected and presented at the international conference \"From Access to Empowerment — Addressing Digital Education Poverty and Promoting Wellbeing,\" held at Spazio Europa in Rome on 9 December 2025. The venue is jointly managed by the Office in Italy of the European Parliament and the Representation in Italy of the European Commission. Certificate of Appreciation issued by Prof.ssa Ida Cortoni, President of the master's programme in Design, Visual & Multimedia Communication, Sapienza.",
+      "Ciro was selected and presented at the international conference \"From Access to Empowerment: Addressing Digital Education Poverty and Promoting Wellbeing,\" held at Spazio Europa in Rome on 9 December 2025. The venue is jointly managed by the Office in Italy of the European Parliament and the Representation in Italy of the European Commission. Certificate of Appreciation issued by Prof.ssa Ida Cortoni, President of the master's programme in Design, Visual & Multimedia Communication, Sapienza.",
     verifyUrl: "https://digital-skills-jobs.europa.eu/en/edeh",
     verifyLabel: "European Digital Education Hub",
   },
@@ -78,7 +78,7 @@ export const RECOGNITION: ReadonlyArray<Recognition> = [
     isoDate: "2024-10-25",
     kind: "event",
     body:
-      "Ciro ran a public AR + multilingual storytelling field test at Maker Faire Rome 2024 (Gazometro). Hundreds of visitors tried the app on-site, with an average engagement of around 8 minutes per visitor — the core validation that voice + AR + on-the-spot generation actually holds attention in the wild.",
+      "Ciro ran a public AR + multilingual storytelling field test at Maker Faire Rome 2024 (Gazometro). Hundreds of visitors tried the app on-site, with an average engagement of around 8 minutes per visitor. It was the first real sign that voice, AR and stories told on the spot can hold people’s attention outside a lab.",
     verifyUrl: "https://makerfairerome.eu",
     verifyLabel: "makerfairerome.eu",
   },
@@ -86,7 +86,7 @@ export const RECOGNITION: ReadonlyArray<Recognition> = [
     id: "sapienza-thesis-2024",
     short: "Sapienza Università di Roma · M.Des. 2024",
     title:
-      "Sapienza Università di Roma — M.Des. thesis on the Ciro framework",
+      "Sapienza Università di Roma · M.Des. thesis on the Ciro framework",
     issuer:
       "Sapienza Università di Roma · Faculty of Architecture · Dept. of Planning, Design, Technology of Architecture (PDTA)",
     location: "Rome, Italy",

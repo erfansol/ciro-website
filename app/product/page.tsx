@@ -11,7 +11,7 @@ export const revalidate = 300;
 export const metadata: Metadata = buildMetadata({
   title: "The Ciro app · How it works",
   description:
-    "Ciro is a mobile app that plays a short story about the place you're standing in — by voice, by text chat, and optionally with an AR overlay. Live on iOS, validated in Rome and 14 other countries.",
+    "Ciro is a mobile app that plays a short story about the place you're standing in, by voice, by text chat and, if you like, with an AR overlay. In beta on iOS, validated in Rome and 14 other countries.",
   path: "/product",
 });
 
@@ -32,7 +32,7 @@ const steps = [
     n: "03",
     title: "Listen, read, or look",
     body:
-      "Each story has a written piece, narrated voice, and — where available — an AR overlay anchored to the building in front of you.",
+      "Each story has a written piece, narrated voice and, where available, an AR overlay anchored to the building in front of you.",
   },
   {
     n: "04",
@@ -59,7 +59,7 @@ const shots = [
     file: "stories_library.jpg",
     title: "Stories · Library",
     body:
-      "Filter by category and city. Stories are short — typically three to ten minutes of walking.",
+      "Filter by category and city. Stories are short: usually three to ten minutes of walking.",
   },
   {
     file: "story_detail.jpg",
@@ -82,7 +82,7 @@ const shots = [
 ];
 
 const stack = [
-  { k: "Mobile app", v: "Flutter — production iOS build shipped" },
+  { k: "Mobile app", v: "Flutter, with a production iOS build" },
   { k: "AR engine", v: "Unity + ARCore Geospatial / ARKit Location Anchors" },
   { k: "AI engine", v: "Google Gemini, with location- and profile-aware prompting" },
   { k: "Backend", v: "Firebase on Google Cloud (Auth, Firestore, Storage, Functions)" },
@@ -91,10 +91,10 @@ const stack = [
 ];
 
 const useCases = [
-  "Cultural tourism — short walking stories at street level",
-  "Heritage sites & museums — branded, multilingual storytelling layers",
-  "Education — school field trips and university programmes",
-  "City marketing — operator-curated story routes per neighbourhood",
+  "Cultural tourism: short walking stories at street level",
+  "Heritage sites and museums: branded, multilingual storytelling",
+  "Education: school field trips and university programmes",
+  "City marketing: story routes chosen by the city, per neighbourhood",
 ];
 
 export default function ProductPage() {
@@ -109,9 +109,9 @@ export default function ProductPage() {
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-900/70 sm:text-lg dark:text-white/65">
           Ciro is a mobile app. Open it on a street in Rome and it plays a
-          three-to-ten-minute story tied to that exact spot — read it, listen
-          to it, or look at it through an AR overlay on the building in
-          front of you — and answers when you ask it something. In beta on
+          three-to-ten-minute story tied to that exact spot. You can read it, listen
+          to it, or see it through an AR overlay on the building in
+          front of you, and it answers when you ask it something. In beta on
           iOS through TestFlight today.
         </p>
 
@@ -121,7 +121,7 @@ export default function ProductPage() {
             In motion
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
-            Five short hand-drawn films — tap one and turn the sound on.
+            Five short hand-drawn films. Tap one and turn the sound on.
           </p>
           <div className="mt-10">
             <FilmGallery ids={filmsOfKind("feature").map((f) => f.id)} />
@@ -142,7 +142,7 @@ export default function ProductPage() {
                 <div className="relative mx-auto aspect-[9/19.5] w-full max-w-[280px] overflow-hidden rounded-[28px] border border-ink-900/10 bg-ink-900/5 dark:border-white/10 dark:bg-white/[0.02]">
                   <Image
                     src={`/app/${s.file}`}
-                    alt={`Ciro app — ${s.title}`}
+                    alt={`Ciro app: ${s.title}`}
                     fill
                     sizes="(min-width: 1024px) 280px, (min-width: 640px) 40vw, 80vw"
                     className="object-cover"
@@ -193,7 +193,7 @@ export default function ProductPage() {
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
             Public AR sessions at Maker Faire Rome 2024 (Gazometro). Around
-            eight minutes of average engagement per visitor — the first
+            eight minutes of average engagement per visitor, the first
             evidence that the format holds attention in the wild.
           </p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">

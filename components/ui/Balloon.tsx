@@ -12,8 +12,8 @@ type Props = {
 };
 
 /**
- * Single brand balloon: smooth body, paneled gores, rope, basket, and
- * a category icon centered on the body. Pure SVG so it's tiny, scales
+ * Single brand balloon, drawn flat: solid body, one darker gore, rope
+ * and basket. Pure SVG so it's tiny, scales
  * crisply, and animates well via Framer / CSS transforms.
  */
 export function Balloon({
@@ -22,7 +22,6 @@ export function Balloon({
   className,
   ariaLabel,
 }: Props) {
-  const id = `b-${color.replace("#", "")}`;
   return (
     <svg
       width={size}
@@ -34,62 +33,24 @@ export function Balloon({
       aria-label={ariaLabel}
       className={className}
     >
-      <defs>
-        <radialGradient
-          id={`${id}-shade`}
-          cx="35%"
-          cy="32%"
-          r="75%"
-          fx="32%"
-          fy="28%"
-        >
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
-          <stop offset="55%" stopColor={color} stopOpacity="1" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
-        </radialGradient>
-        <linearGradient id={`${id}-gore`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#000000" stopOpacity="0.0" />
-          <stop offset="60%" stopColor="#000000" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.0" />
-        </linearGradient>
-      </defs>
-
-      {/* Balloon body */}
-      <ellipse cx="100" cy="105" rx="84" ry="100" fill={`url(#${id}-shade)`} />
-
-      {/* Vertical gore lines for the paneled look */}
-      <g opacity="0.55">
-        <path
-          d="M100 5 C100 80, 100 150, 100 205"
-          stroke={`url(#${id}-gore)`}
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-        <path
-          d="M62 12 C50 80, 50 140, 70 200"
-          stroke={`url(#${id}-gore)`}
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-        <path
-          d="M138 12 C150 80, 150 140, 130 200"
-          stroke={`url(#${id}-gore)`}
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-        <path
-          d="M30 50 C25 110, 35 160, 55 198"
-          stroke={`url(#${id}-gore)`}
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M170 50 C175 110, 165 160, 145 198"
-          stroke={`url(#${id}-gore)`}
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </g>
+      {/* Flat body: one solid colour, a darker centre gore and a paper
+          seam, drawn like the balloons in the Ciro films. No gradients. */}
+      <path
+        d="M100 5 C150 5 184 45 184 100 C184 150 146 180 118 205 L82 205 C54 180 16 150 16 100 C16 45 50 5 100 5 Z"
+        fill={color}
+      />
+      <path
+        d="M100 5 C126 40 124 150 110 205 L90 205 C76 150 74 40 100 5 Z"
+        fill="#000000"
+        opacity="0.16"
+      />
+      <path
+        d="M22 112 C70 124 130 124 178 112"
+        stroke="#faf7f0"
+        strokeOpacity="0.4"
+        strokeWidth="3"
+        fill="none"
+      />
 
       {/* Burner cone */}
       <path

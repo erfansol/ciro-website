@@ -8,7 +8,7 @@ const STOPS = [
   { n: 2, name: "Palazzo Madama", note: "The cardinal who protected him", x: 150, y: 196 },
   { n: 3, name: "San Luigi dei Francesi", note: "Find his face in the crowd", x: 118, y: 128 },
   { n: 4, name: "Sant’Agostino", note: "The pilgrims with dirty feet", x: 200, y: 70 },
-  { n: 5, name: "Via della Pallacorda", note: "28 May 1606 — the fight", x: 262, y: 118 },
+  { n: 5, name: "Via della Pallacorda", note: "28 May 1606, the fight", x: 262, y: 118 },
   { n: 6, name: "The Pantheon", note: "Your verdict", x: 300, y: 222 },
 ];
 const ROUTE = "M70 250 C100 232 128 214 150 196 C170 176 110 160 118 128 C124 100 170 88 200 70 C230 60 250 92 262 118 C276 150 296 186 300 222";
@@ -25,7 +25,7 @@ export function FirstStory() {
             The Fugitive’s <em className="italic text-brand-300">Last Canvas</em>
           </h2>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-paper-50/75">
-            Rome, May 1606. A painter kills a man in a brawl by the tennis courts, and runs. Four hundred years later, a crow who kept the papal police archive asks you to walk his last days in the city — six stops, one kilometre and a bit, and a verdict at the end that is yours to give.
+            Rome, May 1606. A painter kills a man in a brawl by the tennis courts, and runs. Four hundred years later, a crow who kept the papal police archive asks you to walk his last days in the city. Six stops, a little over a kilometre, and a verdict at the end that is yours to give.
           </p>
           <dl className="mt-8 grid max-w-md grid-cols-3 gap-4 border-t border-paper-50/15 pt-6">
             {[

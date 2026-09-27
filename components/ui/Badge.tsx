@@ -4,10 +4,10 @@ import { cn } from "@/lib/cn";
 type Tone = "live" | "soon" | "neutral" | "ar";
 
 // Flat chips. These mostly sit on dark imagery or dark story pages, so
-// each tone is a solid tint with a plain border — no blur, no glow.
+// each tone is a solid tint with a plain border. No blur, no glow.
 const tones: Record<Tone, string> = {
-  live: "bg-emerald-500/15 text-emerald-300 border-emerald-400/40",
-  soon: "bg-amber-500/15 text-amber-300 border-amber-400/40",
+  live: "bg-brand-400/15 text-brand-300 border-brand-300/40",
+  soon: "bg-white/10 text-white/80 border-white/30",
   neutral: "bg-white/10 text-white/85 border-white/25",
   ar: "bg-brand-500/20 text-brand-300 border-brand-400/40",
 };
@@ -30,7 +30,7 @@ export function Badge({ tone = "neutral", className, ...rest }: BadgeProps) {
 export function PulseDot({ className }: { className?: string }) {
   return (
     <span className={cn("relative flex h-2 w-2", className)}>
-      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-300" />
     </span>
   );
 }

@@ -376,7 +376,7 @@ function renderAt(t) {
     R.stopName.textContent = hp < .22 ? "Stop 1 · Piazza Navona" : hp < .4 ? "Stop 2 · Palazzo Madama" : "Stop 3 · San Luigi dei Francesi";
     set(R.live, { opacity: .45 + .55 * Math.abs(Math.sin(t * 3)) });
     set(R.nb, { opacity: seg(t, 11.6, .4) });
-    typed(["Keep up, all four of you —", "the Pope’s guards walk fast."], seg(t, 11.9, 1.8)).forEach((s, i) => R.nl[i].textContent = s);
+    typed(["Keep up, all four of you.", "The Pope’s guards walk fast."], seg(t, 11.9, 1.8)).forEach((s, i) => R.nl[i].textContent = s);
   }
   R.end.render(t, 16.0);
 }
