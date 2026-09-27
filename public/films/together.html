@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIRO film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; height:100%; background:#14120e; overflow:hidden; }
+  #stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  svg#film { width:min(100vw, 56.25vh); height:min(100vh, 177.78vw); display:block; }
+  .serif { font-family:"Newsreader", Georgia, serif; }
+  .sans  { font-family:"Libre Franklin", system-ui, sans-serif; }
+  #hint { position:fixed; bottom:10px; left:0; right:0; text-align:center; font:12px "Libre Franklin", sans-serif; color:#faf7f0; opacity:.45; pointer-events:none; }
+  body.render #hint { display:none; }
+</style>
+</head>
+<body>
+<div id="stage"><svg id="film" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="hint">click to replay · space to pause</div>
+<script>
+// CIRO motion kit — shared helpers, filters, end card and playback harness.
+// Every film is a pure function renderAt(t) so it can be rendered frame-exact.
+const NS = "http://www.w3.org/2000/svg";
+const W = 1080, H = 1920;
+const C = {
+  paper: "#faf7f0", paper2: "#f5f0e4", ink: "#0a0d16", gold: "#d99b1e", goldDeep: "#b27c12",
+  goldSoft: "#ebc46e", terra: "#c4573a", green: "#3f6b4f", navy: "#1f2a44", street: "#e7dcc5", water: "#d6e0d2",
+};
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, d) => clamp((t - a) / d);
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eIn = p => p * p * p;
+const eInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const eBack = p => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const rgb = c => [1, 3, 5].map(i => parseInt(c.substr(i, 2), 16));
+const mixColor = (a, b, p) => { const A = rgb(a), B = rgb(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], p))).join(",")})`; };
+function el(tag, attrs = {}, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const serif = (x, y, size, text, parent, extra = {}) =>
+  el("text", { class: "serif", x, y, "font-size": size, fill: C.ink, ...extra }, parent, text);
+const sans = (x, y, size, text, parent, extra = {}) =>
+  el("text", { class: "sans", x, y, "font-size": size, fill: C.ink, ...extra }, parent, text);
+const label = (x, y, text, parent, extra = {}) =>
+  sans(x, y, 22, text, parent, { "font-weight": 600, "letter-spacing": 5, fill: C.goldDeep, ...extra });
+
+// fade + rise in, optional fade + drift out
+function reveal(node, t, a, d, dy = 30, out = null) {
+  const p = eOut(seg(t, a, d));
+  let o = p, y = (1 - p) * dy;
+  if (out) { const q = eInOut(seg(t, out[0], out[1])); o *= 1 - q; y -= q * dy * .7; }
+  set(node, { opacity: o.toFixed(3), transform: `translate(0 ${y.toFixed(2)})` });
+  return o;
+}
+// stroke draw-on for paths with pathLength=1
+function prepDraw(path) { path.setAttribute("pathLength", 1); path.style.strokeDasharray = "1 2"; }
+function draw(path, p) { path.style.strokeDashoffset = (1 - p).toFixed(4); path.style.opacity = p > .001 ? 1 : 0; }
+const pop = p => p > 0 ? eBack(p) : 0;
+function typed(lines, p) {
+  const total = lines.join("").length; let n = Math.floor(p * total);
+  return lines.map(l => { const k = clamp(n, 0, l.length); n -= l.length; return l.slice(0, k); });
+}
+
+function stage(bg = C.paper) {
+  const svg = $("film");
+  svg.innerHTML = `
+  <defs>
+    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="wobT" type="turbulence" baseFrequency="0.016" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 1.9" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence id="grainT" type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="1" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.30  0 0 0 0 0.24  0 0 0 0 0.16  0 0 0 1.1 -0.42"/>
+    </filter>
+    <radialGradient id="vig" cx="50%" cy="48%" r="75%">
+      <stop offset="60%" stop-color="#6b4a1a" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#6b4a1a" stop-opacity="0.16"/>
+    </radialGradient>
+  </defs>
+  <rect id="bg" width="${W}" height="${H}" fill="${bg}"/>
+  <g id="world"></g>
+  <rect width="${W}" height="${H}" fill="url(#vig)"/>
+  `;
+  return $("world");
+}
+function boil(t) {
+  $("wobT").setAttribute("seed", 1 + Math.floor(t * 8) % 6);
+  $("grainT").setAttribute("seed", 1 + Math.floor(t * 12) % 24);
+}
+
+// Phone frame. Returns { g, screen } where screen is clipped content group.
+// Local coords: screen spans (0,0)→(sw,sh); frame is drawn around it.
+let _clipN = 0;
+function phone(parent, x, y, sw, sh, fill = C.paper2) {
+  const g = el("g", {}, parent);
+  const id = "scr" + (_clipN++);
+  const defs = el("defs", {}, g);
+  const cp = el("clipPath", { id }, defs);
+  el("rect", { x: 0, y: 0, width: sw, height: sh, rx: 50 }, cp);
+  el("rect", { x: -16, y: -16, width: sw + 32, height: sh + 32, rx: 64, fill: C.ink }, g);
+  el("rect", { x: 0, y: 0, width: sw, height: sh, rx: 50, fill }, g);
+  const screen = el("g", { "clip-path": `url(#${id})` }, g);
+  el("rect", { x: sw / 2 - 50, y: 14, width: 100, height: 28, rx: 14, fill: C.ink }, g);
+  g._x = x; g._y = y;
+  g.setAttribute("transform", `translate(${x} ${y})`);
+  return { g, screen, sw, sh };
+}
+
+// Flat hot-air balloon at origin (envelope centred on 0,0; basket bottom ≈ y 105)
+const ENV = "M0 -70 C45 -70 70 -40 70 -5 C70 30 30 55 12 75 L-12 75 C-30 55 -70 30 -70 -5 C-70 -40 -45 -70 0 -70Z";
+const GORE = "M0 -70 C24 -40 22 40 7 75 L-7 75 C-22 40 -24 -40 0 -70Z";
+function balloon(parent, color, gore) {
+  const g = el("g", {}, parent);
+  el("path", { d: ENV, fill: color }, g);
+  el("path", { d: GORE, fill: gore }, g);
+  el("path", { d: "M-66 -8 C-30 2 30 2 66 -8", fill: "none", stroke: C.paper, "stroke-opacity": .35, "stroke-width": 3 }, g);
+  el("path", { d: "M-12 75 L-9 88 M12 75 L9 88", stroke: C.ink, "stroke-width": 1.6 }, g);
+  el("rect", { x: -11, y: 88, width: 22, height: 17, rx: 3, fill: "#7a5230" }, g);
+  return g;
+}
+
+// Flat crow (Il Corvo) facing right, origin at feet.
+function crow(parent) {
+  const g = el("g", {}, parent);
+  const body = el("g", {}, g);
+  el("path", { d: "M-70 -58 L-128 -40 L-120 -30 L-66 -44Z", fill: C.ink }, body);            // tail
+  el("ellipse", { cx: -10, cy: -62, rx: 66, ry: 40, fill: C.ink }, body);                   // body
+  el("path", { d: "M-2 2 L-8 -26 M18 2 L12 -26", stroke: C.ink, "stroke-width": 5, "stroke-linecap": "round" }, body);
+  el("path", { d: "M-14 2 H4 M8 2 H26", stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round" }, body);
+  const head = el("g", {}, g);
+  el("circle", { cx: 52, cy: -104, r: 30, fill: C.ink }, head);
+  el("path", { d: "M76 -112 L122 -100 L76 -92Z", fill: C.gold }, head);                     // beak
+  el("circle", { cx: 60, cy: -110, r: 6.5, fill: C.paper }, head);
+  el("circle", { cx: 62, cy: -110, r: 3, fill: C.ink }, head);
+  el("path", { d: "M30 -86 C40 -70 30 -60 18 -54", fill: "none", stroke: C.ink, "stroke-width": 26, "stroke-linecap": "round" }, head); // neck
+  const wing = el("g", {}, g);
+  el("path", { d: "M-40 -78 C-10 -110 40 -96 44 -70 C10 -58 -30 -56 -62 -52Z", fill: "#232838" }, wing);
+  return { g, head, wing };
+}
+
+// End card: knot logo, CIRO wordmark, underline+dot, tagline, url.
+function endCard(parent, tagline, cy = 820) {
+  const g = el("g", {}, parent);
+  const logoG = el("g", {}, g);
+  el("image", { href: "/films/logo.png", x: -150, y: -150, width: 300, height: 300 }, logoG);
+  const word = el("g", {}, g);
+  const ul = el("path", { d: `M${W / 2 - 150} ${cy + 330} C${W / 2 - 70} ${cy + 316} ${W / 2 + 30} ${cy + 340} ${W / 2 + 130} ${cy + 324}`,
+    fill: "none", stroke: C.gold, "stroke-width": 5, "stroke-linecap": "round" }, el("g", { filter: "url(#wob)" }, g));
+  prepDraw(ul);
+  const dot = el("circle", { cx: W / 2 + 154, cy: cy + 322, r: 8, fill: C.gold }, g);
+  const tag = el("g", {}, g); serif(W / 2, cy + 440, 54, tagline, tag, { "text-anchor": "middle", "font-style": "italic" });
+  const url = el("g", {}, g); sans(W / 2, cy + 520, 24, "CIROAI.COM", url, { "text-anchor": "middle", "font-weight": 600, "letter-spacing": 7, fill: C.goldDeep });
+  const letters = [];
+  function layout() {
+    word.innerHTML = ""; letters.length = 0;
+    const size = 132, track = 34;
+    const nodes = "CIRO".split("").map(ch => serif(0, cy + 290, size, ch, word, { "font-weight": 500 }));
+    const widths = nodes.map(n => n.getComputedTextLength());
+    const total = widths.reduce((a, b) => a + b, 0) + track * 3;
+    let x = W / 2 - total / 2;
+    nodes.forEach((n, i) => { const lg = el("g", {}, word); lg.appendChild(n); n.setAttribute("x", x); x += widths[i] + track; letters.push(lg); });
+  }
+  function render(t, t0) {
+    g.style.display = t > t0 - .1 ? "" : "none";
+    if (t < t0 - .1) return;
+    const lp = seg(t, t0, .9), ls = pop(lp);
+    const bob = Math.sin((t - t0) * 1.2) * 4 * seg(t, t0 + .9, 1);
+    set(logoG, { transform: `translate(${W / 2} ${(cy + bob).toFixed(1)}) scale(${(.55 + .45 * ls).toFixed(3)})`, opacity: clamp(lp * 1.6) });
+    letters.forEach((lg, i) => reveal(lg, t, t0 + .6 + i * .12, .8, 36));
+    draw(ul, eInOut(seg(t, t0 + 1.3, .9)));
+    const dp = seg(t, t0 + 2.05, .4);
+    set(dot, { opacity: dp > 0 ? 1 : 0, r: 8 * pop(dp) });
+    reveal(tag, t, t0 + 1.8, 1, 22);
+    reveal(url, t, t0 + 2.4, .9, 16);
+  }
+  return { g, render, layout };
+}
+
+// Playback harness: ?render → frame-exact mode for the renderer.
+function run(build, renderAt, DURATION) {
+  window.renderAt = renderAt; window.DURATION = DURATION;
+  const rendering = new URLSearchParams(location.search).has("render");
+  if (rendering) document.body.classList.add("render");
+  window.ready = document.fonts.ready.then(() => { build(); renderAt(0); });
+  if (rendering) return;
+  let start = null, paused = false, pauseAt = 0;
+  const tick = now => {
+    if (start === null) start = now;
+    if (!paused) { const t = (now - start) / 1000; renderAt(Math.min(t, DURATION)); if (t > DURATION + 1.5) start = now; }
+    requestAnimationFrame(tick);
+  };
+  window.ready.then(() => requestAnimationFrame(tick));
+  addEventListener("click", () => { start = null; paused = false; });
+  addEventListener("keydown", e => {
+    if (e.code !== "Space") return; e.preventDefault();
+    if (paused) { start = performance.now() - pauseAt * 1000; paused = false; }
+    else { pauseAt = (performance.now() - start) / 1000; paused = true; }
+  });
+}
+
+// Centered headline block: small gold label + serif line + italic gold line.
+function headline(parent, y, lab, l1, l2, size = 88) {
+  const a = el("g", {}, parent), b = el("g", {}, parent), c = el("g", {}, parent);
+  if (lab) label(W / 2, y, lab, a, { "text-anchor": "middle" });
+  serif(W / 2, y + size * 1.12, size, l1, b, { "text-anchor": "middle" });
+  serif(W / 2, y + size * 2.18, size, l2, c, { "text-anchor": "middle", "font-style": "italic", fill: C.goldDeep });
+  return [a, b, c];
+}
+function revealAll(nodes, t, a, out, stagger = .25) {
+  nodes.forEach((n, i) => reveal(n, t, a + i * stagger, 1, 30, out ? [out + i * .05, .6] : null));
+}
+
+</script>
+<script>
+// 03 · Group play — one invite code, friends join, everyone walks the story live.
+const DURATION = 20.5;
+const SW = 500, SH = 960;
+const CODE = "K7M4QX";
+const MEMBERS = [
+  { n: "You", i: "Y", c: C.gold, st: "Host", at: 1.4 },
+  { n: "Maya", i: "M", c: C.terra, st: "Joined just now", at: 5.9 },
+  { n: "Luca", i: "L", c: C.green, st: "Joined just now", at: 7.0 },
+  { n: "Sam", i: "S", c: C.navy, st: "Joined just now", at: 8.0 },
+];
+const PTS = [[95, 715], [196, 600], [142, 482], [304, 395], [371, 280], [250, 184]];
+let R = {};
+
+function avatar(parent, m, r = 24) {
+  const g = el("g", {}, parent);
+  el("circle", { r, fill: m.c, stroke: C.paper, "stroke-width": 3 }, g);
+  sans(0, r * .26, r * .7, m.i, g, { "text-anchor": "middle", "font-weight": 600, fill: C.paper });
+  return g;
+}
+
+function build() {
+  const w = stage();
+  R.h1 = headline(w, 270, "CIRO · PLAY TOGETHER", "Rome is better", "with friends.", 92);
+  R.h2 = headline(w, 270, "CIRO · PLAY TOGETHER", "Share one code.", "Everyone’s in.", 92);
+  R.h3 = headline(w, 270, "CIRO · PLAY TOGETHER", "Walk it together.", "Solve it together.", 88);
+
+  const ph = phone(w, 0, 0, SW, SH, C.paper);
+  R.phone = ph.g; const s = ph.screen;
+
+  // ---- lobby
+  const A = R.lobby = el("g", {}, s);
+  label(32, 94, "GROUP SESSION", A, { "font-size": 13, "letter-spacing": 2.6 });
+  serif(32, 130, 28, "The Fugitive’s Last Canvas", A);
+  el("rect", { x: 24, y: 168, width: 452, height: 196, rx: 26, fill: C.ink }, A);
+  sans(48, 208, 13, "INVITE CODE", A, { "font-weight": 600, "letter-spacing": 2.6, fill: C.goldSoft });
+  R.boxes = CODE.split("").map((ch, i) => {
+    const g = el("g", { transform: `translate(${45 + i * 70 + 30} 290)` }, A);
+    el("rect", { x: -30, y: -50, width: 60, height: 84, rx: 12, fill: "#1c2233" }, g);
+    const tx = serif(0, 14, 48, ch, g, { "text-anchor": "middle", fill: C.paper, "font-weight": 500 });
+    return tx;
+  });
+  R.share = el("g", {}, A);
+  R.shareRect = el("rect", { x: 24, y: 384, width: 452, height: 58, rx: 29, fill: C.paper, stroke: C.ink, "stroke-width": 2 }, R.share);
+  sans(SW / 2, 420, 19, "Share invite link", R.share, { "text-anchor": "middle", "font-weight": 600 });
+  R.toast = el("g", {}, A);
+  el("rect", { x: 140, y: 456, width: 220, height: 38, rx: 19, fill: C.gold }, R.toast);
+  sans(SW / 2, 481, 15, "Invite link copied ✓", R.toast, { "text-anchor": "middle", "font-weight": 600, fill: C.ink });
+  label(32, 530, "WALKERS", A, { "font-size": 13, "letter-spacing": 2.6, fill: C.ink, "fill-opacity": .5 });
+  R.count = sans(468, 530, 15, "", A, { "text-anchor": "end", "fill-opacity": .5 });
+  R.rows = MEMBERS.map((m, i) => {
+    const g = el("g", {}, A);
+    const y = 578 + i * 70;
+    el("line", { x1: 24, y1: y + 35, x2: 476, y2: y + 35, stroke: C.ink, "stroke-opacity": .07 }, g);
+    avatar(g, m).setAttribute("transform", `translate(58 ${y})`);
+    serif(96, y + 8, 25, m.n, g);
+    sans(476, y + 6, 15, m.st, g, { "text-anchor": "end", fill: i ? C.goldDeep : C.ink, "fill-opacity": i ? 1 : .5, "font-weight": i ? 600 : 400 });
+    g._y = y; return g;
+  });
+  R.start = el("g", {}, A);
+  R.startRect = el("rect", { x: 24, y: 868, width: 452, height: 64, rx: 32, fill: C.ink }, R.start);
+  sans(SW / 2, 907, 20, "Start together", R.start, { "text-anchor": "middle", "font-weight": 600, fill: C.paper });
+
+  // ---- live map
+  const B = R.map = el("g", {}, s);
+  el("rect", { x: 0, y: 0, width: SW, height: SH, fill: C.paper2 }, B);
+  el("path", { d: "M465 0 C400 180 530 330 445 505 S475 800 500 960", fill: "none", stroke: C.water, "stroke-width": 50 }, B);
+  const st = el("g", { fill: "none", stroke: C.street, "stroke-width": 14, "stroke-linecap": "round" }, B);
+  ["M0 218 L500 280", "M0 479 L500 404", "M0 628 L500 715", "M0 840 L500 790", "M142 0 L75 960", "M343 0 L423 960", "M237 0 L258 960", "M0 355 L500 330"]
+    .forEach(d => el("path", { d }, st));
+  const d = "M" + PTS.map(p => p.join(" ")).join(" L");
+  el("path", { d, fill: "none", stroke: C.ink, "stroke-opacity": .25, "stroke-width": 4, "stroke-dasharray": "3 9", "stroke-linecap": "round" }, B);
+  R.route = el("path", { d, fill: "none", stroke: C.gold, "stroke-width": 7, "stroke-linecap": "round", "stroke-linejoin": "round" }, B);
+  prepDraw(R.route);
+  PTS.forEach(([x, y], i) => {
+    const g = el("g", { transform: `translate(${x} ${y})` }, B);
+    el("circle", { r: 15, fill: C.paper, stroke: C.ink, "stroke-width": 3 }, g);
+    sans(0, 5, 13, String(i + 1), g, { "text-anchor": "middle", "font-weight": 600 });
+  });
+  R.pucks = MEMBERS.slice().reverse().map(m => ({ m, g: avatar(B, m, 20) }));
+  R.youTag = el("g", {}, B);
+  el("rect", { x: -26, y: -58, width: 52, height: 26, rx: 13, fill: C.ink }, R.youTag);
+  sans(0, -40, 13, "You", R.youTag, { "text-anchor": "middle", "font-weight": 600, fill: C.paper });
+  el("rect", { x: 0, y: 0, width: SW, height: 140, fill: C.paper }, B);
+  R.live = el("circle", { cx: 38, cy: 90, r: 6, fill: C.terra }, B);
+  sans(54, 95, 13, "LIVE · 4 WALKERS", B, { "font-weight": 600, "letter-spacing": 2.6, fill: C.terra });
+  R.stopName = serif(32, 128, 26, "", B);
+  const nb = el("g", {}, B);
+  el("rect", { x: 20, y: 790, width: 460, height: 146, rx: 24, fill: C.ink }, nb);
+  sans(44, 826, 12, "IL CORVO · TO ALL FOUR OF YOU", nb, { "font-weight": 600, "letter-spacing": 2.4, fill: C.goldSoft });
+  R.nl = [864, 896].map(y => serif(44, y, 22, "", nb, { "font-style": "italic", fill: C.paper }));
+  R.nb = nb;
+
+  R.end = endCard(w, "Stories are better shared.");
+  R.end.layout();
+}
+
+function renderAt(t) {
+  boil(t);
+  revealAll(R.h1, t, .3, 6.9);
+  revealAll(R.h2, t, 7.3, 11.3);
+  revealAll(R.h3, t, 11.7, 15.2);
+
+  const on = t < 16.2;
+  R.phone.style.display = on ? "" : "none";
+  if (!on) { R.end.render(t, 16.0); return; }
+  const inP = eOut(seg(t, .7, 1.2)), outP = eInOut(seg(t, 15.2, .8));
+  set(R.phone, { transform: `translate(${(W - SW * 1.15) / 2} ${(575 + (1 - inP) * 420 - outP * 60).toFixed(1)}) scale(1.15)`, opacity: inP * (1 - outP) });
+
+  // lobby
+  R.boxes.forEach((tx, i) => {
+    const p = seg(t, 1.9 + i * .16, .4);
+    set(tx, { opacity: p > 0 ? 1 : 0, transform: `translate(0 ${((1 - pop(p)) * 16).toFixed(1)})` });
+  });
+  const press = Math.sin(seg(t, 4.3, .35) * Math.PI);
+  set(R.shareRect, { fill: mixColor(C.paper, C.paper2, press) });
+  set(R.share, { transform: `translate(250 413) scale(${(1 - .04 * press).toFixed(3)}) translate(-250 -413)` });
+  const tp = seg(t, 4.6, .4), tout = seg(t, 6.4, .4);
+  set(R.toast, { opacity: clamp(tp * 2) * (1 - tout), transform: `translate(0 ${((1 - eOut(tp)) * 12).toFixed(1)})` });
+  let count = 0;
+  R.rows.forEach((g, i) => {
+    const p = seg(t, MEMBERS[i].at, .5);
+    if (p > 0) count++;
+    set(g, { opacity: clamp(p * 1.6), transform: `translate(${((1 - eOut(p)) * 60).toFixed(1)} 0)` });
+  });
+  R.count.textContent = `${count} here`;
+  const sp = Math.sin(seg(t, 9.7, .35) * Math.PI);
+  set(R.startRect, { fill: sp > .01 ? mixColor(C.ink, C.goldDeep, sp) : C.ink });
+  set(R.start, { transform: `translate(250 900) scale(${(1 - .04 * sp).toFixed(3)}) translate(-250 -900)` });
+
+  // live map slides over
+  const mp = eInOut(seg(t, 10.1, .7));
+  set(R.map, { transform: `translate(${((1 - mp) * SW).toFixed(1)} 0)`, opacity: mp > 0 ? 1 : 0 });
+  set(R.lobby, { transform: `translate(${(-mp * 160).toFixed(1)} 0)` });
+  if (mp > 0) {
+    const L = R.route.getTotalLength();
+    const hp = lerp(.15, .5, eInOut(seg(t, 10.8, 4.2)));
+    draw(R.route, hp);
+    R.pucks.forEach(({ m, g }, k) => {
+      const lag = [.13, .09, .05, 0][k];
+      const p = Math.max(0, hp - lag);
+      const pt = R.route.getPointAtLength(L * p);
+      const j = (Math.sin(t * 2 + k * 2) * 6 + [16, -14, 12, 0][k]) * (k < 3 ? 1 : 0);
+      set(g, { transform: `translate(${(pt.x + j).toFixed(1)} ${(pt.y - j * .5).toFixed(1)})` });
+      if (m.n === "You") set(R.youTag, { transform: `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})` });
+    });
+    R.stopName.textContent = hp < .22 ? "Stop 1 · Piazza Navona" : hp < .4 ? "Stop 2 · Palazzo Madama" : "Stop 3 · San Luigi dei Francesi";
+    set(R.live, { opacity: .45 + .55 * Math.abs(Math.sin(t * 3)) });
+    set(R.nb, { opacity: seg(t, 11.6, .4) });
+    typed(["Keep up, all four of you —", "the Pope’s guards walk fast."], seg(t, 11.9, 1.8)).forEach((s, i) => R.nl[i].textContent = s);
+  }
+  R.end.render(t, 16.0);
+}
+
+run(build, renderAt, DURATION);
+
+</script>
+</body>
+</html>

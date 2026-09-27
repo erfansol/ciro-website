@@ -58,7 +58,7 @@ export default function AboutPage() {
         {/* Founder */}
         <section className="mt-16">
           <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
-            Founder
+            The team
           </h2>
           <div className="mt-6 rounded-lg border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
             <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-ink-900/45 dark:text-white/40">
@@ -85,6 +85,23 @@ export default function AboutPage() {
                 Languages: Persian (native), English, Italian.
               </p>
             </div>
+          </div>
+
+          <div className="mt-5 rounded-lg border border-ink-900/10 bg-white p-8 dark:border-white/10 dark:bg-white/[0.02]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-ink-900/45 dark:text-white/40">
+              Co-founder
+            </p>
+            <h3 className="mt-3 font-display text-2xl tracking-tight sm:text-3xl">
+              Kimia Bayat
+            </h3>
+            <p className="mt-1 text-sm text-ink-900/55 dark:text-white/55">
+              Rome, Italy
+            </p>
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-900/75 dark:text-white/70">
+              Leads interactive storytelling — the characters, the routes and
+              the moments where a story asks something of you. Media graduate
+              of Sapienza Università di Roma.
+            </p>
           </div>
 
           <p className="mt-6 text-sm text-ink-900/60 dark:text-white/55">

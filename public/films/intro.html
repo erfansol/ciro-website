@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIRO Intro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#faf7f0; --ink:#0a0d16; }
+  html, body { margin:0; height:100%; background:#14120e; overflow:hidden; }
+  #stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  svg#film { width:100vw; height:56.25vw; max-height:100vh; max-width:177.78vh; display:block; }
+  .serif { font-family:"Newsreader", Georgia, serif; }
+  .sans  { font-family:"Libre Franklin", system-ui, sans-serif; }
+  #hint { position:fixed; bottom:12px; left:0; right:0; text-align:center;
+          font:12px "Libre Franklin", sans-serif; color:#faf7f0; opacity:.45; pointer-events:none; }
+  body.render #hint { display:none; }
+</style>
+</head>
+<body>
+<div id="stage">
+<svg id="film" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- hand-drawn "boiling line" wobble -->
+    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="wobT" type="turbulence" baseFrequency="0.016" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- rubber-stamp ink speckle -->
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 1.9" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <!-- film/paper grain -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence id="grainT" type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="1" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.30  0 0 0 0 0.24  0 0 0 0 0.16  0 0 0 1.1 -0.42"/>
+    </filter>
+    <radialGradient id="vig" cx="50%" cy="48%" r="75%">
+      <stop offset="60%" stop-color="#6b4a1a" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#6b4a1a" stop-opacity="0.16"/>
+    </radialGradient>
+    <clipPath id="sky"><rect x="0" y="0" width="1920" height="760"/></clipPath>
+    <clipPath id="scr"><rect x="1144" y="154" width="372" height="772" rx="46"/></clipPath>
+  </defs>
+
+  <rect id="bg" width="1920" height="1080" fill="#faf7f0"/>
+
+  <!-- ============ SCENE 1 · Every street has a story ============ -->
+  <g id="s1">
+    <g id="s1a"><text class="serif" x="960" y="450" text-anchor="middle" font-size="128" font-weight="400" fill="#0a0d16">Every street</text></g>
+    <g id="s1b"><text class="serif" x="960" y="590" text-anchor="middle" font-size="128" font-style="italic" fill="#b27c12">has a story.</text></g>
+    <g filter="url(#wob)">
+      <path id="walk" d="M160 820 C420 740 560 880 820 800 S1200 720 1420 800 S1680 840 1760 770"
+            pathLength="1" fill="none" stroke="#d99b1e" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 2"/>
+    </g>
+    <circle id="walker" r="11" fill="#0a0d16"/>
+  </g>
+
+  <!-- ============ SCENE 2+3 · Rome skyline + balloons ============ -->
+  <g id="s23">
+    <g clip-path="url(#sky)"><circle id="sun" cx="1000" cy="640" r="150" fill="#ebc46e"/></g>
+    <g id="balloons" clip-path="url(#sky)"></g>
+    <g id="skyline" filter="url(#wob)" stroke="#0a0d16" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" fill="#faf7f0">
+      <path d="M600 640 C618 540 782 540 800 640Z"/>
+      <path d="M560 760 V662 H840 V760Z"/>
+      <path d="M548 662 L700 604 L852 662Z"/>
+      <path fill="none" d="M585 674V760 M625 674V760 M665 674V760 M700 674V760 M735 674V760 M775 674V760 M815 674V760"/>
+      <path d="M420 760 C398 700 402 640 420 590 C438 640 442 700 420 760Z"/>
+      <path d="M464 760 C440 690 444 620 464 566 C484 620 488 690 464 760Z"/>
+      <path d="M200 760 V705 H260 V688 H320 V714 H380 V760Z"/>
+      <path d="M972 760 V738 H1028 V760Z"/>
+      <path d="M986 738 L991 575 L1000 556 L1009 575 L1014 738Z"/>
+      <path d="M1158 642 C1158 520 1342 520 1342 642Z"/>
+      <path d="M1150 760 V642 H1350 V760Z"/>
+      <path fill="none" d="M1250 552 V642 M1205 562 C1195 592 1192 620 1192 642 M1295 562 C1305 592 1308 620 1308 642"/>
+      <path d="M1232 553 V522 H1268 V553Z"/>
+      <path d="M1226 522 L1250 500 L1274 522Z"/>
+      <path fill="none" d="M1250 500 V474 M1240 484 H1260"/>
+      <path fill="none" d="M1180 760 V712 A12 12 0 0 1 1204 712 V760 M1238 760 V706 A12 12 0 0 1 1262 706 V760 M1296 760 V712 A12 12 0 0 1 1320 712 V760"/>
+      <path d="M1380 760 V700 H1440 V680 H1500 V710 H1540 V760Z"/>
+      <path d="M1560 760 C1538 700 1542 640 1560 596 C1578 640 1582 700 1560 760Z"/>
+      <path d="M1660 760 V620 H1700 V760Z"/>
+      <path d="M1654 620 L1680 594 L1706 620Z"/>
+      <path d="M1600 760 V698 H1640 V760Z M1700 760 V704 H1740 V760Z"/>
+      <path fill="none" d="M150 760 H1770"/>
+    </g>
+    <g id="s2t"><text class="serif" x="960" y="905" text-anchor="middle" font-size="62" fill="#0a0d16">Rome has told stories for two thousand years.</text></g>
+    <g id="s3t"><text class="serif" x="960" y="905" text-anchor="middle" font-size="62" font-style="italic" fill="#0a0d16">Now it tells them <tspan fill="#b27c12">to you.</tspan></text></g>
+  </g>
+
+  <!-- ============ SCENE 4 · Walk real streets (phone) ============ -->
+  <g id="s4">
+    <g id="s4text">
+      <g id="s4l1"><text class="sans" x="230" y="380" font-size="19" font-weight="600" letter-spacing="4" fill="#b27c12">THE FUGITIVE’S LAST CANVAS · ROME</text></g>
+      <g id="s4l2"><text class="serif" x="226" y="490" font-size="84" fill="#0a0d16">Walk real streets.</text></g>
+      <g id="s4l3"><text class="serif" x="226" y="596" font-size="84" font-style="italic" fill="#b27c12">Meet who walked them.</text></g>
+      <g id="s4l4">
+        <text class="sans" x="230" y="680" font-size="27" fill="#0a0d16" fill-opacity=".62">A living narrator guides you stop by stop —</text>
+        <text class="sans" x="230" y="720" font-size="27" fill="#0a0d16" fill-opacity=".62">and answers when you ask.</text>
+      </g>
+    </g>
+    <g id="phone">
+      <rect x="1130" y="140" width="400" height="800" rx="58" fill="#0a0d16"/>
+      <rect x="1144" y="154" width="372" height="772" rx="46" fill="#f5f0e4"/>
+      <g clip-path="url(#scr)">
+        <path d="M1490 154 C1440 300 1540 420 1476 560 S1500 800 1520 926" fill="none" stroke="#d6e0d2" stroke-width="38"/>
+        <g fill="none" stroke="#e7dcc5" stroke-width="11" stroke-linecap="round">
+          <path d="M1144 330 L1516 380"/><path d="M1144 540 L1516 480"/><path d="M1144 660 L1516 730"/>
+          <path d="M1144 830 L1516 790"/><path d="M1250 154 L1200 926"/><path d="M1400 154 L1460 926"/>
+          <path d="M1320 154 L1336 926"/><path d="M1144 440 L1516 420"/>
+        </g>
+        <ellipse cx="1296" cy="612" rx="20" ry="58" fill="#ebe0c7"/>
+        <circle cx="1330" cy="450" r="26" fill="#ebe0c7"/>
+        <path id="route" d="M1215 700 L1290 610 L1250 515 L1370 445 L1420 350 L1330 270" pathLength="1"
+              fill="none" stroke="#d99b1e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 2"/>
+        <g id="stops"></g>
+        <g id="puck"><circle id="puckRing" r="14" fill="none" stroke="#0a0d16" stroke-width="2"/><circle r="8" fill="#0a0d16"/></g>
+        <rect x="1144" y="154" width="372" height="100" fill="#faf7f0"/>
+        <line x1="1144" y1="254" x2="1516" y2="254" stroke="#0a0d16" stroke-opacity=".08"/>
+        <text class="sans" x="1174" y="206" font-size="12" font-weight="600" letter-spacing="2.4" fill="#b27c12">THE FUGITIVE’S LAST CANVAS</text>
+        <text id="stopLbl" class="serif" x="1174" y="236" font-size="22" fill="#0a0d16">Stop 1 of 6</text>
+        <g id="bubble">
+          <rect x="1162" y="748" width="336" height="156" rx="22" fill="#0a0d16"/>
+          <text class="sans" x="1186" y="782" font-size="11.5" font-weight="600" letter-spacing="2.4" fill="#ebc46e">IL CORVO · YOUR NARRATOR</text>
+          <g id="wave" fill="#ebc46e"></g>
+          <text id="bl1" class="serif" x="1186" y="818" font-size="20" font-style="italic" fill="#faf7f0"></text>
+          <text id="bl2" class="serif" x="1186" y="846" font-size="20" font-style="italic" fill="#faf7f0"></text>
+          <text id="bl3" class="serif" x="1186" y="874" font-size="20" font-style="italic" fill="#faf7f0"></text>
+        </g>
+      </g>
+      <rect x="1288" y="166" width="84" height="24" rx="12" fill="#0a0d16"/>
+    </g>
+  </g>
+
+  <!-- ============ SCENE 5 · The case file (noir) ============ -->
+  <g id="s5">
+    <g id="s5t"><text class="serif" x="960" y="210" text-anchor="middle" font-size="64" font-style="italic" fill="#faf7f0">Close a case four centuries cold.</text></g>
+    <g id="card">
+      <rect x="-380" y="-230" width="760" height="460" rx="6" fill="#faf7f0"/>
+      <g stroke="#0a0d16" stroke-opacity=".07"><line x1="-330" y1="0" x2="330" y2="0"/><line x1="-330" y1="140" x2="330" y2="140"/></g>
+      <text class="sans" x="-330" y="-170" font-size="14" font-weight="600" letter-spacing="3" fill="#0a0d16" fill-opacity=".55">PAPAL POLICE · ROMA</text>
+      <text class="sans" x="330" y="-170" text-anchor="end" font-size="14" font-weight="600" letter-spacing="3" fill="#0a0d16" fill-opacity=".55">CASE Nº 1606/28</text>
+      <line x1="-330" y1="-148" x2="330" y2="-148" stroke="#0a0d16" stroke-opacity=".25" stroke-width="1.5"/>
+      <text class="serif" x="-330" y="-78" font-size="56" fill="#0a0d16">Michelangelo Merisi</text>
+      <text class="serif" x="-330" y="-34" font-size="28" font-style="italic" fill="#0a0d16" fill-opacity=".7">called Caravaggio, painter</text>
+      <text class="sans" x="-330" y="44" font-size="20" fill="#0a0d16" fill-opacity=".8">Charge — the death of Ranuccio Tomassoni</text>
+      <text class="sans" x="-330" y="80" font-size="20" fill="#0a0d16" fill-opacity=".8">Place — Via della Pallacorda, Rome</text>
+      <text class="sans" x="-330" y="116" font-size="20" fill="#0a0d16" fill-opacity=".8">Date — 28 May 1606</text>
+      <text class="serif" x="-330" y="186" font-size="26" font-style="italic" fill="#0a0d16">Your verdict —</text>
+      <g id="stamp" filter="url(#ink)">
+        <g id="stampInner">
+          <rect x="-190" y="-48" width="380" height="96" rx="10" fill="none" stroke="#c4573a" stroke-width="7"/>
+          <rect x="-179" y="-37" width="358" height="74" rx="5" fill="none" stroke="#c4573a" stroke-width="2"/>
+          <text class="sans" x="0" y="17" text-anchor="middle" font-size="46" font-weight="600" letter-spacing="7" fill="#c4573a">PARDONED</text>
+        </g>
+      </g>
+    </g>
+    <g id="s5b"><text class="sans" x="960" y="925" text-anchor="middle" font-size="26" fill="#faf7f0" fill-opacity=".7">Your verdict becomes your souvenir of Rome.</text></g>
+  </g>
+
+  <!-- ============ SCENE 6 · Logo ============ -->
+  <g id="s6">
+    <g id="logoG"><image id="logo" href="/films/logo.png" x="-150" y="-150" width="300" height="300"/></g>
+    <g id="word"></g>
+    <g filter="url(#wob)">
+      <path id="uline" pathLength="1" fill="none" stroke="#d99b1e" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 2"
+            d="M820 742 C900 728 1000 752 1100 736"/>
+    </g>
+    <circle id="udot" cx="1124" cy="734" r="8" fill="#d99b1e"/>
+    <g id="tag"><text class="serif" x="960" y="830" text-anchor="middle" font-size="46" font-style="italic" fill="#0a0d16">Every street has a story.</text></g>
+    <g id="url"><text class="sans" x="960" y="900" text-anchor="middle" font-size="20" font-weight="600" letter-spacing="6" fill="#b27c12">CIROAI.COM</text></g>
+  </g>
+
+  <rect width="1920" height="1080" fill="url(#vig)" pointer-events="none"/>
+  
+  <rect id="fade" width="1920" height="1080" fill="#faf7f0" opacity="0" pointer-events="none"/>
+</svg>
+</div>
+<div id="hint">click to replay · space to pause</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const DURATION = 35.5;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, d) => clamp((t - a) / d);
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const eIn = p => p * p * p;
+const eBack = p => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const rgb = c => [1, 3, 5].map(i => parseInt(c.substr(i, 2), 16));
+const mixColor = (a, b, p) => { const A = rgb(a), B = rgb(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], p))).join(",")})`; };
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+
+// fade + rise in, optional fade + drift out
+function reveal(node, t, a, d, dy = 30, out = null) {
+  const p = eOut(seg(t, a, d));
+  let o = p, y = (1 - p) * dy;
+  if (out) { const q = eInOut(seg(t, out[0], out[1])); o *= 1 - q; y -= q * dy * .7; }
+  set(node, { opacity: o.toFixed(3), transform: `translate(0 ${y.toFixed(2)})` });
+  return o;
+}
+function draw(path, p) {
+  path.style.strokeDashoffset = (1 - p).toFixed(4);
+  path.style.opacity = p > 0.001 ? 1 : 0;
+}
+
+// ---------- build: skyline draw order ----------
+const skyPaths = [...$("skyline").querySelectorAll("path")];
+
+// ---------- build: balloons ----------
+const BALLOONS = [
+  { x: 330,  y: 420, s: .85, c: "#c4573a", gc: "#a8452c", d: 0.0, ph: 0.3 },
+  { x: 640,  y: 300, s: 1.05, c: "#d99b1e", gc: "#b27c12", d: 0.35, ph: 1.7 },
+  { x: 1000, y: 250, s: 1.25, c: "#1f2a44", gc: "#2f3d5f", d: 0.7, ph: 0.9 },
+  { x: 1330, y: 330, s: .95, c: "#3f6b4f", gc: "#335a41", d: 0.5, ph: 2.4 },
+  { x: 1620, y: 410, s: .8,  c: "#d99b1e", gc: "#b27c12", d: 0.95, ph: 1.2 },
+];
+const ENV = "M0 -70 C45 -70 70 -40 70 -5 C70 30 30 55 12 75 L-12 75 C-30 55 -70 30 -70 -5 C-70 -40 -45 -70 0 -70Z";
+const GORE = "M0 -70 C24 -40 22 40 7 75 L-7 75 C-22 40 -24 -40 0 -70Z";
+BALLOONS.forEach(b => {
+  const root = $("balloons");
+  b.thread = el("line", { stroke: "#0a0d16", "stroke-width": 1.6, "stroke-dasharray": "2 7", "stroke-linecap": "round", "stroke-opacity": .55 }, root);
+  b.ring = el("circle", { cx: b.x, cy: 756, r: 6, fill: "none", stroke: b.c, "stroke-width": 3 }, root);
+  b.dot = el("circle", { cx: b.x, cy: 756, r: 6, fill: b.c }, root);
+  b.g = el("g", {}, root);
+  el("path", { d: ENV, fill: b.c }, b.g);
+  el("path", { d: GORE, fill: b.gc }, b.g);
+  el("path", { d: "M-66 -8 C-30 2 30 2 66 -8", fill: "none", stroke: "#faf7f0", "stroke-opacity": .35, "stroke-width": 3 }, b.g);
+  el("path", { d: "M-12 75 L-9 88 M12 75 L9 88", stroke: "#0a0d16", "stroke-width": 1.6 }, b.g);
+  el("rect", { x: -11, y: 88, width: 22, height: 17, rx: 3, fill: "#7a5230" }, b.g);
+});
+
+// ---------- build: map stops + voice wave ----------
+const STOPS = [[1215, 700], [1290, 610], [1250, 515], [1370, 445], [1420, 350], [1330, 270]];
+const stopNodes = STOPS.map(([x, y], i) => {
+  const g = el("g", {}, $("stops"));
+  el("circle", { r: 17, fill: "#0a0d16" }, g);
+  el("circle", { r: 17, fill: "none", stroke: "#faf7f0", "stroke-width": 3 }, g);
+  const tx = el("text", { class: "sans", "text-anchor": "middle", y: 5.5, "font-size": 14, "font-weight": 600, fill: "#faf7f0" }, g);
+  tx.textContent = i + 1;
+  g._x = x; g._y = y;
+  return g;
+});
+const waveBars = [0, 1, 2, 3, 4].map(i => el("rect", { x: 1444 + i * 8, width: 4, rx: 2 }, $("wave")));
+const LINES = ["Four hundred years ago, a painter", "ran down this very street…", "with blood on his sword."];
+
+// ---------- build: wordmark (laid out after fonts load) ----------
+const letters = [];
+function layoutWord() {
+  const w = $("word"); w.innerHTML = ""; letters.length = 0;
+  const chars = "CIRO".split(""), size = 118, track = 30;
+  const nodes = chars.map(ch => { const n = el("text", { class: "serif", "font-size": size, "font-weight": 500, fill: "#0a0d16", y: 0 }, w); n.textContent = ch; return n; });
+  const widths = nodes.map(n => n.getComputedTextLength());
+  const total = widths.reduce((a, b) => a + b, 0) + track * (chars.length - 1);
+  let x = 960 - total / 2;
+  nodes.forEach((n, i) => {
+    const g = el("g", {}, w); g.appendChild(n);
+    n.setAttribute("x", x); n.setAttribute("y", 700);
+    x += widths[i] + track; letters.push(g);
+  });
+}
+
+// ---------- the timeline ----------
+function renderAt(t) {
+  // hand-drawn boil (on twos) + grain
+  $("wobT").setAttribute("seed", 1 + Math.floor(t * 8) % 6);
+  $("grainT").setAttribute("seed", 1 + Math.floor(t * 12) % 24);
+
+  // background: paper → ink (noir) → paper
+  const toInk = eInOut(seg(t, 23.8, .8)), toPaper = eInOut(seg(t, 28.8, .6));
+  const bgc = toPaper > 0 ? mixColor("#0a0d16", "#faf7f0", toPaper) : mixColor("#faf7f0", "#0a0d16", toInk);
+  $("bg").setAttribute("fill", bgc);
+
+  // ---- S1
+  const s1 = t < 5.6;
+  $("s1").style.display = s1 ? "" : "none";
+  if (s1) {
+    reveal($("s1a"), t, .5, 1.1, 34, [4.4, .8]);
+    reveal($("s1b"), t, 1.4, 1.1, 34, [4.5, .8]);
+    const wp = eInOut(seg(t, .3, 3.4));
+    const walk = $("walk"); draw(walk, wp);
+    const outQ = eInOut(seg(t, 4.5, .8));
+    walk.parentNode.setAttribute("opacity", 1 - outQ);
+    const L = walk.getTotalLength(), pt = walk.getPointAtLength(L * wp);
+    set($("walker"), { cx: pt.x, cy: pt.y, opacity: (wp > 0 ? 1 : 0) * (1 - outQ) });
+  }
+
+  // ---- S2 + S3
+  const s23 = t > 4.9 && t < 16.8;
+  $("s23").style.display = s23 ? "" : "none";
+  if (s23) {
+    const out = eInOut(seg(t, 15.7, .9));
+    $("s23").setAttribute("transform", `translate(0 ${(-70 * out).toFixed(1)})`);
+    $("s23").setAttribute("opacity", 1 - out);
+    skyPaths.forEach((p, i) => {
+      p.setAttribute("pathLength", 1);
+      p.style.strokeDasharray = "1 2";
+      const q = eInOut(seg(t, 5.1 + i * .1, 1.3));
+      draw(p, q);
+      p.style.fillOpacity = eOut(seg(t, 5.1 + i * .1 + .9, .6));
+    });
+    const sp = eOut(seg(t, 6.2, 2.2));
+    set($("sun"), { cy: lerp(930, 640, sp) });
+    reveal($("s2t"), t, 7.2, 1, 26, [10.9, .6]);
+    reveal($("s3t"), t, 11.6, 1, 26);
+    BALLOONS.forEach(b => {
+      const rp = eOut(seg(t, 10.2 + b.d, 2.6));
+      const y = lerp(900, b.y, rp) + Math.sin((t + b.ph) * 1.4) * 6 * rp;
+      const x = b.x + Math.sin((t + b.ph) * .8) * 4 * rp;
+      b.g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${b.s}) rotate(${(Math.sin((t + b.ph) * 1.1) * 2 * rp).toFixed(2)})`);
+      const basket = y + 105 * b.s;
+      set(b.thread, { x1: x, y1: basket, x2: b.x, y2: 756, opacity: rp > .05 ? 1 : 0 });
+      const on = seg(t, 10.2 + b.d, .4);
+      const pulse = ((t + b.ph) % 1.6) / 1.6;
+      set(b.dot, { opacity: on });
+      set(b.ring, { r: 6 + pulse * 26, opacity: on * (1 - pulse) });
+    });
+  }
+
+  // ---- S4
+  const s4 = t > 15.9 && t < 24.4;
+  $("s4").style.display = s4 ? "" : "none";
+  if (s4) {
+    const inP = eOut(seg(t, 16.2, 1.2)), outP = eInOut(seg(t, 23.6, .7));
+    $("phone").setAttribute("transform", `translate(${((1 - inP) * 260 + outP * 120).toFixed(1)} ${(outP * -40).toFixed(1)})`);
+    $("phone").setAttribute("opacity", inP * (1 - outP));
+    reveal($("s4l1"), t, 16.6, .9, 20, [23.5, .6]);
+    reveal($("s4l2"), t, 16.9, 1, 30, [23.55, .6]);
+    reveal($("s4l3"), t, 17.4, 1, 30, [23.6, .6]);
+    reveal($("s4l4"), t, 18.1, 1, 24, [23.65, .6]);
+
+    const rp = eInOut(seg(t, 17.8, 3.0));
+    const route = $("route"); draw(route, rp);
+    const L = route.getTotalLength(), pt = route.getPointAtLength(L * rp);
+    set($("puck"), { transform: `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`, opacity: seg(t, 17.6, .3) });
+    const pr = (t % 1.4) / 1.4;
+    set($("puckRing"), { r: 10 + pr * 18, opacity: 1 - pr });
+    let reached = 1;
+    stopNodes.forEach((g, i) => {
+      const at = 17.8 + 3.0 * (i / 5) - (i === 0 ? .2 : 0);
+      const p = seg(t, at, .45);
+      if (p > 0) reached = i + 1;
+      const s = p > 0 ? eBack(p) : 0;
+      set(g, { transform: `translate(${g._x} ${g._y}) scale(${s.toFixed(3)})`, opacity: p > 0 ? 1 : 0 });
+    });
+    $("stopLbl").textContent = `Stop ${reached} of 6`;
+
+    const bp = eBack(seg(t, 20.5, .55));
+    set($("bubble"), { opacity: seg(t, 20.5, .25), transform: `translate(1330 904) scale(${(.6 + .4 * bp).toFixed(3)}) translate(-1330 -904)` });
+    const total = LINES.join("").length;
+    let n = Math.floor(seg(t, 20.9, 1.9) * total);
+    LINES.forEach((line, i) => { const k = clamp(n, 0, line.length); $("bl" + (i + 1)).textContent = line.slice(0, k); n -= line.length; });
+    const speaking = t > 20.9 && t < 22.9;
+    waveBars.forEach((r, i) => {
+      const h = speaking ? 4 + Math.abs(Math.sin(t * 9 + i * 1.3)) * 12 : 4;
+      set(r, { y: 776 - h / 2, height: h });
+    });
+  }
+
+  // ---- S5
+  const s5 = t > 24.2 && t < 29.4;
+  $("s5").style.display = s5 ? "" : "none";
+  if (s5) {
+    const cp = eOut(seg(t, 24.3, 1.0)), out = eInOut(seg(t, 28.6, .7));
+    const hit = seg(t, 26.45, .35);
+    const shake = hit > 0 && hit < 1 ? Math.sin(hit * Math.PI * 5) * (1 - hit) * 6 : 0;
+    $("card").setAttribute("transform",
+      `translate(${960 + shake} ${lerp(500, 565, cp) - out * 40 + Math.abs(shake) * .6}) rotate(${lerp(-7, -2, cp).toFixed(2)})`);
+    $("card").setAttribute("opacity", cp * (1 - out));
+    reveal($("s5t"), t, 24.9, 1, 24, [28.5, .6]);
+    reveal($("s5b"), t, 26.9, .9, 20, [28.5, .6]);
+    const st = seg(t, 26.1, .35);
+    const sc = lerp(2.3, 1, eIn(st));
+    set($("stamp"), { transform: `translate(140 150) rotate(-9) scale(${sc.toFixed(3)})`, opacity: st > 0 ? clamp(st * 2.2) : 0 });
+  }
+
+  // ---- S6
+  const s6 = t > 29.2;
+  $("s6").style.display = s6 ? "" : "none";
+  if (s6) {
+    const lp = seg(t, 29.4, .9);
+    const ls = lp > 0 ? eBack(lp) : 0;
+    const bob = Math.sin((t - 30) * 1.2) * 4 * seg(t, 30.3, 1);
+    set($("logoG"), { transform: `translate(960 ${(420 + bob).toFixed(1)}) scale(${(.55 + .45 * ls).toFixed(3)})`, opacity: clamp(lp * 1.6) });
+    letters.forEach((g, i) => reveal(g, t, 30.0 + i * .12, .8, 36));
+    draw($("uline"), eInOut(seg(t, 30.7, .9)));
+    const dp = seg(t, 31.45, .4);
+    set($("udot"), { opacity: dp > 0 ? 1 : 0, r: dp > 0 ? 8 * eBack(dp) : 0 });
+    reveal($("tag"), t, 31.2, 1, 22);
+    reveal($("url"), t, 31.8, .9, 16);
+  }
+}
+
+// ---------- playback ----------
+window.renderAt = renderAt;
+window.DURATION = DURATION;
+const render = new URLSearchParams(location.search).has("render");
+if (render) document.body.classList.add("render");
+
+window.ready = document.fonts.ready.then(() => { layoutWord(); renderAt(0); });
+
+if (!render) {
+  let start = null, paused = false, pauseAt = 0;
+  const tick = now => {
+    if (start === null) start = now;
+    if (!paused) {
+      const t = (now - start) / 1000;
+      renderAt(Math.min(t, DURATION));
+      if (t > DURATION + 1.5) start = now;
+    }
+    requestAnimationFrame(tick);
+  };
+  window.ready.then(() => requestAnimationFrame(tick));
+  addEventListener("click", () => { start = null; paused = false; });
+  addEventListener("keydown", e => {
+    if (e.code !== "Space") return;
+    e.preventDefault();
+    if (paused) { start = performance.now() - pauseAt * 1000; paused = false; }
+    else { pauseAt = (performance.now() - start) / 1000; paused = true; }
+  });
+}
+</script>
+</body>
+</html>

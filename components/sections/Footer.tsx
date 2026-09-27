@@ -14,6 +14,7 @@ const company = [
 
 const product = [
   { label: "How it works", href: "/product" },
+  { label: "Films", href: "/films" },
   { label: "Stories", href: "/stories" },
   { label: "TestFlight access", href: "mailto:info@ciroai.com?subject=Ciro%20TestFlight%20access" },
   { label: "Waitlist", href: "/#waitlist" },

@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIRO film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; height:100%; background:#14120e; overflow:hidden; }
+  #stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  svg#film { width:min(100vw, 56.25vh); height:min(100vh, 177.78vw); display:block; }
+  .serif { font-family:"Newsreader", Georgia, serif; }
+  .sans  { font-family:"Libre Franklin", system-ui, sans-serif; }
+  #hint { position:fixed; bottom:10px; left:0; right:0; text-align:center; font:12px "Libre Franklin", sans-serif; color:#faf7f0; opacity:.45; pointer-events:none; }
+  body.render #hint { display:none; }
+</style>
+</head>
+<body>
+<div id="stage"><svg id="film" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="hint">click to replay · space to pause</div>
+<script>
+// CIRO motion kit — shared helpers, filters, end card and playback harness.
+// Every film is a pure function renderAt(t) so it can be rendered frame-exact.
+const NS = "http://www.w3.org/2000/svg";
+const W = 1080, H = 1920;
+const C = {
+  paper: "#faf7f0", paper2: "#f5f0e4", ink: "#0a0d16", gold: "#d99b1e", goldDeep: "#b27c12",
+  goldSoft: "#ebc46e", terra: "#c4573a", green: "#3f6b4f", navy: "#1f2a44", street: "#e7dcc5", water: "#d6e0d2",
+};
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, d) => clamp((t - a) / d);
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eIn = p => p * p * p;
+const eInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const eBack = p => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const rgb = c => [1, 3, 5].map(i => parseInt(c.substr(i, 2), 16));
+const mixColor = (a, b, p) => { const A = rgb(a), B = rgb(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], p))).join(",")})`; };
+function el(tag, attrs = {}, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const set = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const serif = (x, y, size, text, parent, extra = {}) =>
+  el("text", { class: "serif", x, y, "font-size": size, fill: C.ink, ...extra }, parent, text);
+const sans = (x, y, size, text, parent, extra = {}) =>
+  el("text", { class: "sans", x, y, "font-size": size, fill: C.ink, ...extra }, parent, text);
+const label = (x, y, text, parent, extra = {}) =>
+  sans(x, y, 22, text, parent, { "font-weight": 600, "letter-spacing": 5, fill: C.goldDeep, ...extra });
+
+// fade + rise in, optional fade + drift out
+function reveal(node, t, a, d, dy = 30, out = null) {
+  const p = eOut(seg(t, a, d));
+  let o = p, y = (1 - p) * dy;
+  if (out) { const q = eInOut(seg(t, out[0], out[1])); o *= 1 - q; y -= q * dy * .7; }
+  set(node, { opacity: o.toFixed(3), transform: `translate(0 ${y.toFixed(2)})` });
+  return o;
+}
+// stroke draw-on for paths with pathLength=1
+function prepDraw(path) { path.setAttribute("pathLength", 1); path.style.strokeDasharray = "1 2"; }
+function draw(path, p) { path.style.strokeDashoffset = (1 - p).toFixed(4); path.style.opacity = p > .001 ? 1 : 0; }
+const pop = p => p > 0 ? eBack(p) : 0;
+function typed(lines, p) {
+  const total = lines.join("").length; let n = Math.floor(p * total);
+  return lines.map(l => { const k = clamp(n, 0, l.length); n -= l.length; return l.slice(0, k); });
+}
+
+function stage(bg = C.paper) {
+  const svg = $("film");
+  svg.innerHTML = `
+  <defs>
+    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="wobT" type="turbulence" baseFrequency="0.016" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 1.9" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence id="grainT" type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="1" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.30  0 0 0 0 0.24  0 0 0 0 0.16  0 0 0 1.1 -0.42"/>
+    </filter>
+    <radialGradient id="vig" cx="50%" cy="48%" r="75%">
+      <stop offset="60%" stop-color="#6b4a1a" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#6b4a1a" stop-opacity="0.16"/>
+    </radialGradient>
+  </defs>
+  <rect id="bg" width="${W}" height="${H}" fill="${bg}"/>
+  <g id="world"></g>
+  <rect width="${W}" height="${H}" fill="url(#vig)"/>
+  `;
+  return $("world");
+}
+function boil(t) {
+  $("wobT").setAttribute("seed", 1 + Math.floor(t * 8) % 6);
+  $("grainT").setAttribute("seed", 1 + Math.floor(t * 12) % 24);
+}
+
+// Phone frame. Returns { g, screen } where screen is clipped content group.
+// Local coords: screen spans (0,0)→(sw,sh); frame is drawn around it.
+let _clipN = 0;
+function phone(parent, x, y, sw, sh, fill = C.paper2) {
+  const g = el("g", {}, parent);
+  const id = "scr" + (_clipN++);
+  const defs = el("defs", {}, g);
+  const cp = el("clipPath", { id }, defs);
+  el("rect", { x: 0, y: 0, width: sw, height: sh, rx: 50 }, cp);
+  el("rect", { x: -16, y: -16, width: sw + 32, height: sh + 32, rx: 64, fill: C.ink }, g);
+  el("rect", { x: 0, y: 0, width: sw, height: sh, rx: 50, fill }, g);
+  const screen = el("g", { "clip-path": `url(#${id})` }, g);
+  el("rect", { x: sw / 2 - 50, y: 14, width: 100, height: 28, rx: 14, fill: C.ink }, g);
+  g._x = x; g._y = y;
+  g.setAttribute("transform", `translate(${x} ${y})`);
+  return { g, screen, sw, sh };
+}
+
+// Flat hot-air balloon at origin (envelope centred on 0,0; basket bottom ≈ y 105)
+const ENV = "M0 -70 C45 -70 70 -40 70 -5 C70 30 30 55 12 75 L-12 75 C-30 55 -70 30 -70 -5 C-70 -40 -45 -70 0 -70Z";
+const GORE = "M0 -70 C24 -40 22 40 7 75 L-7 75 C-22 40 -24 -40 0 -70Z";
+function balloon(parent, color, gore) {
+  const g = el("g", {}, parent);
+  el("path", { d: ENV, fill: color }, g);
+  el("path", { d: GORE, fill: gore }, g);
+  el("path", { d: "M-66 -8 C-30 2 30 2 66 -8", fill: "none", stroke: C.paper, "stroke-opacity": .35, "stroke-width": 3 }, g);
+  el("path", { d: "M-12 75 L-9 88 M12 75 L9 88", stroke: C.ink, "stroke-width": 1.6 }, g);
+  el("rect", { x: -11, y: 88, width: 22, height: 17, rx: 3, fill: "#7a5230" }, g);
+  return g;
+}
+
+// Flat crow (Il Corvo) facing right, origin at feet.
+function crow(parent) {
+  const g = el("g", {}, parent);
+  const body = el("g", {}, g);
+  el("path", { d: "M-70 -58 L-128 -40 L-120 -30 L-66 -44Z", fill: C.ink }, body);            // tail
+  el("ellipse", { cx: -10, cy: -62, rx: 66, ry: 40, fill: C.ink }, body);                   // body
+  el("path", { d: "M-2 2 L-8 -26 M18 2 L12 -26", stroke: C.ink, "stroke-width": 5, "stroke-linecap": "round" }, body);
+  el("path", { d: "M-14 2 H4 M8 2 H26", stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round" }, body);
+  const head = el("g", {}, g);
+  el("circle", { cx: 52, cy: -104, r: 30, fill: C.ink }, head);
+  el("path", { d: "M76 -112 L122 -100 L76 -92Z", fill: C.gold }, head);                     // beak
+  el("circle", { cx: 60, cy: -110, r: 6.5, fill: C.paper }, head);
+  el("circle", { cx: 62, cy: -110, r: 3, fill: C.ink }, head);
+  el("path", { d: "M30 -86 C40 -70 30 -60 18 -54", fill: "none", stroke: C.ink, "stroke-width": 26, "stroke-linecap": "round" }, head); // neck
+  const wing = el("g", {}, g);
+  el("path", { d: "M-40 -78 C-10 -110 40 -96 44 -70 C10 -58 -30 -56 -62 -52Z", fill: "#232838" }, wing);
+  return { g, head, wing };
+}
+
+// End card: knot logo, CIRO wordmark, underline+dot, tagline, url.
+function endCard(parent, tagline, cy = 820) {
+  const g = el("g", {}, parent);
+  const logoG = el("g", {}, g);
+  el("image", { href: "/films/logo.png", x: -150, y: -150, width: 300, height: 300 }, logoG);
+  const word = el("g", {}, g);
+  const ul = el("path", { d: `M${W / 2 - 150} ${cy + 330} C${W / 2 - 70} ${cy + 316} ${W / 2 + 30} ${cy + 340} ${W / 2 + 130} ${cy + 324}`,
+    fill: "none", stroke: C.gold, "stroke-width": 5, "stroke-linecap": "round" }, el("g", { filter: "url(#wob)" }, g));
+  prepDraw(ul);
+  const dot = el("circle", { cx: W / 2 + 154, cy: cy + 322, r: 8, fill: C.gold }, g);
+  const tag = el("g", {}, g); serif(W / 2, cy + 440, 54, tagline, tag, { "text-anchor": "middle", "font-style": "italic" });
+  const url = el("g", {}, g); sans(W / 2, cy + 520, 24, "CIROAI.COM", url, { "text-anchor": "middle", "font-weight": 600, "letter-spacing": 7, fill: C.goldDeep });
+  const letters = [];
+  function layout() {
+    word.innerHTML = ""; letters.length = 0;
+    const size = 132, track = 34;
+    const nodes = "CIRO".split("").map(ch => serif(0, cy + 290, size, ch, word, { "font-weight": 500 }));
+    const widths = nodes.map(n => n.getComputedTextLength());
+    const total = widths.reduce((a, b) => a + b, 0) + track * 3;
+    let x = W / 2 - total / 2;
+    nodes.forEach((n, i) => { const lg = el("g", {}, word); lg.appendChild(n); n.setAttribute("x", x); x += widths[i] + track; letters.push(lg); });
+  }
+  function render(t, t0) {
+    g.style.display = t > t0 - .1 ? "" : "none";
+    if (t < t0 - .1) return;
+    const lp = seg(t, t0, .9), ls = pop(lp);
+    const bob = Math.sin((t - t0) * 1.2) * 4 * seg(t, t0 + .9, 1);
+    set(logoG, { transform: `translate(${W / 2} ${(cy + bob).toFixed(1)}) scale(${(.55 + .45 * ls).toFixed(3)})`, opacity: clamp(lp * 1.6) });
+    letters.forEach((lg, i) => reveal(lg, t, t0 + .6 + i * .12, .8, 36));
+    draw(ul, eInOut(seg(t, t0 + 1.3, .9)));
+    const dp = seg(t, t0 + 2.05, .4);
+    set(dot, { opacity: dp > 0 ? 1 : 0, r: 8 * pop(dp) });
+    reveal(tag, t, t0 + 1.8, 1, 22);
+    reveal(url, t, t0 + 2.4, .9, 16);
+  }
+  return { g, render, layout };
+}
+
+// Playback harness: ?render → frame-exact mode for the renderer.
+function run(build, renderAt, DURATION) {
+  window.renderAt = renderAt; window.DURATION = DURATION;
+  const rendering = new URLSearchParams(location.search).has("render");
+  if (rendering) document.body.classList.add("render");
+  window.ready = document.fonts.ready.then(() => { build(); renderAt(0); });
+  if (rendering) return;
+  let start = null, paused = false, pauseAt = 0;
+  const tick = now => {
+    if (start === null) start = now;
+    if (!paused) { const t = (now - start) / 1000; renderAt(Math.min(t, DURATION)); if (t > DURATION + 1.5) start = now; }
+    requestAnimationFrame(tick);
+  };
+  window.ready.then(() => requestAnimationFrame(tick));
+  addEventListener("click", () => { start = null; paused = false; });
+  addEventListener("keydown", e => {
+    if (e.code !== "Space") return; e.preventDefault();
+    if (paused) { start = performance.now() - pauseAt * 1000; paused = false; }
+    else { pauseAt = (performance.now() - start) / 1000; paused = true; }
+  });
+}
+
+// Centered headline block: small gold label + serif line + italic gold line.
+function headline(parent, y, lab, l1, l2, size = 88) {
+  const a = el("g", {}, parent), b = el("g", {}, parent), c = el("g", {}, parent);
+  if (lab) label(W / 2, y, lab, a, { "text-anchor": "middle" });
+  serif(W / 2, y + size * 1.12, size, l1, b, { "text-anchor": "middle" });
+  serif(W / 2, y + size * 2.18, size, l2, c, { "text-anchor": "middle", "font-style": "italic", fill: C.goldDeep });
+  return [a, b, c];
+}
+function revealAll(nodes, t, a, out, stagger = .25) {
+  nodes.forEach((n, i) => reveal(n, t, a + i * stagger, 1, 30, out ? [out + i * .05, .6] : null));
+}
+
+</script>
+<script>
+// "Rome, told by CIRO" — one config per landmark.
+// Art is drawn in a local 800×520 box (ground at y 520). Path kinds:
+//   P = filled paper shape, Q = filled paper2 (recess), N = line only, W = water line
+const range = (a, b, s) => { const o = []; for (let x = a; x <= b; x += s) o.push(x); return o; };
+const headAt = (x, y, r = 4) => `M${x - r} ${y} a${r} ${r} 0 1 0 ${r * 2} 0 a${r} ${r} 0 1 0 ${-r * 2} 0`;
+
+const CONFIGS = {
+  colosseum: {
+    n: "01", name: "The Colosseum", sub: "Colosseo · AD 80",
+    hook: ["What happened", "beneath the arena?"],
+    sun: [640, 230, 120], balloonX: 770, accents: ["birds"],
+    art: [
+      ["P", "M60 520 V150 H520 L560 210 H600 L620 280 H680 L700 360 H740 V520Z"],
+      ["N", "M60 440 H740 M60 360 H700 M60 280 H620 M60 210 H560"],
+      ["Q", range(88, 684, 58).map(x => `M${x} 520 V480 A18 18 0 0 1 ${x + 36} 480 V520Z`).join(" ")],
+      ["Q", range(88, 654, 58).map(x => `M${x} 440 V400 A18 18 0 0 1 ${x + 36} 400 V440Z`).join(" ")],
+      ["Q", range(88, 564, 58).map(x => `M${x} 360 V320 A18 18 0 0 1 ${x + 36} 320 V360Z`).join(" ")],
+      ["N", range(96, 500, 116).map(x => `M${x} 192 h22 v-22 h-22Z`).join(" ")],
+      ["N", "M-60 520 H860"],
+    ],
+    facts: [
+      ["100 days", ["of games opened it in AD 80,", "under Emperor Titus."]],
+      ["50,000", ["spectators came and went", "through 80 ground-floor arches."]],
+      ["Below", ["Under the sand, lifts hoisted", "wild beasts into the arena."]],
+    ],
+  },
+  trevi: {
+    n: "02", name: "Trevi Fountain", sub: "Fontana di Trevi · 1762",
+    hook: ["Why throw a coin", "over your shoulder?"],
+    sun: [700, 100, 90], balloonX: 780, accents: ["birds", "coins"],
+    art: [
+      ["P", "M80 400 V130 H720 V400Z"],
+      ["P", "M60 130 H740 V112 H60Z"],
+      ["P", "M320 112 V70 H480 V112Z"],
+      ["N", "M362 70 C362 42 438 42 438 70"],
+      ["N", "M300 130 V400 M322 130 V400 M478 130 V400 M500 130 V400"],
+      ["N", [110, 170, 230, 534, 594, 654].flatMap(x => [170, 282].map(y => `M${x} ${y} h36 v54 h-36Z`)).join(" ")],
+      ["Q", "M340 400 V240 A60 60 0 0 1 460 240 V400Z"],
+      ["P", "M386 304 C378 332 382 362 388 386 H412 C418 362 422 332 414 304Z"],
+      ["P", headAt(400, 290, 13)],
+      ["Q", "M80 404 C120 384 150 424 190 404 C230 384 260 424 300 408 C340 388 360 424 400 404 C440 424 470 388 500 408 C540 424 570 384 610 404 C650 424 690 384 720 404 V440 H80Z"],
+      ["N", "M40 440 H760 M40 440 C80 505 720 505 760 440"],
+      ["W", "M70 462 C170 452 270 472 400 460 S640 452 730 462"],
+      ["N", "M-60 520 H860"],
+    ],
+    facts: [
+      ["19 BC", ["Its water still arrives by the", "Aqua Virgo, built by Agrippa."]],
+      ["One coin", ["Right hand, over your left shoulder —", "and you will return to Rome."]],
+      ["€1 million+", ["in coins is fished out every", "year and given to charity."]],
+    ],
+  },
+  pantheon: {
+    n: "03", name: "The Pantheon", sub: "Pantheon · c. AD 125",
+    hook: ["Why is there a hole", "in the roof?"],
+    sun: [610, 110, 90], balloonX: 760, accents: ["birds", "rain"],
+    art: [
+      ["P", "M150 262 C165 92 635 92 650 262Z"],
+      ["N", "M205 190 C300 160 500 160 595 190 M178 226 C300 200 500 200 622 226 M376 136 C386 131 414 131 424 136"],
+      ["P", "M120 262 H680 V300 H120Z"],
+      ["P", "M150 300 L400 222 L650 300Z"],
+      ["N", "M192 294 L400 236 L608 294"],
+      ["P", "M150 300 H650 V334 H150Z"],
+      ["P", range(0, 7, 1).map(i => `M${172 + i * 62} 334 h24 v156 h-24Z`).join(" ")],
+      ["P", range(0, 7, 1).map(i => `M${168 + i * 62} 334 h32 v10 h-32Z`).join(" ")],
+      ["P", "M130 490 H670 V505 H130Z M110 505 H690 V520 H110Z"],
+      ["N", "M-60 520 H860"],
+    ],
+    texts: [[400, 323, 14, "M·AGRIPPA·L·F·COS·TERTIVM·FECIT", 2]],
+    facts: [
+      ["43 metres", ["Still the largest unreinforced", "concrete dome on Earth."]],
+      ["Agrippa", ["The name on its front belongs to", "a man dead a century before."]],
+      ["Open sky", ["Its only window is the oculus.", "When it rains, the floor drains."]],
+    ],
+  },
+  stpeters: {
+    n: "04", name: "St. Peter’s Basilica", sub: "Basilica di San Pietro · 1626",
+    hook: ["One church.", "A hundred and twenty years."],
+    sun: [560, 110, 100], balloonX: 770, accents: ["birds"],
+    art: [
+      ["P", "M178 250 C178 196 242 196 242 250Z M558 250 C558 196 622 196 622 250Z"],
+      ["N", "M210 205 V186 M590 205 V186"],
+      ["P", "M280 250 V176 H520 V250Z"],
+      ["N", range(300, 500, 40).map(x => `M${x} 182 V250`).join(" ")],
+      ["P", "M290 176 C290 40 510 40 510 176Z"],
+      ["N", "M400 74 V176 M345 88 C330 120 326 150 326 176 M455 88 C470 120 474 150 474 176"],
+      ["P", "M382 80 V46 H418 V80Z"], ["P", "M376 46 L400 28 L424 46Z"], ["N", "M400 28 V6 M390 14 H410"],
+      ["P", "M140 250 H660 V440 H140Z"],
+      ["N", "M140 282 H660 M330 282 L400 256 L470 282"],
+      ["N", range(175, 625, 50).map(x => `M${x} 290 V440`).join(" ")],
+      ["N", range(160, 640, 40).map(x => `M${x} 250 v-12 ${headAt(x, 232)}`).join(" ")],
+      ["Q", "M250 440 V380 H290 V440Z M380 440 V370 H420 V440Z M510 440 V380 H550 V440Z"],
+      ["P", "M120 440 H680 V460 H120Z M90 460 H710 V480 H90Z"],
+      ["Q", "M-40 520 C10 470 60 452 120 446 V476 C80 482 40 496 20 520Z M840 520 C790 470 740 452 680 446 V476 C720 482 760 496 780 520Z"],
+      ["P", "M392 520 L396 432 L400 420 L404 432 L408 520Z"],
+      ["N", "M-60 520 H860"],
+    ],
+    facts: [
+      ["1506", ["First stone. Bramante, Michelangelo", "and Bernini would all shape it."]],
+      ["136 metres", ["from the floor to the cross", "on Michelangelo’s dome."]],
+      ["284 columns", ["in Bernini’s colonnade —", "two arms embracing the square."]],
+    ],
+  },
+  forum: {
+    n: "05", name: "The Roman Forum", sub: "Foro Romano",
+    hook: ["Rome’s old heart,", "still beating."],
+    sun: [382, 170, 110], balloonX: 790, accents: ["birds", "flowers"],
+    art: [
+      ["P", "M60 520 V270 H330 V520Z"], ["P", "M50 270 H340 V205 H50Z"],
+      ["Q", "M150 520 V390 A45 45 0 0 1 240 390 V520Z M80 520 V440 A20 20 0 0 1 120 440 V520Z M270 520 V440 A20 20 0 0 1 310 440 V520Z"],
+      ["N", "M70 275 V520 M140 275 V520 M250 275 V520 M320 275 V520"],
+      ["P", "M348 520 V150 H364 V520Z M374 520 V150 H390 V520Z M400 520 V150 H416 V520Z"],
+      ["P", "M340 150 H424 V124 H340Z"],
+      ["P", "M430 520 V440 H740 V520Z"],
+      ["P", range(0, 5, 1).map(i => `M${446 + i * 54} 440 V250 h20 V440Z`).join(" ")],
+      ["P", "M430 250 H740 V200 H430Z"],
+      ["P", "M-30 520 h40 v-14 h-40Z M16 520 h24 v-10 h-24Z M760 520 h36 v-16 h-36Z"],
+      ["N", "M-60 520 H860"],
+    ],
+    texts: [[585, 231, 13, "SENATVS POPVLVSQVE ROMANVS", 1.5]],
+    facts: [
+      ["44 BC", ["Caesar’s body was burned here.", "People still leave him flowers."]],
+      ["Cow field", ["For centuries it lay half-buried,", "known as the Campo Vaccino."]],
+      ["Via Sacra", ["The Sacred Way, where victorious", "generals paraded in triumph."]],
+    ],
+  },
+  castel: {
+    n: "06", name: "Castel Sant’Angelo", sub: "Mausoleo di Adriano · AD 139",
+    hook: ["A tomb. A fortress.", "A pope’s escape route."],
+    sun: [630, 150, 100], balloonX: 770, accents: ["birds", "runner"],
+    art: [
+      ["P", "M-160 440 H100 V410 H-160Z"],
+      ["N", range(-160, 80, 26).map(x => `M${x} 410 v-10 h13 v10`).join(" ")],
+      ["P", "M100 470 V380 H700 V470Z"],
+      ["P", "M190 380 V222 H610 V380Z"],
+      ["N", range(190, 596, 30).map(x => `M${x} 222 v-12 h15 v12`).join(" ")],
+      ["P", "M290 210 V148 H510 V210Z"],
+      ["P", "M360 148 V120 H440 V148Z"],
+      ["N", "M394 120 L400 78 L406 120 M400 84 C382 72 372 90 364 104 M400 84 C418 72 428 90 436 104 M400 92 L422 112"],
+      ["P", headAt(400, 70, 6)],
+      ["Q", "M262 300 h20 v32 h-20Z M390 290 h20 v32 h-20Z M518 300 h20 v32 h-20Z"],
+      ["P", "M-60 470 H860 V486 H-60Z"],
+      ["N", [-20, 150, 320, 490, 660].map(x => `M${x} 520 A70 34 0 0 1 ${x + 140} 520`).join(" ")],
+      ["N", range(20, 780, 110).map(x => `M${x} 470 v-18 ${headAt(x, 446)}`).join(" ")],
+      ["W", "M-60 528 C60 520 180 536 300 528 S540 520 860 528"],
+    ],
+    facts: [
+      ["AD 139", ["Finished as Emperor Hadrian’s tomb;", "later a fortress, then a prison."]],
+      ["1527", ["A pope fled here along a secret", "800-metre corridor on a wall."]],
+      ["Tosca", ["Puccini’s heroine leaps to", "her death from these ramparts."]],
+    ],
+  },
+};
+
+const CFG = CONFIGS["castel"];
+// "Rome, told by CIRO" — landmark reel engine. Expects CFG (from configs.js).
+const DURATION = 20.5;
+const OX = 140, OY = 710;              // art origin → local ground (y 520) lands at screen y 1230
+const FACT0 = 4.1, FACT_STEP = 3.1, CTA = 13.5, OUT = 15.3, END = 16.1;
+const BIRDS = [[0, 0], [-26, 14], [-40, -12], [-60, 22], [-72, 2], [-94, -16], [-104, 18], [-128, 4], [-146, -8], [-160, 20]];
+let R = {};
+
+function build() {
+  const w = stage();
+  const a = el("g", {}, w); label(W / 2, 250, `ROME, TOLD BY CIRO · Nº ${CFG.n}`, a, { "text-anchor": "middle" });
+  const b = el("g", {}, w); serif(W / 2, 384, CFG.name.length > 14 ? 92 : 112, CFG.name, b, { "text-anchor": "middle" });
+  const c = el("g", {}, w); serif(W / 2, 458, 42, CFG.sub, c, { "text-anchor": "middle", "font-style": "italic", fill: C.goldDeep });
+  R.top = [a, b, c];
+
+  R.art = el("g", {}, w);
+  const defs = el("defs", {}, R.art);
+  el("rect", { x: -300, y: -900, width: 1400, height: 1418 }, el("clipPath", { id: "skyc" }, defs));
+  const sky = el("g", { "clip-path": "url(#skyc)" }, R.art);
+  const [sx, sy, sr] = CFG.sun;
+  R.sun = el("circle", { cx: sx, cy: sy, r: sr, fill: C.goldSoft }, sky);
+  R.sunY = sy;
+
+  R.birds = el("g", {}, R.art);
+  R.birdNodes = BIRDS.map(() => el("path", { d: "M-10 -4 Q-5 -1 0 0 Q5 -1 10 -4", fill: "none", stroke: C.ink, "stroke-width": 2.6, "stroke-linecap": "round" }, R.birds));
+
+  // CTA balloon sits behind the art so its thread tucks behind the buildings
+  R.cta = el("g", {}, sky);
+  R.thread = el("line", { stroke: C.ink, "stroke-width": 1.8, "stroke-dasharray": "2 7", "stroke-linecap": "round", "stroke-opacity": .55 }, R.cta);
+  R.bal = balloon(R.cta, C.terra, "#a8452c");
+
+  const art = el("g", { filter: "url(#wob)", stroke: C.ink, "stroke-width": 3.5, "stroke-linejoin": "round", "stroke-linecap": "round" }, R.art);
+  R.paths = CFG.art.map(([k, d]) => {
+    const fill = k === "P" ? C.paper : k === "Q" ? C.paper2 : "none";
+    const extra = k === "W" ? { stroke: "#9fb8b0", "stroke-width": 5 } : {};
+    const p = el("path", { d, fill, ...extra }, art); prepDraw(p); p._k = k; return p;
+  });
+  R.texts = (CFG.texts || []).map(([x, y, size, txt, ls]) =>
+    serif(x, y, size, txt, R.art, { "text-anchor": "middle", "letter-spacing": ls, "fill-opacity": .75 }));
+
+  R.acc = el("g", {}, R.art);
+  const has = k => CFG.accents.includes(k);
+  if (has("coins")) {
+    R.coin = el("ellipse", { rx: 10, ry: 10, fill: C.gold, stroke: C.goldDeep, "stroke-width": 2 }, R.acc);
+    R.rip = [0, 1].map(() => el("ellipse", { cx: 400, cy: 462, fill: "none", stroke: C.goldDeep, "stroke-width": 2 }, R.acc));
+  }
+  if (has("rain")) {
+    R.cloud = el("path", { d: "M300 -40 C300 -70 340 -80 360 -62 C372 -96 432 -96 444 -62 C466 -80 506 -68 500 -40Z", fill: C.paper2, stroke: C.ink, "stroke-width": 3 }, R.acc);
+    R.drops = range(0, 13, 1).map(() => el("line", { stroke: C.navy, "stroke-width": 2.4, "stroke-linecap": "round" }, R.acc));
+  }
+  if (has("flowers")) {
+    R.flowers = [[378, C.terra], [394, C.gold], [410, C.terra], [426, C.paper], [362, C.gold], [442, C.terra]].map(([x, col], i) => {
+      const g = el("g", {}, R.acc);
+      el("path", { d: `M0 0 V-${14 + (i % 3) * 5}`, stroke: C.green, "stroke-width": 2.5 }, g);
+      const top = -(14 + (i % 3) * 5);
+      [0, 72, 144, 216, 288].forEach(an => el("circle", { cx: Math.cos(an * Math.PI / 180) * 5, cy: top + Math.sin(an * Math.PI / 180) * 5, r: 4.2, fill: col, stroke: C.ink, "stroke-width": 1 }, g));
+      el("circle", { cx: 0, cy: top, r: 2.5, fill: C.goldDeep }, g);
+      g._x = x; return g;
+    });
+  }
+  if (has("runner")) {
+    R.runner = el("g", {}, R.acc);
+    el("circle", { r: 9, fill: C.paper, stroke: C.ink, "stroke-width": 2.5 }, R.runner);
+    el("circle", { r: 4, fill: C.terra }, R.runner);
+  }
+
+  // pulsing story marker on the ground
+  R.dotRing = el("circle", { cx: CFG.balloonX, cy: 516, r: 6, fill: "none", stroke: C.terra, "stroke-width": 3 }, R.art);
+  R.dot = el("circle", { cx: CFG.balloonX, cy: 516, r: 6, fill: C.terra }, R.art);
+  R.pill = el("g", {}, R.art);
+  el("rect", { x: -104, y: -20, width: 208, height: 40, rx: 20, fill: C.ink }, R.pill);
+  sans(0, 6, 16, "A story starts here", R.pill, { "text-anchor": "middle", "font-weight": 600, fill: C.paper });
+
+  // captions
+  R.hook = el("g", {}, w);
+  CFG.hook.forEach((l, i) => serif(W / 2, 1410 + i * 76, 64, l, R.hook, { "text-anchor": "middle", "font-style": "italic", fill: i ? C.goldDeep : C.ink }));
+  R.facts = CFG.facts.map(([big, lines]) => {
+    const g = el("g", {}, w);
+    serif(W / 2, 1400, 118, big, g, { "text-anchor": "middle", fill: C.goldDeep });
+    lines.forEach((l, i) => serif(W / 2, 1478 + i * 50, 40, l, g, { "text-anchor": "middle" }));
+    return g;
+  });
+  R.ctaT = [el("g", {}, w), el("g", {}, w)];
+  serif(W / 2, 1420, 80, "Stand here.", R.ctaT[0], { "text-anchor": "middle" });
+  serif(W / 2, 1512, 80, "Ask CIRO the rest.", R.ctaT[1], { "text-anchor": "middle", "font-style": "italic", fill: C.goldDeep });
+
+  R.end = endCard(w, "Every stone has a story.");
+  R.end.layout();
+}
+
+function renderAt(t) {
+  boil(t);
+  revealAll(R.top, t, .3, OUT, .2);
+
+  const on = t < END + .2;
+  R.art.style.display = on ? "" : "none";
+  if (on) {
+    const out = eInOut(seg(t, OUT, .8));
+    set(R.art, { transform: `translate(${OX} ${(OY - 70 * out).toFixed(1)})`, opacity: 1 - out });
+    const n = R.paths.length;
+    R.paths.forEach((p, i) => {
+      const s0 = .7 + i * (2.6 / n);
+      draw(p, eInOut(seg(t, s0, 1.1)));
+      if (p._k === "P" || p._k === "Q") p.style.fillOpacity = eOut(seg(t, s0 + .8, .6));
+    });
+    R.texts.forEach(tx => reveal(tx, t, 3.4, .8, 0));
+    set(R.sun, { cy: lerp(R.sunY + 380, R.sunY, eOut(seg(t, 1.4, 2.4))) });
+
+    // starlings drifting across the sky
+    const bp = seg(t, 3.0, 11.5);
+    set(R.birds, { opacity: bp > 0 && bp < 1 ? Math.min(1, bp * 8, (1 - bp) * 8) : 0 });
+    const fx = lerp(-120, 1000, bp), fy = -150 + Math.sin(bp * 6) * 30;
+    R.birdNodes.forEach((b, i) => {
+      const [dx, dy] = BIRDS[i];
+      const flap = .35 + Math.abs(Math.sin(t * 9 + i * 1.7)) * .9;
+      const wob = Math.sin(t * 1.3 + i) * 6;
+      set(b, { transform: `translate(${(fx + dx + wob).toFixed(1)} ${(fy + dy + Math.cos(t * 1.1 + i) * 5).toFixed(1)}) scale(1 ${flap.toFixed(2)})` });
+    });
+
+    // accents
+    if (R.coin) {
+      const period = 3.1, k = t - 4.2;
+      const ph = k > 0 && t < OUT ? (k % period) / 1.1 : -1;
+      if (ph >= 0 && ph <= 1) {
+        const P0 = [840, 640], P1 = [620, 60], P2 = [400, 462];
+        const x = (1 - ph) ** 2 * P0[0] + 2 * (1 - ph) * ph * P1[0] + ph * ph * P2[0];
+        const y = (1 - ph) ** 2 * P0[1] + 2 * (1 - ph) * ph * P1[1] + ph * ph * P2[1];
+        set(R.coin, { cx: x, cy: y, ry: (Math.abs(Math.cos(t * 14)) * 10 + 1).toFixed(1), opacity: 1 });
+      } else set(R.coin, { opacity: 0 });
+      R.rip.forEach((r, i) => {
+        const rp = k > 1.1 ? ((k - 1.1 - i * .25) % period) / 1.2 : -1;
+        const vis = rp >= 0 && rp <= 1 && t < OUT;
+        set(r, { rx: vis ? 8 + rp * 70 : 0, ry: vis ? 2 + rp * 12 : 0, opacity: vis ? 1 - rp : 0 });
+      });
+    }
+    if (R.drops) {
+      const f3 = FACT0 + 2 * FACT_STEP;
+      const cp = seg(t, f3 - .2, .6) * (1 - seg(t, f3 + 2.8, .5));
+      set(R.cloud, { opacity: cp, transform: `translate(0 ${((1 - cp) * -20).toFixed(1)})` });
+      R.drops.forEach((d, i) => {
+        const x = 330 + (i * 37) % 140;
+        const p = ((t * 1.4 + i * .137) % 1);
+        const y0 = -30 + p * 170;
+        set(d, { x1: x, y1: y0, x2: x - 3, y2: y0 + 18, opacity: cp * (y0 < 132 ? 1 : 0) });
+      });
+    }
+    if (R.flowers) R.flowers.forEach((g, i) => {
+      const p = seg(t, FACT0 + .4 + i * .18, .5);
+      set(g, { transform: `translate(${g._x} 518) scale(${pop(p).toFixed(3)})`, opacity: p > 0 ? 1 : 0 });
+    });
+    if (R.runner) {
+      const f2 = FACT0 + FACT_STEP;
+      const rp = eInOut(seg(t, f2 + .2, 2.2));
+      const hop = Math.abs(Math.sin(t * 14)) * 4;
+      set(R.runner, { transform: `translate(${lerp(-150, 96, rp).toFixed(1)} ${(398 - hop).toFixed(1)})`, opacity: seg(t, f2, .3) * (1 - seg(t, f2 + 2.7, .3)) });
+    }
+
+    // CTA balloon
+    const bx = CFG.balloonX, rise = eOut(seg(t, CTA - .3, 1.8));
+    const by = lerp(640, 30, rise) + Math.sin(t * 1.4) * 6 * rise;
+    set(R.bal, { transform: `translate(${bx} ${by.toFixed(1)}) scale(.8)` });
+    set(R.cta, { opacity: rise > 0 ? 1 : 0 });
+    set(R.thread, { x1: bx, y1: by + 84, x2: bx, y2: 516 });
+    const don = seg(t, CTA - .4, .4), pulse = (t % 1.6) / 1.6;
+    set(R.dot, { opacity: don }); set(R.dotRing, { r: 6 + pulse * 26, opacity: don * (1 - pulse) });
+    const pp = seg(t, CTA + .8, .5);
+    set(R.pill, { opacity: clamp(pp * 2), transform: `translate(${bx - 110} 580) scale(${(.8 + .2 * pop(pp)).toFixed(3)})` });
+  }
+
+  reveal(R.hook, t, 1.4, 1, 26, [3.5, .5]);
+  R.facts.forEach((g, i) => { const a = FACT0 + i * FACT_STEP; reveal(g, t, a, .8, 30, [a + FACT_STEP - .55, .5]); });
+  R.ctaT.forEach((g, i) => reveal(g, t, CTA + i * .3, .9, 30, [OUT, .6]));
+
+  R.end.render(t, END);
+}
+
+run(build, renderAt, DURATION);
+
+</script>
+</body>
+</html>

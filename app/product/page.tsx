@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { FilmGallery } from "@/components/films/FilmGallery";
+import { filmsOfKind } from "@/lib/films";
 
 // 5-min ISR so redeploys propagate through Hostinger's CDN (see about/page.tsx).
 export const revalidate = 300;
@@ -109,8 +111,22 @@ export default function ProductPage() {
           Ciro is a mobile app. Open it on a street in Rome and it plays a
           three-to-ten-minute story tied to that exact spot — read it, listen
           to it, or look at it through an AR overlay on the building in
-          front of you. Live on iOS today; Android beta is in test flight.
+          front of you — and answers when you ask it something. In beta on
+          iOS through TestFlight today.
         </p>
+
+        {/* Feature films */}
+        <section className="mt-16">
+          <h2 className="font-display text-2xl tracking-tight sm:text-3xl">
+            In motion
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm text-ink-900/65 dark:text-white/60">
+            Five short hand-drawn films — tap one and turn the sound on.
+          </p>
+          <div className="mt-10">
+            <FilmGallery ids={filmsOfKind("feature").map((f) => f.id)} />
+          </div>
+        </section>
 
         {/* In-app gallery */}
         <section className="mt-16">

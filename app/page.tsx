@@ -3,6 +3,9 @@ import { ActsSpine } from "@/components/sections/ActsSpine";
 import { Finale } from "@/components/sections/Finale";
 import { Waitlist } from "@/components/sections/Waitlist";
 import { RecognitionStrip } from "@/components/sections/RecognitionStrip";
+import { IntroFilm, FeatureFilms, RomeSeries } from "@/components/sections/FilmSections";
+import { FirstStory } from "@/components/sections/FirstStory";
+import { MadeInRome } from "@/components/sections/MadeInRome";
 import { loadStories, pickFeaturedPerCategory } from "@/lib/stories";
 import { softwareAppJsonLd } from "@/lib/seo";
 
@@ -23,7 +26,12 @@ export default async function HomePage() {
       />
       <HeroBalloons />
       <RecognitionStrip />
+      <IntroFilm />
+      <FeatureFilms />
       <ActsSpine acts={acts} />
+      <FirstStory />
+      <RomeSeries />
+      <MadeInRome />
       <Finale />
       <Waitlist />
     </>

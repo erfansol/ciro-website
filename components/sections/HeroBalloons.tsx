@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Balloon } from "@/components/ui/Balloon";
 import { CATEGORIES } from "@/lib/categories";
+import { Scribble } from "@/components/ui/Scribble";
 
 /**
  * Hero. Five quiet, coloured balloons drift across a soft daytime sky.
@@ -75,9 +76,9 @@ export function HeroBalloons() {
           transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-balance text-[clamp(2.4rem,6vw,5rem)] leading-[1.05] tracking-tight"
         >
-          Every place has a story.
+          Every street has a <Scribble delay={1.1}>story.</Scribble>
           <br />
-          <em className="italic text-ink-900/60">Ciro tells you, on the spot.</em>
+          <em className="italic text-ink-900/60">Ciro tells it to you, on the spot.</em>
         </motion.h1>
 
         <motion.p
@@ -86,9 +87,9 @@ export function HeroBalloons() {
           transition={{ duration: 0.9, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-ink-900/65 sm:text-lg"
         >
-          A mobile app that plays a short story about the place
-          you&rsquo;re standing in — written, voiced, and optionally with
-          an AR overlay. Live in Rome.
+          Stand anywhere in Rome and a narrator tells you what happened right
+          there — then answers your questions, in your language. Real history,
+          walkable routes, and a little mystery. Live in Rome.
         </motion.p>
 
         {/* Brand idea, expressed quietly — a coordinate stamp. */}
@@ -121,7 +122,16 @@ export function HeroBalloons() {
             Request TestFlight access
             <span aria-hidden>→</span>
           </a>
-          <p className="mt-2 text-xs text-ink-900/45">
+          <a
+            href="#film"
+            className="group mt-3 inline-flex items-center gap-2.5 text-sm font-medium text-ink-900/75 transition-colors hover:text-ink-900"
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-ink-900/20 transition-colors group-hover:border-ink-900/50">
+              <svg width="9" height="11" viewBox="0 0 12 14" aria-hidden fill="currentColor"><path d="M1 1.2v11.6c0 .6.7 1 1.2.7l9.3-5.8a.8.8 0 0 0 0-1.4L2.2.5C1.7.2 1 .6 1 1.2Z" /></svg>
+            </span>
+            Watch the film <span className="font-mono text-xs text-ink-900/45">0:35</span>
+          </a>
+          <p className="mt-3 text-xs text-ink-900/45">
             Email{" "}
             <a
               href="mailto:info@ciroai.com"
@@ -134,7 +144,7 @@ export function HeroBalloons() {
         </motion.div>
 
         <motion.a
-          href="#act-historical"
+          href="#film"
           initial={reduced ? false : { opacity: 0 }}
           animate={reduced ? undefined : { opacity: 1 }}
           transition={{ duration: 1.4, delay: 1.4 }}
