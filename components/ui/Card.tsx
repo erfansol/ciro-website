@@ -6,6 +6,9 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
   glow?: boolean;
 };
 
+// `glow` is destructured purely to keep it out of `rest`, so it never
+// reaches the DOM node as an unknown attribute.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function Card({ className, glow: _glow, ...rest }: CardProps) {
   return (
     <div

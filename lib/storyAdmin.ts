@@ -2,6 +2,14 @@ import "server-only";
 import { getAdminDb } from "./firebaseAdmin";
 import { CATEGORY_BY_ID, type FirestoreStory, type BundleData, type AnchorData } from "./categories";
 import { logAdmin } from "./auditLog";
+import {
+  experienceKind,
+  productionSchema,
+  walkSchema,
+  type ExperienceKind,
+  type ProductionData,
+  type WalkDoc,
+} from "./walkSchema";
 
 export type AdminStory = FirestoreStory & {
   published: boolean;
@@ -10,6 +18,13 @@ export type AdminStory = FirestoreStory & {
   moderationStatus?: "draft" | "pending" | "approved" | "rejected";
   views?: number;
   completions?: number;
+  /** How the story plays in the app, derived from the document. */
+  kind: ExperienceKind;
+  /** The narrated walk, when the document carries a valid one. */
+  walk: WalkDoc | null;
+  /** Present when `walk` exists in the doc but fails validation. */
+  walkIssues: string[];
+  production: ProductionData;
 };
 
 export type StoryPublishStatus = "draft" | "scheduled" | "published";
@@ -56,6 +71,17 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
   const rawAnchor = raw.anchor as Record<string, unknown> | undefined;
   const moderation = raw.moderation as { status?: string } | undefined;
   const stats = raw.stats as { views?: number; completions?: number } | undefined;
+
+  const walkParsed = raw.walk !== undefined ? walkSchema.safeParse(raw.walk) : null;
+  const walk = walkParsed?.success ? walkParsed.data : null;
+  const walkIssues =
+    walkParsed && !walkParsed.success
+      ? walkParsed.error.issues.map((i) => `${i.path.map(String).join(".")}: ${i.message}`)
+      : [];
+  const productionParsed = productionSchema.safeParse(raw.production ?? {});
+  const production: ProductionData = productionParsed.success
+    ? productionParsed.data
+    : productionSchema.parse({});
 
   const bundle: BundleData | undefined = rawBundle
     ? {
@@ -117,6 +143,10 @@ function mapAdminDoc(id: string, raw: RawDoc): AdminStory {
       undefined,
     views: readNumber(stats?.views),
     completions: readNumber(stats?.completions),
+    kind: experienceKind({ id, walk: raw.walk, bundle, filmScene: raw.filmScene }),
+    walk,
+    walkIssues,
+    production,
   };
 }
 
@@ -276,8 +306,16 @@ export async function updateStory(
     const existing = (before.data() as RawDoc).anchor as Record<string, unknown> | undefined ?? {};
     update.anchor = { ...existing, ...patch.anchor };
     // Keep mapCenter in sync with the anchor lat/lon so the world map
-    // pin moves when the anchor is updated from the editor.
-    if (patch.anchor.latitude !== undefined && patch.anchor.longitude !== undefined) {
+    // pin moves when the anchor is updated from the editor — but only
+    // when the same save did not set mapCenter explicitly. The editor
+    // pre-fills the anchor fields, so without this guard an edit to the
+    // map-centre latitude alone was silently reverted by the anchor.
+    if (
+      patch.lat === undefined &&
+      patch.lon === undefined &&
+      patch.anchor.latitude !== undefined &&
+      patch.anchor.longitude !== undefined
+    ) {
       update.mapCenter = { lat: patch.anchor.latitude, lon: patch.anchor.longitude };
     }
   }

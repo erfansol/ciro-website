@@ -44,7 +44,7 @@ const LIGHT_MAP_STYLE: google.maps.MapTypeStyle[] = [
   { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#7a8398" }] },
 ];
 
-function buildMapOptions(theme: "dark" | "light"): google.maps.MapOptions {
+export function buildMapOptions(theme: "dark" | "light"): google.maps.MapOptions {
   return {
     styles: theme === "dark" ? DARK_MAP_STYLE : LIGHT_MAP_STYLE,
     disableDefaultUI: false,

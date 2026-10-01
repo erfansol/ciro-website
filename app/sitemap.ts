@@ -15,6 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE.url}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/partners`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/press`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE.url}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${SITE.url}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${SITE.url}/support`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const cityRoutes: MetadataRoute.Sitemap = CITIES.map((c) => ({

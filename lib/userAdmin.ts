@@ -305,9 +305,11 @@ export async function setUserRole(
   role: AdminRole | null,
   actorUid: string,
 ): Promise<void> {
-  if (uid === actorUid && role !== "admin") {
-    // Same self-lockout protection: don't let an admin demote themselves
-    // and lose access to /admin in the same click.
+  if (uid === actorUid) {
+    // Nobody edits their own role: it prevents an admin locking
+    // themselves out, and it closes the hole where an editor could
+    // promote themselves to admin (the caller must be an admin, but a
+    // self-grant is refused regardless).
     throw new Error("You can't change your own role here.");
   }
   const ref = getAdminDb().collection("roles").doc(uid);

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin, type AdminRole } from "@/lib/auth";
+import { requireRole, type AdminRole } from "@/lib/auth";
 import { setUserDisabled, setUserRole } from "@/lib/userAdmin";
 
 const VALID_ROLES = new Set(["admin", "moderator", "editor"]);
@@ -20,7 +20,7 @@ export async function suspendUserAction(
   formData: FormData,
 ): Promise<ActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin"]);
     const uid = readUid(formData);
     const reason = (formData.get("reason") as string | null)?.trim() || undefined;
     await setUserDisabled(uid, true, session.uid, reason);
@@ -38,7 +38,7 @@ export async function restoreUserAction(
   formData: FormData,
 ): Promise<ActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin"]);
     const uid = readUid(formData);
     await setUserDisabled(uid, false, session.uid);
     revalidatePath(`/admin/users/${uid}`);
@@ -55,7 +55,7 @@ export async function setRoleAction(
   formData: FormData,
 ): Promise<ActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin"]);
     const uid = readUid(formData);
     const raw = formData.get("role");
     if (typeof raw !== "string") throw new Error("Missing role");

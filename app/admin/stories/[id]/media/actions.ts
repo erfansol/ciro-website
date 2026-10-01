@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import {
   deleteStoryMedia,
   setStoryBanner,
@@ -14,7 +14,7 @@ export async function togglePreviewAction(
   formData: FormData,
 ): Promise<MediaActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin", "editor"]);
     const storyId = formData.get("storyId");
     const filename = formData.get("filename");
     const next = formData.get("next");
@@ -44,7 +44,7 @@ export async function setBannerAction(
   formData: FormData,
 ): Promise<MediaActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin", "editor"]);
     const storyId = formData.get("storyId");
     const filename = formData.get("filename");
     if (typeof storyId !== "string" || storyId.length === 0)
@@ -71,7 +71,7 @@ export async function deleteMediaAction(
   formData: FormData,
 ): Promise<MediaActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin", "editor"]);
     const storyId = formData.get("storyId");
     const filename = formData.get("filename");
     if (typeof storyId !== "string" || storyId.length === 0) {

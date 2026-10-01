@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
 import { RECOGNITION_BY_DATE } from "@/lib/recognition";
 

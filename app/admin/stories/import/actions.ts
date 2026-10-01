@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import {
   importStories,
   planStoryImport,
@@ -33,7 +33,7 @@ export async function previewImportAction(
   formData: FormData,
 ): Promise<ImportPreviewResult> {
   try {
-    await requireAdmin();
+    await requireRole(["admin", "editor"]);
     const json = parsePayload(formData.get("payload"));
     const plan = await planStoryImport(json);
     return { ok: true, plan };
@@ -48,7 +48,7 @@ export async function applyImportAction(
   formData: FormData,
 ): Promise<ImportApplyResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin", "editor"]);
     const json = parsePayload(formData.get("payload"));
     const result = await importStories(json, session.uid);
     revalidatePath("/admin/stories");

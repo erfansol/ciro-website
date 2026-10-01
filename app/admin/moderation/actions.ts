@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { setReportStatus } from "@/lib/reportsAdmin";
 
 export type ReportActionResult = { ok: true } | { ok: false; error: string };
@@ -23,7 +23,7 @@ async function run(
   status: "resolved" | "dismissed",
 ): Promise<ReportActionResult> {
   try {
-    const session = await requireAdmin();
+    const session = await requireRole(["admin", "moderator"]);
     const id = formData.get("id");
     if (typeof id !== "string" || id.length === 0) {
       return { ok: false, error: "Missing report id" };

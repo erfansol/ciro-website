@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveStoryAction, deleteStoryAction } from "./actions";
+import { BundleUploader } from "@/components/admin/BundleUploader";
 import type { AdminStory } from "@/lib/storyAdmin";
 import type { StoryCategoryMeta } from "@/lib/categories";
 
@@ -359,7 +360,14 @@ export function StoryEditorForm({
               defaultValue={story.bundle?.sizeBytes !== undefined ? String(story.bundle.sizeBytes) : ""}
               placeholder="0"
             />
+            {(story.bundle?.version !== undefined || story.bundle?.sha256) && (
+              <p className="text-[11px] text-admin-text-subtle">
+                Current: v{story.bundle?.version ?? 0}
+                {story.bundle?.sha256 ? ` · sha256 ${story.bundle.sha256.slice(0, 12)}…` : ""}
+              </p>
+            )}
           </div>
+          <BundleUploader storyId={story.id} />
         </fieldset>
 
         {/* ── AR Anchor ─────────────────────────────────────────── */}

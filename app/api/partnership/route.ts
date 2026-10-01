@@ -36,18 +36,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  await saveSubmission({
-    kind: "partnership",
-    payload: {
-      name: parsed.data.name.trim(),
-      email: parsed.data.email.toLowerCase(),
-      role: parsed.data.role,
-      message: parsed.data.message || null,
-    },
-    receivedAt: new Date().toISOString(),
-    ip,
-    userAgent: req.headers.get("user-agent") ?? undefined,
-  });
+  // Never report success on a failed write — a lost enquiry that looked
+  // like it worked is unrecoverable, because the sender won't try again.
+  try {
+    await saveSubmission({
+      kind: "partnership",
+      payload: {
+        name: parsed.data.name.trim(),
+        email: parsed.data.email.toLowerCase(),
+        role: parsed.data.role,
+        message: parsed.data.message || null,
+      },
+      receivedAt: new Date().toISOString(),
+      ip,
+      userAgent: req.headers.get("user-agent") ?? undefined,
+    });
+  } catch (err) {
+    console.error("[partnership] submission failed:", err);
+    return NextResponse.json(
+      { error: "Could not send your message. Please try again shortly." },
+      { status: 503 },
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

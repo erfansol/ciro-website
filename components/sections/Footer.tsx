@@ -20,10 +20,11 @@ const product = [
   { label: "Waitlist", href: "/#waitlist" },
 ];
 
+// Same paths the mobile app links to (lib/core/constants/app_links.dart).
 const legal = [
-  { label: "Privacy", href: "/legal/privacy" },
-  { label: "Terms", href: "/legal/terms" },
-  { label: "Cookies", href: "/legal/cookies" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Support", href: "/support" },
 ];
 
 export function Footer() {

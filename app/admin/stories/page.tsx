@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { listAdminStories, publishStatus } from "@/lib/storyAdmin";
 import { CATEGORY_BY_ID } from "@/lib/categories";
+import { EXPERIENCE_KIND_LABELS, PRODUCTION_STAGE_LABELS } from "@/lib/walkSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +73,9 @@ export default async function AdminStoriesPage() {
                 <th className="px-4 py-3 font-medium">City</th>
                 <th className="px-4 py-3 font-medium">Category</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Coords</th>
+                <th className="px-4 py-3 font-medium">Experience</th>
+                <th className="px-4 py-3 font-medium">Stage</th>
+                <th className="px-4 py-3 font-medium">Price</th>
                 <th className="px-4 py-3 font-medium" />
               </tr>
             </thead>
@@ -112,10 +115,24 @@ export default async function AdminStoriesPage() {
                     <td className="px-4 py-3">
                       <StatusBadge story={s} />
                     </td>
+                    <td className="px-4 py-3 text-xs text-admin-text" title={coords}>
+                      {EXPERIENCE_KIND_LABELS[s.kind]}
+                      {s.kind === "walk" && s.walk ? ` · ${s.walk.stops.length} stops` : ""}
+                      {s.kind === "none" ? <span className="text-amber-300"> · coming soon</span> : ""}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-admin-text-muted">
+                      {PRODUCTION_STAGE_LABELS[s.production.stage]}
+                    </td>
                     <td className="px-4 py-3 text-xs tabular-nums text-admin-text-muted">
-                      {coords}
+                      {s.priceCents ? `${(s.priceCents / 100).toFixed(2)} ${s.currency ?? "USD"}` : "Free"}
                     </td>
                     <td className="px-4 py-3 text-right">
+                      <Link
+                        href={`/admin/stories/${s.id}/studio`}
+                        className="mr-4 text-xs uppercase tracking-[0.22em] text-admin-text-muted hover:text-admin-text"
+                      >
+                        Studio
+                      </Link>
                       <Link
                         href={`/admin/stories/${s.id}`}
                         className="text-xs uppercase tracking-[0.22em] text-admin-text-muted hover:text-admin-text"
